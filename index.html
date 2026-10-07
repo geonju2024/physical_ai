@@ -4,7 +4,6 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>MUSE — Your Personal AI Stylist</title>
-<meta name="description" content="MUSE는 사용자의 체형, 취향, 보유 의류, 날씨와 일정을 이해해 상황에 맞는 코디를 추천하고, 없는 옷은 가상 피팅으로 확인할 수 있는 AI 퍼스널 스타일리스트 스마트미러입니다."/>
 <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -157,7 +156,7 @@
 <header class="docked full-width top-0 sticky z-50 bg-surface/80 dark:bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant/30 dark:border-outline/20 transition-all duration-300 ease-out">
 <div class="flex justify-between items-center w-full max-w-7xl mx-auto px-6 md:px-10 py-5">
 <!-- Brand Logo -->
-<a class="font-display-hero text-headline-md tracking-tight font-normal text-primary dark:text-on-surface flex items-center gap-2" href="#about">
+<a class="font-display-hero text-headline-md tracking-tight font-normal text-primary dark:text-on-surface flex items-center gap-2" href="#">
 <span>MUSE</span>
 <span class="w-1.5 h-1.5 rounded-full bg-secondary inline-block"></span>
 </a>
@@ -171,26 +170,16 @@
 </nav>
 <!-- Trailing Action -->
 <div class="flex items-center gap-3">
-<button class="hidden sm:inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary-container px-6 py-2.5 rounded-xl font-label-uppercase text-label-uppercase tracking-wider transition-all duration-200 hover:shadow-[0_4px_20px_rgba(96,80,175,0.25)]" data-scroll-target="how-it-works">
+<button class="hidden sm:inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary-container px-6 py-2.5 rounded-xl font-label-uppercase text-label-uppercase tracking-wider transition-all duration-200 hover:shadow-[0_4px_20px_rgba(96,80,175,0.25)]" onclick="document.getElementById('cta-section').scrollIntoView({behavior: 'smooth'})">
 <span>Meet MUSE</span>
 <span class="material-symbols-outlined text-secondary-fixed text-base" data-icon="auto_awesome">auto_awesome</span>
 </button>
-<button id="mobile-menu-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu" class="md:hidden p-2 rounded-lg text-primary hover:bg-surface-container">
-<span class="material-symbols-outlined" id="mobile-menu-icon">menu</span>
+<button aria-label="Menu" class="md:hidden p-2 rounded-lg text-primary hover:bg-surface-container">
+<span class="material-symbols-outlined">menu</span>
 </button>
 </div>
 </div>
 </header>
-<nav id="mobile-menu" class="md:hidden hidden sticky top-[73px] z-40 bg-surface/95 backdrop-blur-md border-b border-outline-variant/30">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-1 font-label-uppercase text-label-uppercase">
-    <a class="mobile-nav-link py-3 border-b border-outline-variant/30" href="#about">About</a>
-    <a class="mobile-nav-link py-3 border-b border-outline-variant/30" href="#how-it-works">How it works</a>
-    <a class="mobile-nav-link py-3 border-b border-outline-variant/30" href="#features">Features</a>
-    <a class="mobile-nav-link py-3 border-b border-outline-variant/30" href="#virtual-try-on">Virtual Try-On</a>
-    <a class="mobile-nav-link py-3" href="#my-style">My Style</a>
-    <button class="mt-3 bg-primary text-white rounded-xl px-5 py-3 tracking-wider" data-scroll-target="how-it-works">Meet MUSE</button>
-  </div>
-</nav>
 <!-- ========================================================================= -->
 <!-- 2. HERO SECTION                                                           -->
 <!-- ========================================================================= -->
@@ -242,13 +231,13 @@
 <span class="inline-block h-7 w-7 rounded-full ring-2 ring-surface bg-primary text-[10px] font-bold flex items-center justify-center text-white">ZR</span>
 <span class="inline-block h-7 w-7 rounded-full ring-2 ring-surface bg-secondary-fixed text-[10px] font-bold flex items-center justify-center text-on-secondary-fixed">VG</span>
 </div>
-<span>Curated from your wardrobe, preferences and daily context</span>
+<span>Curated with modern Seoul &amp; Tokyo contemporary fashion labels</span>
 </div>
 </div>
 <!-- Right Smart Mirror Presentation with High-Res Image & Interactive Glass Widgets -->
 <div class="lg:col-span-7 relative">
 <div class="relative mx-auto max-w-2xl rounded-2xl overflow-hidden editorial-border shadow-[0_25px_60px_-15px_rgba(0,0,0,0.08)] bg-surface-container-lowest">
-<img alt="MUSE Smart Mirror lifestyle scene in modern sunlit studio apartment" class="w-full h-auto object-cover aspect-[16/10] sm:aspect-[16/9] lg:aspect-[16/11]" src="images/muse/hero-smart-mirror.jpg"/>
+<img alt="MUSE Smart Mirror lifestyle scene in modern sunlit studio apartment" class="w-full h-auto object-cover aspect-[16/10] sm:aspect-[16/9] lg:aspect-[16/11]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWsihqSnK6tR84pj1Ma4INorEhdF-VMKxYQa_O1n4-uYmq7d8OtGNwl-HCVUG7Epgx2E7RzELnG3ZBzq7HtHBx1bj5YYwXOsShYLMJyiDuqtIjkuaRmvZDkIURBhmVtKaQmcu1pkYgh_hC1K0EuHsyjv65vDyb0jOzx_C-DeuJcgYazyn4B4RM_WcV8VFdtT5z6ooh-4wBsOwx-0UIc-eKVteL-eIuh3XVzqUjfLY"/>
 <!-- Interactive UI Callout Overlays inside photo mirror (Floating HUD Elements) -->
 <div class="absolute top-4 sm:top-6 left-4 sm:left-6 flex flex-col gap-2.5 max-w-[210px] sm:max-w-[240px] pointer-events-none">
 <!-- Mood Card -->
@@ -261,7 +250,7 @@
 <span class="material-symbols-outlined text-outline text-lg">cloud</span>
 <div>
 <span class="font-label-tag text-xs font-semibold text-primary block">17°C Cloudy</span>
-<span class="font-body-sm text-[11px] text-on-surface-variant">Local weather · Breezy</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">Seoul · Breezy spring</span>
 </div>
 </div>
 <!-- Schedule Card -->
@@ -283,7 +272,7 @@
 </div>
 <span class="font-body-sm text-[11px] text-on-surface-variant block">Soft Crop Jacket + Silver Bag</span>
 </div>
-<button class="ml-1 px-3 py-1.5 bg-primary text-white rounded-lg font-label-uppercase text-[10px] tracking-wider hover:bg-secondary transition-colors" data-scroll-target="virtual-try-on">
+<button class="ml-1 px-3 py-1.5 bg-primary text-white rounded-lg font-label-uppercase text-[10px] tracking-wider hover:bg-secondary transition-colors">
                 Try it on
               </button>
 </div>
@@ -744,10 +733,10 @@
 <!-- Side-by-Side Before/Virtual Try-on Image Card -->
 <div class="lg:col-span-7">
 <div class="bg-surface-container-lowest p-3 sm:p-5 rounded-3xl editorial-border shadow-md">
-<img alt="Before Base White Tee and Jeans vs Virtual Try-On Black Blazer Suit Look with Silver Bag" class="w-full h-auto rounded-2xl object-cover" src="images/muse/virtual-try-on.jpg"/>
+<img alt="Before Base White Tee and Jeans vs Virtual Try-On Black Blazer Suit Look with Silver Bag" class="w-full h-auto rounded-2xl object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFsK2GRsCiISJmWhZT-U4dnYfXOOyLS101oA5axHuSMpm1m7KZCmOV454SOuAMjepyOmQ4rr17hWMr9-SobWovwcVnmV3-XWj-MPNS4943erb4ToFxJlbGd9mUcMB-rBhl7XCCxblcBUCw8oLhB8nsAEsoqoJkMaq_nOM3-pWm7LgwjqHd1HYa4rs5P7AUafkwD28R9QhNP_OQoMs9gMDGetIyQ0PBH7C-H0i816U"/>
 <div class="flex items-center justify-between mt-4 px-2 font-label-tag text-xs text-outline">
-<span class="font-semibold text-primary">MUSE STYLE PREVIEW</span>
-<span>Personalized Virtual Styling Demo</span>
+<span class="font-semibold text-primary">COLLABORATION ARCHIVE</span>
+<span>ZARA · 29CM Curated Selection</span>
 </div>
 </div>
 </div>
@@ -770,12 +759,12 @@
 </div>
 <!-- Try-on Toggle Actions -->
 <div class="mt-8 pt-6 border-t border-outline-variant/30 flex flex-col gap-3">
-<button class="w-full py-3.5 px-6 rounded-xl bg-primary text-white font-label-uppercase text-label-uppercase tracking-wider hover:bg-secondary transition-colors flex items-center justify-center gap-2" data-demo-message="가상 피팅 기능은 MUSE MVP에서 연동될 예정입니다.">
+<button class="w-full py-3.5 px-6 rounded-xl bg-primary text-white font-label-uppercase text-label-uppercase tracking-wider hover:bg-secondary transition-colors flex items-center justify-center gap-2">
 <span class="material-symbols-outlined text-sm">view_in_ar</span>
 <span>거울에서 입어보기 (Try on)</span>
 </button>
-<button class="w-full py-3 px-6 rounded-xl bg-transparent editorial-border text-primary font-label-uppercase text-label-uppercase tracking-wider hover:bg-surface-container transition-colors" data-demo-message="외부 쇼핑몰 상품 연동은 향후 기능으로 준비 중입니다.">
-                추천 상품 더 보기
+<button class="w-full py-3 px-6 rounded-xl bg-transparent editorial-border text-primary font-label-uppercase text-label-uppercase tracking-wider hover:bg-surface-container transition-colors">
+                29CM에서 상품 상세 보기
               </button>
 </div>
 </div>
@@ -815,7 +804,7 @@
 </div>
 <div class="flex items-center gap-2">
 <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
-<span class="font-label-tag text-xs font-semibold text-primary">Active Profile: MUSE User</span>
+<span class="font-label-tag text-xs font-semibold text-primary">Active Profile: Jiwon K.</span>
 </div>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10">
@@ -998,3 +987,56 @@
 <!-- 10. FINAL CTA BANNER & FOOTER (Shared Component JSON Blueprint)           -->
 <!-- ========================================================================= -->
 <!-- Evocative Luxury Banner -->
+<section class="py-28 md:py-36 bg-surface text-center relative overflow-hidden" id="cta-section">
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none -z-10 opacity-30">
+<div class="w-[600px] h-[600px] rounded-full bg-secondary-fixed/50 blur-[100px]"></div>
+</div>
+<div class="max-w-4xl mx-auto px-6">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-4">THE FUTURE OF YOUR MORNING</span>
+<h2 class="font-headline-lg md:font-display-hero text-headline-lg md:text-display-hero text-primary tracking-tight font-medium leading-tight">
+        “Tomorrow, ask your mirror.”
+      </h2>
+<p class="mt-6 font-title-editorial text-title-editorial text-on-surface-variant">
+        내일 아침, 옷장보다 먼저 MUSE에게 물어보세요.
+      </p>
+<div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+<button class="w-full sm:w-auto px-10 py-4 bg-primary text-white rounded-xl font-label-uppercase text-label-uppercase tracking-widest hover:bg-primary-container hover:shadow-[0_10px_35px_rgba(96,80,175,0.35)] transition-all duration-300">
+          Meet MUSE
+        </button>
+<button class="w-full sm:w-auto px-8 py-4 bg-transparent editorial-border text-primary rounded-xl font-label-uppercase text-label-uppercase tracking-widest hover:bg-surface-container transition-colors">
+          REQUEST LOOKBOOK
+        </button>
+</div>
+<p class="mt-8 font-body-sm text-xs text-outline">
+        Private Beta Invitation available for Seoul &amp; Tokyo Residents · Limited 500 Atelier Units
+      </p>
+</div>
+</section>
+<!-- Footer (Rendered strictly from Shared Components JSON) -->
+<footer class="w-full mt-auto bg-surface-container-low dark:bg-surface-container-high border-t border-outline-variant/40 dark:border-outline/30 transition-colors duration-200 ease-in-out">
+<div class="w-full max-w-7xl mx-auto px-6 md:px-10 py-16 flex flex-col md:flex-row justify-between items-start gap-10">
+<!-- Brand & Copyright -->
+<div class="space-y-4 max-w-sm">
+<div class="font-display-hero text-headline-sm font-normal text-primary dark:text-on-surface flex items-center gap-2">
+<span>MUSE</span>
+<span class="text-xs font-title-editorial text-on-surface-variant font-normal">· Your Personal AI Stylist</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline leading-relaxed">
+          © 2025 MUSE Atelier Inc. All rights reserved. Sculpted by ambient intelligence.
+        </p>
+<p class="font-label-uppercase text-[10px] text-outline tracking-wider uppercase">
+          Crafted for discerning wardrobes in Seoul &amp; Tokyo.
+        </p>
+</div>
+<!-- Navigation Links from JSON -->
+<div class="flex flex-wrap gap-x-8 gap-y-3 font-body-sm text-body-sm">
+<a class="text-primary dark:text-on-surface font-medium hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Philosophy</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Lookbook</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Virtual Atelier</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Journal</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Privacy &amp; Legal</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Contact Concierge</a>
+</div>
+</div>
+</footer>
+</body></html>
