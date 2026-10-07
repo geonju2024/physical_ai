@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>MUSE 데이터 처리 기술 | 전처리와 후처리</title>
+<meta name="description" content="AI 스마트미러 MUSE가 드레스룸 환경에서 체형, 옷장, 날씨, 일정, 피드백 데이터를 정돈하는 전처리와 후처리 아키텍처">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+<style>
+/* ============ Editorial Muse 디자인 토큰 & 감성 테마 ============ */
+:root {
+  --canvas: #faf9f6;
+  --canvas-alt: #f4f3ef;
+  --surface-glass: rgba(255, 255, 255, 0.72);
+  --surface-glass-tint: rgba(250, 249, 246, 0.85);
+  --card: #ffffff;
+  --ink: #121212;
+  --ink-secondary: #444748;
+  --ink-muted: #74777f;
+  --outline: rgba(18, 18, 18, 0.08);
+  --outline-subtle: rgba(18, 18, 18, 0.04);
+  --hairline: rgba(18, 18, 18, 0.06);
+
+  /* 에디토리얼 MUSE 시그니처 악센트 */
+  --lavender: #9d8df1;
+  --lavender-tint: #f3f0ff;
+  --lavender-glow: rgba(157, 141, 241, 0.15);
+  --blush: #f472b6;
+  --blush-tint: #fdf2f8;
+  --silver-accent: #c4c7c7;
+
+  /* 타이포그래피 */
+  --font-serif: "Playfair Display", "Noto Serif KR", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+
+  --r-xs: 4px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-card: 20px;
+  --r-full: 9999px;
+
+  --shadow-subtle: 0 4px 20px -2px rgba(18, 18, 18, 0.04);
+  --shadow-glass: 0 12px 32px -8px rgba(18, 18, 18, 0.06);
+  --shadow-hover: 0 16px 36px -6px rgba(157, 141, 241, 0.16);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background-color: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+p { margin: 0; }
+
+/* 타이포그래피 스케일 */
+.font-serif { font-family: var(--font-serif); }
+.font-italic { font-style: italic; }
+
+.display-hero {
+  font-family: var(--font-serif);
+  font-size: clamp(38px, 4.5vw, 56px);
+  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+.headline-lg {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3.2vw, 40px);
+  line-height: 1.25;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.headline-md {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.headline-sm {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 1.35;
+  font-weight: 500;
+  margin: 0;
+}
+.title-editorial {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.body-md { font-size: 14.5px; line-height: 1.6; color: var(--ink-secondary); }
+.body-sm { font-size: 12.5px; line-height: 1.5; color: var(--ink-muted); }
+
+/* 칩 / 배지 / 태그 (MUSE Landing Screen 스타일) */
+.tag-editorial {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--surface-glass);
+  backdrop-filter: blur(8px);
+  padding: 5px 12px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--outline);
+}
+.tag-editorial.lavender {
+  background: var(--lavender-tint);
+  border-color: rgba(157, 141, 241, 0.3);
+  color: #5544a8;
+}
+.tag-editorial.field {
+  background: var(--blush-tint);
+  border-color: rgba(244, 114, 182, 0.3);
+  color: #a02a63;
+}
+.tag-editorial .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* 그리드 & 래퍼 */
+.wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+}
+section {
+  padding: 100px 0;
+  position: relative;
+}
+.section-intro {
+  margin-bottom: 2.5rem;
+}
+.section-intro .tag-editorial {
+  margin-bottom: 1rem;
+}
+.section-intro p {
+  margin-top: 1rem;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink-secondary);
+  max-width: 36em;
+}
+
+/* 글래스 네비게이션 헤더 (SCREEN_5와 통일) */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 249, 246, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--hairline);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+.topbar .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+.brand-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.brand-wordmark {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+.brand-sub {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.topbar nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.topbar nav a {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink-secondary);
+  letter-spacing: -0.01em;
+  transition: color 0.2s;
+  padding: 4px 0;
+}
+.topbar nav a:hover {
+  color: var(--ink);
+}
+.topbar .action-btn {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  border-radius: var(--r-full);
+  background: var(--ink);
+  color: #fff;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.topbar .action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+  background: #222;
+}
+
+/* 카드 컴포넌트 */
+.card-muse {
+  background: var(--card);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-subtle);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.card-muse:hover {
+  box-shadow: var(--shadow-glass);
+}
+.card-glass {
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 30px rgba(18, 18, 18, 0.04);
+}
+
+/* ============ 히어로 섹션 ============ */
+.hero {
+  padding: 80px 0 110px;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 80% 20%, rgba(157, 141, 241, 0.09), transparent 50%),
+              radial-gradient(circle at 20% 70%, rgba(244, 114, 182, 0.05), transparent 45%);
+}
+.hero .copy {
+  grid-column: 1 / span 7;
+  align-self: center;
+}
+.hero .copy .lead-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.hero .lede {
+  margin-top: 1.5rem;
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: var(--ink-secondary);
+  max-width: 32em;
+}
+.hero .actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.25rem;
+}
+.btn-primary {
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 26px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: var(--r-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(18, 18, 18, 0.2);
+}
+.btn-ghost {
+  border: 1px solid var(--outline);
+  background: var(--surface-glass);
+  backdrop-filter: blur(8px);
+  color: var(--ink);
+  padding: 12px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: var(--r-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+.btn-ghost:hover {
+  background: rgba(18, 18, 18, 0.05);
+  border-color: var(--ink);
+}
+
+.hero .mirror-showcase {
+  grid-column: 8 / span 5;
+  position: relative;
+  justify-self: end;
+  width: min(100%, 380px);
+}
+.mirror-frame {
+  position: relative;
+  aspect-ratio: 300 / 460;
+  border: 3.5px solid var(--ink);
+  border-radius: 190px 190px var(--r-card) var(--r-card);
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 24px 60px -12px rgba(18, 18, 18, 0.14),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+.mirror-frame svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.mirror-frame .after {
+  clip-path: inset(0 0 0 var(--p, 50%));
+}
+.mirror-slider-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--p, 50%);
+  width: 2px;
+  background: var(--ink);
+  transform: translateX(-1px);
+  pointer-events: none;
+}
+.mirror-slider-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 4px var(--canvas);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.compare-controls {
+  margin-top: 1.25rem;
+}
+.compare-controls .labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.compare-controls input[type="range"] {
+  width: 100%;
+  accent-color: var(--ink);
+  height: 24px;
+  cursor: ew-resize;
+}
+
+/* ============ 현장 조사 섹션 (Field Notes) ============ */
+.field .section-intro { grid-column: 1 / span 4; }
+.field .rows {
+  grid-column: 5 / span 8;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.field-card {
+  padding: 1.75rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  background: var(--card);
+  border: 1px solid var(--outline);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-subtle);
+  position: relative;
+}
+.field-card::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 1.5rem;
+  bottom: 1.5rem;
+  width: 1px;
+  background: var(--hairline);
+}
+.field-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.field-side .tag-editorial { margin-bottom: 0.75rem; }
+.field-side h3 { margin-bottom: 0.5rem; }
+
+/* ============ 데이터 흐름 섹션 ============ */
+.section-alt {
+  background-color: var(--canvas-alt);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+.flow-head { grid-column: 1 / span 7; }
+.flow-container {
+  grid-column: 1 / -1;
+  margin-top: 2rem;
+  padding: 2.5rem;
+  overflow-x: auto;
+  border-radius: var(--r-card);
+}
+.flow-container svg { min-width: 880px; margin: 0 auto; }
+
+/* ============ 전처리 탭 섹션 ============ */
+.pre .section-intro { grid-column: 1 / span 7; }
+.tabs-wrap {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  border-bottom: 1px solid var(--outline);
+  padding-bottom: 1rem;
+}
+.tab-btn {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 18px;
+  border-radius: var(--r-full);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tab-btn:hover {
+  background: rgba(18, 18, 18, 0.04);
+  color: var(--ink);
+}
+.tab-btn[aria-selected="true"] {
+  background: var(--ink);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(18, 18, 18, 0.15);
+}
+
+.panel-card {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2.5rem;
+  margin-top: 1.5rem;
+  padding: 3rem;
+  border-radius: var(--r-card);
+}
+.panel-card[hidden] { display: none; }
+.panel-meta {
+  grid-column: 1 / span 4;
+}
+.panel-meta h3 { margin-bottom: 0.75rem; }
+.panel-meta p { margin-bottom: 1.5rem; }
+.panel-steps-container {
+  grid-column: 5 / span 8;
+}
+
+.timeline-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: step-counter;
+}
+.timeline-steps li {
+  counter-increment: step-counter;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 1.25rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--outline-subtle);
+  align-items: baseline;
+}
+.timeline-steps li:first-child { padding-top: 0; }
+.timeline-steps li:last-child { border-bottom: 0; padding-bottom: 0; }
+.timeline-steps li::before {
+  content: counter(step-counter, decimal-leading-zero);
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--lavender);
+  letter-spacing: -0.02em;
+}
+.timeline-steps strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+.timeline-steps span {
+  display: block;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-secondary);
+}
+
+/* ============ 후처리 섹션 ============ */
+.post .section-intro { grid-column: 1 / span 7; }
+.table-card {
+  grid-column: 1 / -1;
+  margin-top: 2rem;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--r-card);
+}
+.table-card-head {
+  padding: 1.75rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--outline);
+  background: #ffffff;
+}
+.table-wrap { overflow-x: auto; }
+table.muse-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+table.muse-table th, table.muse-table td {
+  padding: 16px 2rem;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--outline-subtle);
+}
+table.muse-table th {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  background: var(--canvas-alt);
+}
+table.muse-table td:first-child {
+  font-weight: 600;
+  color: var(--ink);
+}
+table.muse-table td.num {
+  font-family: var(--font-serif);
+  font-size: 15.5px;
+  color: #3f3d56;
+}
+
+.post-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.post-item-card {
+  padding: 2.25rem;
+  display: flex;
+  flex-direction: column;
+}
+.post-item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1rem;
+}
+.post-item-head .tag-editorial { margin-bottom: 0; }
+.io-badge-group {
+  margin: 1.25rem 0 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--canvas-alt);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.io-row {
+  display: flex;
+  gap: 0.75rem;
+}
+.io-label {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  min-width: 32px;
+}
+
+/* ============ 원칙 & 설계 목표 ============ */
+.principles-col { grid-column: 1 / span 5; }
+.goals-col { grid-column: 7 / span 6; }
+.principles-list {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+}
+.principles-list li {
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--outline);
+}
+.principles-list li strong {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+  color: var(--ink);
+}
+.principles-list li span {
+  display: block;
+  font-size: 14px;
+  color: var(--ink-secondary);
+}
+
+/* 푸터 (SCREEN_5와 통일) */
+footer {
+  padding: 4rem 0 3.5rem;
+  border-top: 1px solid var(--hairline);
+  background: var(--canvas);
+}
+footer .wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+footer .brand-wordmark { font-size: 22px; }
+
+/* 미디어 쿼리 */
+@media (max-width: 1024px) {
+  .hero .copy, .hero .mirror-showcase,
+  .field .section-intro, .field .rows,
+  .flow-head, .pre .section-intro, .post .section-intro,
+  .principles-col, .goals-col {
+    grid-column: 1 / -1;
+  }
+  .hero .mirror-showcase {
+    justify-self: center;
+    width: min(100%, 340px);
+    margin-top: 2.5rem;
+  }
+  .panel-meta, .panel-steps-container {
+    grid-column: 1 / -1;
+  }
+  .post-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 768px) {
+  .wrap { padding: 0 1.25rem; }
+  section { padding: 64px 0; }
+  .field-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .field-card::before { display: none; }
+  .panel-card { padding: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- 상단 에디토리얼 글래스 헤더 -->
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand-group">
+      <a class="brand-wordmark" href="#top">MUSE</a>
+      <span class="brand-sub">Atelier Intelligence</span>
+    </div>
+    <nav aria-label="문서 네비게이션">
+      <a href="#field">현장 조사</a>
+      <a href="#flow">데이터 흐름</a>
+      <a href="#pre">전처리</a>
+      <a href="#post">후처리</a>
+      <a href="#goals">원칙과 목표</a>
+    </nav>
+    <a href="#pre" class="action-btn">Inspect Pipeline</a>
+  </div>
+</header>
+
+<!-- ======================= 히어로 섹션 ======================= -->
+<div class="hero" id="top">
+  <div class="wrap grid">
+    <div class="copy">
+      <div class="lead-meta">
+        <span class="tag-editorial lavender"><span class="dot"></span>Data Processing Architecture</span>
+        <span class="tag-editorial">Edge & Cloud Hybrid</span>
+      </div>
+      <h1 class="display-hero">거울 앞에 서기 전에,<br><span class="font-italic">데이터부터</span> 정돈합니다.</h1>
+      <p class="lede">조명도, 배경도, 거울과의 거리도 집집마다 다른 드레스룸 환경. MUSE는 듀얼 ToF 센서와 온디바이스 비전 기술을 통해 실제 현장의 노이즈를 전처리에서 걸러내고, AI 생성 결과는 후처리 검증을 거친 뒤 비로소 거울 표면에 띄웁니다.</p>
+      <div class="actions">
+        <a class="btn-primary" href="#pre">전처리 파이프라인</a>
+        <a class="btn-ghost" href="#post">후처리 검증 기준</a>
+      </div>
+    </div>
+
+    <!-- 스마트 미러 인터랙티브 뷰어 -->
+    <div class="mirror-showcase">
+      <div class="mirror-frame" id="arch" style="--p:50%">
+        <!-- 원본 장면 SVG -->
+        <svg viewBox="0 0 300 460" role="img" aria-label="원본 드레스룸 장면">
+          <defs>
+            <pattern id="grain" width="6" height="6" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r=".7" fill="#000" opacity=".12"/><circle cx="4" cy="4" r=".6" fill="#fff" opacity=".18"/>
+            </pattern>
+          </defs>
+          <rect width="300" height="460" fill="#e8dfce"/>
+          <rect y="380" width="300" height="80" fill="#a39074"/>
+          <rect x="214" y="30" width="72" height="50" rx="3" fill="#2b2722"/>
+          <path d="M226 74 L262 34 L272 34 L236 74Z" fill="#f7e8c8" opacity=".55"/>
+          <line x1="6" y1="112" x2="78" y2="112" stroke="#6b5a44" stroke-width="3"/>
+          <line x1="222" y1="112" x2="296" y2="112" stroke="#6b5a44" stroke-width="3"/>
+          <path d="M18 116 h46 l10 24 -8 4 v100 h-50 v-100 l-8 -4z" fill="#4e6390"/>
+          <path d="M234 116 h46 l10 24 -8 4 v100 h-50 v-100 l-8 -4z" fill="#9e4b3e"/>
+          <g>
+            <path d="M120 90 a30 32 0 0 1 60 0 v8 h-60z" fill="#3a2a1e"/>
+            <ellipse cx="150" cy="100" rx="25" ry="28" fill="#d9a47e"/>
+            <rect x="142" y="124" width="16" height="12" fill="#d9a47e"/>
+            <path d="M98 136 h104 l18 16 v96 h-14 v-86 l-6 -4 v100 h-100 v-100 l-6 4 v86 h-14 v-96z" fill="#edddb8"/>
+            <circle cx="87" cy="254" r="8" fill="#d9a47e"/><circle cx="213" cy="254" r="8" fill="#d9a47e"/>
+            <path d="M104 258 h92 v136 h-42 v-96 h-8 v96 h-42z" fill="#353247"/>
+            <ellipse cx="124" cy="400" rx="24" ry="9" fill="#2a211a"/><ellipse cx="176" cy="400" rx="24" ry="9" fill="#2a211a"/>
+          </g>
+          <rect width="300" height="460" fill="#e8a13a" opacity=".16"/>
+          <rect width="300" height="460" fill="url(#grain)"/>
+        </svg>
+
+        <!-- 정돈된 MUSE 전처리 결과 SVG -->
+        <svg class="after" viewBox="0 0 300 460" role="img" aria-label="MUSE 온디바이스 전처리 결과">
+          <defs>
+            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M20 0H0V20" fill="none" stroke="#ebe8e1" stroke-width=".7"/>
+            </pattern>
+          </defs>
+          <rect width="300" height="460" fill="#faf9f6"/>
+          <rect width="300" height="460" fill="url(#grid)"/>
+          <path d="M18 116 h46 l10 24 -8 4 v100 h-50 v-100 l-8 -4z" fill="none" stroke="#c4c7c7" stroke-dasharray="4 4"/>
+          <path d="M234 116 h46 l10 24 -8 4 v100 h-50 v-100 l-8 -4z" fill="none" stroke="#c4c7c7" stroke-dasharray="4 4"/>
+          <g>
+            <ellipse cx="150" cy="100" rx="27" ry="30" fill="#ede9fe" stroke="#9d8df1" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <rect x="142" y="124" width="16" height="12" fill="#d2a58a"/>
+            <path d="M98 136 h104 l18 16 v96 h-14 v-86 l-6 -4 v100 h-100 v-100 l-6 4 v86 h-14 v-96z" fill="#ffffff" stroke="#e3e2e0"/>
+            <circle cx="87" cy="254" r="8" fill="#d2a58a"/><circle cx="213" cy="254" r="8" fill="#d2a58a"/>
+            <path d="M104 258 h92 v136 h-42 v-96 h-8 v96 h-42z" fill="#1f2a4a"/>
+            <ellipse cx="124" cy="400" rx="24" ry="9" fill="#1a1715"/><ellipse cx="176" cy="400" rx="24" ry="9" fill="#1a1715"/>
+          </g>
+          <rect x="72" y="62" width="156" height="352" rx="16" fill="none" stroke="#9d8df1" stroke-width="1.5" stroke-dasharray="6 5"/>
+          <g font-family="Plus Jakarta Sans, Noto Sans KR, sans-serif" font-size="10.5" fill="#121212" font-weight="600">
+            <rect x="180" y="58" width="84" height="22" rx="11" fill="#ede9fe"/>
+            <text x="222" y="73" text-anchor="middle" fill="#5544a8">얼굴 온디바이스</text>
+            <rect x="200" y="292" width="94" height="22" rx="11" fill="#ede9fe"/>
+            <text x="247" y="307" text-anchor="middle" fill="#5544a8">D65 색 보정</text>
+            <rect x="194" y="432" width="98" height="22" rx="11" fill="#ede9fe"/>
+            <text x="243" y="447" text-anchor="middle" fill="#5544a8">ToF 심도 분리</text>
+          </g>
+        </svg>
+
+        <div class="mirror-slider-divider" aria-hidden="true">
+          <div class="mirror-slider-handle">↔</div>
+        </div>
+      </div>
+
+      <div class="compare-controls">
+        <div class="labels">
+          <span>Raw Field Camera</span>
+          <span>MUSE Edge Processed</span>
+        </div>
+        <input id="slider" type="range" min="0" max="100" value="50" aria-label="원본과 처리 결과 비교 슬라이더">
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+<!-- ======================= 현장 조사 ======================= -->
+<section class="field" id="field">
+  <div class="wrap grid">
+    <div class="section-intro">
+      <span class="tag-editorial field"><span class="dot"></span>Field Observation</span>
+      <h2 class="headline-lg">시범 가정 드레스룸에서<br>발견한 현실적 제약</h2>
+      <p>MUSE 엔지니어링 팀은 20여 가구의 드레스룸 현장을 실측 조사했습니다. 불규칙한 조명, 배경 행거, 1초도 가만히 있지 않는 출근길 행동 양식이 전처리 파이프라인의 기준값이 되었습니다.</p>
+    </div>
+
+    <div class="rows">
+      <div class="field-card">
+        <div class="field-side">
+          <span class="tag-editorial field"><span class="dot"></span>현장 제약</span>
+          <h3 class="title-editorial">카메라 뒤에 걸린 배경 의류</h3>
+          <p class="body-md">배경 행거의 옷을 착용 의류로 오인하고, 베이지색 벽지는 피부색과 경계가 모호해 분리 오차를 유발했습니다.</p>
+        </div>
+        <div class="field-side">
+          <span class="tag-editorial lavender"><span class="dot"></span>MUSE 솔루션</span>
+          <h3 class="title-editorial">듀얼 ToF 심도 거리 분리</h3>
+          <p class="body-md">사용자 실루엣 기준 ±40cm 심도 범위 밖의 모든 배경을 원천 차단하고 초기 설치 시 빈 공간 맵을 메모리합니다.</p>
+        </div>
+      </div>
+
+      <div class="field-card">
+        <div class="field-side">
+          <span class="tag-editorial field"><span class="dot"></span>현장 제약</span>
+          <h3 class="title-editorial">혼합 조명과 조도 편차 (100~600 lux)</h3>
+          <p class="body-md">형광등, 난백색 LED, 자연광 혼합으로 동일 의류도 아침과 저녁에 완전히 다른 색상 코드로 인식되었습니다.</p>
+        </div>
+        <div class="field-side">
+          <span class="tag-editorial lavender"><span class="dot"></span>MUSE 솔루션</span>
+          <h3 class="title-editorial">미러 내장 링 라이트 주도 촬영</h3>
+          <p class="body-md">촬영 0.5초간 내장 플래시 500lux를 조사해 광원을 통일하고 D65 표준 색온도로 캘리브레이션합니다.</p>
+        </div>
+      </div>
+
+      <div class="field-card">
+        <div class="field-side">
+          <span class="tag-editorial field"><span class="dot"></span>현장 제약</span>
+          <h3 class="title-editorial">바쁜 아침, 0.5초의 멈춤도 없음</h3>
+          <p class="body-md">옷을 갈아입으며 움직이는 상태가 대다수이며, 대기 시간이 2초를 초과하면 사용 피로도가 급격히 상승했습니다.</p>
+        </div>
+        <div class="field-side">
+          <span class="tag-editorial lavender"><span class="dot"></span>MUSE 솔루션</span>
+          <h3 class="title-editorial">0.5초 15연사 선명도 랭킹 선별</h3>
+          <p class="body-md">블러 및 움직임 점수 상위 3장을 선별하고, 오늘의 추천 코디는 새벽 6시 클라우드에서 사전 연산해 둡니다.</p>
+        </div>
+      </div>
+
+      <div class="field-card">
+        <div class="field-side">
+          <span class="tag-editorial field"><span class="dot"></span>현장 제약</span>
+          <h3 class="title-editorial">드레스룸 상시 카메라에 대한 불안</h3>
+          <p class="body-md">사적인 침실/옷방 공간에서 렌즈가 항상 사용자를 지켜보고 있다는 우려가 존재했습니다.</p>
+        </div>
+        <div class="field-side">
+          <span class="tag-editorial lavender"><span class="dot"></span>MUSE 솔루션</span>
+          <h3 class="title-editorial">하드웨어 셔터 & 물리 버튼 트리거</h3>
+          <p class="body-md">버튼을 터치할 때만 카메라가 활성화되며, 얼굴과 배경을 지운 신체 키포인트 데이터만 서버로 안전하게 전송합니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 데이터 흐름 섹션 ======================= -->
+<section class="section-alt" id="flow">
+  <div class="wrap grid">
+    <div class="flow-head section-intro">
+      <span class="tag-editorial lavender"><span class="dot"></span>End-to-End Pipeline</span>
+      <h2 class="headline-lg">데이터가 거울에 닿기까지</h2>
+      <p>지연 시간과 프라이버시가 핵심인 신체 데이터는 <strong>온디바이스 Edge</strong>에서, 컴퓨팅 파워가 요구되는 카탈로그 분석은 <strong>Cloud</strong>에서 병렬 처리됩니다.</p>
+    </div>
+
+    <div class="card-muse flow-container card-glass">
+      <svg viewBox="0 0 920 340" role="img" aria-label="MUSE 데이터 파이프라인 아키텍처 다이어그램">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0 1L8 5L0 9z" fill="#9d8df1"/>
+          </marker>
+        </defs>
+        <!-- 데이터 인풋 노드 -->
+        <g font-family="Plus Jakarta Sans, Noto Sans KR, sans-serif" font-size="12.5" font-weight="500">
+          <rect x="20" y="24" width="130" height="34" rx="17" fill="#ffffff" stroke="#c4c7c7"/>
+          <text x="85" y="46" text-anchor="middle" fill="#121212">신체 실루엣</text>
+
+          <rect x="20" y="70" width="130" height="34" rx="17" fill="#ffffff" stroke="#c4c7c7"/>
+          <text x="85" y="92" text-anchor="middle" fill="#121212">ToF 깊이 센서</text>
+
+          <rect x="20" y="116" width="130" height="34" rx="17" fill="#ffffff" stroke="#c4c7c7"/>
+          <text x="85" y="138" text-anchor="middle" fill="#121212">착용 피드백</text>
+
+          <rect x="20" y="184" width="130" height="34" rx="17" fill="#ffffff" stroke="#c4c7c7"/>
+          <text x="85" y="206" text-anchor="middle" fill="#121212">모바일 옷장 사진</text>
+
+          <rect x="20" y="230" width="130" height="34" rx="17" fill="#ffffff" stroke="#c4c7c7"/>
+          <text x="85" y="252" text-anchor="middle" fill="#121212">제휴 쇼핑몰 상품</text>
+
+          <rect x="20" y="276" width="130" height="34" rx="17" fill="#ffffff" stroke="#c4c7c7"/>
+          <text x="85" y="298" text-anchor="middle" fill="#121212">날씨 & 캘린더 TPO</text>
+
+          <!-- Edge 박스 -->
+          <rect x="210" y="16" width="220" height="146" rx="20" fill="#f8f7ff" stroke="#9d8df1" stroke-width="1.5"/>
+          <text x="320" y="48" text-anchor="middle" font-weight="700" font-size="14" fill="#5544a8">MUSE Edge 전처리</text>
+          <text x="320" y="74" text-anchor="middle" fill="#444748" font-size="12">온디바이스 얼굴 마스킹</text>
+          <text x="320" y="94" text-anchor="middle" fill="#444748" font-size="12">ToF 배경 분리 (±40cm)</text>
+          <text x="320" y="114" text-anchor="middle" fill="#444748" font-size="12">로컬 오프라인 버퍼링</text>
+          <text x="320" y="134" text-anchor="middle" fill="#9d8df1" font-size="11" font-weight="600">&lt; 50ms Ultra-low Latency</text>
+
+          <!-- Cloud 박스 -->
+          <rect x="210" y="174" width="220" height="146" rx="20" fill="#faf9f6" stroke="#c4c7c7" stroke-width="1.5"/>
+          <text x="320" y="206" text-anchor="middle" font-weight="700" font-size="14" fill="#121212">MUSE Cloud 전처리</text>
+          <text x="320" y="232" text-anchor="middle" fill="#444748" font-size="12">촬영 매트 색/왜곡 보정</text>
+          <text x="320" y="252" text-anchor="middle" fill="#444748" font-size="12">표준 치수(단면/둘레) 변환</text>
+          <text x="320" y="272" text-anchor="middle" fill="#444748" font-size="12">일정 TPO 격식/활동성 파싱</text>
+          <text x="320" y="292" text-anchor="middle" fill="#444748" font-size="12">피드백 시간 감쇠 가중치</text>
+
+          <!-- 연결선 -->
+          <path d="M150 41 H208" stroke="#9d8df1" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <path d="M150 87 H208" stroke="#9d8df1" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <path d="M150 133 H208" stroke="#9d8df1" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <path d="M150 201 H208" stroke="#c4c7c7" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <path d="M150 247 H208" stroke="#c4c7c7" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <path d="M150 293 H208" stroke="#c4c7c7" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- AI 코어 모델 -->
+          <rect x="490" y="96" width="160" height="136" rx="20" fill="#ffffff" stroke="#121212" stroke-width="1.5"/>
+          <text x="570" y="132" text-anchor="middle" font-weight="700" font-size="14" fill="#121212">MUSE AI Core</text>
+          <text x="570" y="158" text-anchor="middle" fill="#444748" font-size="12">3D 체형 추정</text>
+          <text x="570" y="178" text-anchor="middle" fill="#444748" font-size="12">TPO 코디네이션 큐레이션</text>
+          <text x="570" y="198" text-anchor="middle" fill="#444748" font-size="12">AR 의류 시뮬레이션</text>
+
+          <!-- 후처리 검증 박스 -->
+          <rect x="700" y="96" width="130" height="136" rx="20" fill="#121212"/>
+          <text x="765" y="142" text-anchor="middle" font-weight="700" font-size="14" fill="#ffffff">후처리 검증</text>
+          <text x="765" y="168" text-anchor="middle" fill="#c4c7c7" font-size="12">체형 왜곡 방지</text>
+          <text x="765" y="188" text-anchor="middle" fill="#c4c7c7" font-size="12">ΔE2000 색차 검사</text>
+          <text x="765" y="208" text-anchor="middle" fill="#c4c7c7" font-size="12">기후/반복 필터</text>
+
+          <!-- 연결 -->
+          <path d="M430 89 C460 89 460 144 488 144" stroke="#9d8df1" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+          <path d="M430 247 C460 247 460 184 488 184" stroke="#c4c7c7" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+          <path d="M650 164 H698" stroke="#121212" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- 최종 디스플레이 아치 -->
+          <path d="M856 220 V130 a24 24 0 0 1 48 0 V220 z" fill="none" stroke="#121212" stroke-width="2.5"/>
+          <text x="880" y="244" text-anchor="middle" font-size="12" font-weight="700">미러 글래스</text>
+          <path d="M830 164 H854" stroke="#121212" stroke-width="1.5" marker-end="url(#arrow)"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 전처리 파이프라인 ======================= -->
+<section class="pre" id="pre">
+  <div class="wrap grid">
+    <div class="section-intro">
+      <span class="tag-editorial lavender"><span class="dot"></span>Pre-Processing Specs</span>
+      <h2 class="headline-lg">6대 데이터 소스의 정돈 단계</h2>
+      <p>체형, 옷장, 날씨 등 각 데이터의 성격과 민감도에 따라 최적화된 온디바이스 / 클라우드 파이프라인을 통과합니다.</p>
+    </div>
+
+    <!-- 탭 내비게이션 -->
+    <div class="tabs-wrap" role="tablist" aria-label="전처리 데이터 유형">
+      <button class="tab-btn" role="tab" id="t-body" aria-controls="p-body" aria-selected="true">
+        <span>신체 실루엣</span>
+      </button>
+      <button class="tab-btn" role="tab" id="t-depth" aria-controls="p-depth" aria-selected="false">
+        <span>ToF 심도</span>
+      </button>
+      <button class="tab-btn" role="tab" id="t-closet" aria-controls="p-closet" aria-selected="false">
+        <span>디지털 옷장</span>
+      </button>
+      <button class="tab-btn" role="tab" id="t-shop" aria-controls="p-shop" aria-selected="false">
+        <span>쇼핑몰 카탈로그</span>
+      </button>
+      <button class="tab-btn" role="tab" id="t-ctx" aria-controls="p-ctx" aria-selected="false">
+        <span>날씨 & 일정</span>
+      </button>
+      <button class="tab-btn" role="tab" id="t-fb" aria-controls="p-fb" aria-selected="false">
+        <span>착용 피드백</span>
+      </button>
+    </div>
+
+    <!-- 탭 1: 신체 이미지 -->
+    <div class="card-muse panel-card" role="tabpanel" id="p-body" aria-labelledby="t-body">
+      <div class="panel-meta">
+        <span class="tag-editorial lavender"><span class="dot"></span>Edge 온디바이스 처리</span>
+        <h3 class="headline-md" style="margin-top:1rem">신체 이미지</h3>
+        <p class="body-md">2초 내 스타일링 제안이 완료되어야 하므로 모든 RGB 분석 및 얼굴 마스킹은 기기 자체 NPU에서 온디바이스로 완료됩니다.</p>
+        <div class="io-badge-group">
+          <div class="io-row"><span class="io-label">IN</span><span class="body-sm">4K 카메라 센서 RGB 스트림</span></div>
+          <div class="io-row"><span class="io-label">OUT</span><span class="body-sm">얼굴 비식별화 키포인트 맵 (1024×768)</span></div>
+        </div>
+      </div>
+      <div class="panel-steps-container">
+        <ol class="timeline-steps">
+          <li><div><strong>버튼 터치 시에만 카메라 활성화</strong><span>항시 감시형 촬영을 배제하고 사용자 명시적 터치 시에만 세션이 오픈됩니다.</span></div></li>
+          <li><div><strong>거리 센서 기준 거리 (1.9~2.6m) 확인</strong><span>거울과 사용자 사이 최적 피팅 화각을 확인하고 벗어날 시 스마트 가이드를 표시합니다.</span></div></li>
+          <li><div><strong>내장 링 라이트 조사 후 15연사</strong><span>400~600 lux 균일 조명 하에서 0.5초 동안 초고속 버스트 캡처를 실행합니다.</span></div></li>
+          <li><div><strong>모션 블러 평가 상위 3장 선별</strong><span>가장 흔들림이 적고 선명한 프레임 3장을 가중치 평가하여 픽업합니다.</span></div></li>
+          <li><div><strong>카메라 렌즈 왜곡(Fisheye) 보정</strong><span>공장 출하 캘리브레이션 매트릭스를 기반으로 가장자리 왜곡을 수평 정렬합니다.</span></div></li>
+          <li><div><strong>ToF 심도 기반 실루엣 분리</strong><span>사용자 기준 ±40cm 이내의 신체 영역만 분리해 옷걸이 및 가구 노이즈를 완전 제거합니다.</span></div></li>
+          <li><div><strong>얼굴 마스킹 및 실루엣 정규화</strong><span>외부 전송용 이미지는 얼굴 영역을 완전 블러링하고 체형 비율 데이터만 암호화 전송합니다.</span></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- 탭 2: 깊이 -->
+    <div class="card-muse panel-card" role="tabpanel" id="p-depth" aria-labelledby="t-depth" hidden>
+      <div class="panel-meta">
+        <span class="tag-editorial lavender"><span class="dot"></span>Edge 온디바이스 처리</span>
+        <h3 class="headline-md" style="margin-top:1rem">ToF 깊이 센서</h3>
+        <p class="body-md">거울, 유리 창문, TV 등의 광택 반사로 인한 3D 노이즈를 필터링하여 정확한 체형 치수(어깨, 가슴, 허리)를 산출합니다.</p>
+      </div>
+      <div class="panel-steps-container">
+        <ol class="timeline-steps">
+          <li><div><strong>설치 공간 빈 배경 정적 맵 학습</strong><span>첫 부팅 시 30초간 빈 드레스룸의 심도 맵을 스캔해 반사 노이즈 좌표를 마스킹합니다.</span></div></li>
+          <li><div><strong>유효 작동 심도 (0.5~3.5m) 클리핑</strong><span>지나치게 가깝거나 거울 뒤 가상 깊이 평면(허상)에 위치한 포인트는 즉각 배제합니다.</span></div></li>
+          <li><div><strong>시공간 결합 필터링</strong><span>정적 프레임 간 가중 평균 및 바이래터럴 필터로 외곽선 에지를 정밀 보존합니다.</span></div></li>
+          <li><div><strong>바닥 평면 수평 정렬 보정</strong><span>바닥면과의 각도를 계산해 스탠드 기울기가 2° 이상 틀어졌을 경우 알림을 발송합니다.</span></div></li>
+          <li><div><strong>3D 포인트 클라우드 다운샘플링</strong><span>5mm 복셀 그리드로 압축해 실시간 체형 추정 모델의 인퍼런스 속도를 극대화합니다.</span></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- 탭 3: 디지털 옷장 -->
+    <div class="card-muse panel-card" role="tabpanel" id="p-closet" aria-labelledby="t-closet" hidden>
+      <div class="panel-meta">
+        <span class="tag-editorial"><span class="dot"></span>Cloud 파이프라인</span>
+        <h3 class="headline-md" style="margin-top:1rem">스마트 클로젯 사진</h3>
+        <p class="body-md">MUSE 스마트 촬영 매트 위에 올려둔 옷을 모바일 앱으로 촬영하면 실제 규격, 직조 패턴, 대표 컬러를 자동 디지털화합니다.</p>
+      </div>
+      <div class="panel-steps-container">
+        <ol class="timeline-steps">
+          <li><div><strong>매트 4코너 마커 투영 변환</strong><span>비스듬히 찍힌 모바일 사진을 1:1 수직 시점 정사영 영상으로 자동 교정합니다 (1px = 1mm).</span></div></li>
+          <li><div><strong>컬러 패치 기반 광원 화이트밸런스 복원</strong><span>주변 조명의 색 왜곡을 색차 차트로 역산하여 실물 본연의 색상으로 캘리브레이션합니다.</span></div></li>
+          <li><div><strong>의류 경계 자동 누끼 세그멘테이션</strong><span>매트 그린 스크린 영역과 경계를 분리하고 모헤어/시스루 소재 특성을 태깅합니다.</span></div></li>
+          <li><div><strong>CIE Lab 색공간 대표 3색 추출</strong><span>사람의 지각에 가장 부합하는 Lab 색공간에서 하이라이트를 배제한 베이스 컬러를 산출합니다.</span></div></li>
+          <li><div><strong>실측 치수(총장, 어깨단면) 자동 계측</strong><span>픽셀당 밀리미터 단위를 기반으로 옷의 실측 치수를 데이터베이스에 바인딩합니다.</span></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- 탭 4: 쇼핑몰 상품 -->
+    <div class="card-muse panel-card" role="tabpanel" id="p-shop" aria-labelledby="t-shop" hidden>
+      <div class="panel-meta">
+        <span class="tag-editorial"><span class="dot"></span>Cloud 일일 배치</span>
+        <h3 class="headline-md" style="margin-top:1rem">제휴 쇼핑몰 카탈로그</h3>
+        <p class="body-md">29CM, W컨셉, 무신사 등 주요 파트너사의 신규 상품 정보를 표준 규격으로 매일 자동 인제스천합니다.</p>
+      </div>
+      <div class="panel-steps-container">
+        <ol class="timeline-steps">
+          <li><div><strong>누끼 단독컷 / 모델 착용컷 분리</strong><span>AR 가상 드레이핑에 적합한 흰 배경 단독 상품 컷을 최우선 추출합니다.</span></div></li>
+          <li><div><strong>브랜드별 사이즈 체계 표준화</strong><span>브랜드마다 상이한 S/M/L, 26/28 표기를 실측 밀리미터 단면 테이블로 통일 변환합니다.</span></div></li>
+          <li><div><strong>고해상도 텍스처 맵 생성</strong><span>드레이핑 시 직물 결이 무너지지 않도록 1024×768 표준 텍스처 맵을 구성합니다.</span></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- 탭 5: 날씨 & 일정 -->
+    <div class="card-muse panel-card" role="tabpanel" id="p-ctx" aria-labelledby="t-ctx" hidden>
+      <div class="panel-meta">
+        <span class="tag-editorial"><span class="dot"></span>Cloud 실시간 처리</span>
+        <h3 class="headline-md" style="margin-top:1rem">날씨 & 일정 컨텍스트</h3>
+        <p class="body-md">외출 시간대 기온과 일정의 TPO 격식을 유기적으로 파싱해 출근 룩과 주말 캐주얼을 영리하게 분기합니다.</p>
+      </div>
+      <div class="panel-steps-container">
+        <ol class="timeline-steps">
+          <li><div><strong>외출 체감온도 및 강수 확률 매핑</strong><span>종일 평균 기온이 아닌, 사용자가 외출하는 시간대의 풍속/체감온도를 타깃팅합니다.</span></div></li>
+          <li><div><strong>일정 약어("ㄱㅅ 미팅" 등) 자연어 해석</strong><span>개인 캘린더 사전 및 LLM 컨텍스트 파서로 TPO 포멀 지수(1~5단계)를 추출합니다.</span></div></li>
+          <li><div><strong>프라이버시 익명화</strong><span>일정 세부 텍스트는 영구 저장하지 않으며 '격식 미팅, 실내 위주' 메타데이터만 활용합니다.</span></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- 탭 6: 피드백 -->
+    <div class="card-muse panel-card" role="tabpanel" id="p-fb" aria-labelledby="t-fb" hidden>
+      <div class="panel-meta">
+        <span class="tag-editorial"><span class="dot"></span>Hybrid 처리</span>
+        <h3 class="headline-md" style="margin-top:1rem">착용 피드백 & Style DNA</h3>
+        <p class="body-md">거울에서의 선택(Wear / Pass / Swap)과 모바일 피드백을 가공해 취향 DNA를 점진적으로 정교화합니다.</p>
+      </div>
+      <div class="panel-steps-container">
+        <ol class="timeline-steps">
+          <li><div><strong>7일 로컬 오프라인 큐</strong><span>와이파이가 일시 단절되어도 거울 로컬 스토리지에 반응을 안전 보관 후 재동기화합니다.</span></div></li>
+          <li><div><strong>시간 감쇠(Time-decay) 가중치 적용</strong><span>계절 변화와 취향 이동을 고려하여 60일 이전 선택은 반영 가중치를 50% 감쇠합니다.</span></div></li>
+          <li><div><strong>버튼 연타 및 오작동 필터</strong><span>1초 이내 발생한 중복 입력은 단일 신호로 정규화하여 학습 왜곡을 방지합니다.</span></div></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 후처리 검증 기준 ======================= -->
+<section class="post section-alt" id="post">
+  <div class="wrap grid">
+    <div class="section-intro">
+      <span class="tag-editorial lavender"><span class="dot"></span>Post-Processing Guardrails</span>
+      <h2 class="headline-lg">거울에 비추기 전, 엄격한 품질 검증</h2>
+      <p>AI 모델이 생성한 결과가 아무리 시각적으로 그럴듯해도, 왜곡된 체형이나 잘못된 색상은 잘못된 쇼핑과 실망으로 이어집니다. MUSE는 다음 기준을 통과한 결과물만 렌더링합니다.</p>
+    </div>
+
+    <!-- 핵심 통과 기준 요약표 -->
+    <div class="card-muse table-card">
+      <div class="table-card-head">
+        <h3 class="headline-sm">검증 매트릭스 & 폴백(Fallback) 정책</h3>
+        <span class="tag-editorial lavender"><span class="dot"></span>Strict Quality Gate</span>
+      </div>
+      <div class="table-wrap">
+        <table class="muse-table">
+          <thead>
+            <tr>
+              <th scope="col">결과물 영역</th>
+              <th scope="col">핵심 검사 항목</th>
+              <th scope="col">허용 통과 기준</th>
+              <th scope="col">기준 미달 시 페일세이프(Fallback)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>가상 피팅 (Try-On)</td>
+              <td>체형 실루엣 일치율</td>
+              <td class="num">윤곽 겹침 85% 이상</td>
+              <td>날씬 보정 방지 위해 즉각 재생성</td>
+            </tr>
+            <tr>
+              <td>가상 피팅 (Try-On)</td>
+              <td>의류 실물 색상 일치</td>
+              <td class="num">ΔE2000 ≤ 8.0</td>
+              <td>의류 영역만 색 보정, 15 초과 시 재생성</td>
+            </tr>
+            <tr>
+              <td>가상 피팅 (Try-On)</td>
+              <td>패턴 및 텍스처 보존</td>
+              <td>특징점 보존 점수 충족</td>
+              <td>"실물 패턴과 차이가 있을 수 있습니다" 배지</td>
+            </tr>
+            <tr>
+              <td>TPO 코디네이션</td>
+              <td>기상 및 외출 조건 적합성</td>
+              <td>비 올 시 스웨이드 제외, 체감 10℃↓ 아우터 필수</td>
+              <td>부적합 아이템 자동 교체</td>
+            </tr>
+            <tr>
+              <td>TPO 코디네이션</td>
+              <td>착용 반복 방지 (Anti-repeat)</td>
+              <td>최근 7일 동일 조합, 3일 연속 동일 상의 배제</td>
+              <td>차순위 조합 큐레이션으로 재정렬</td>
+            </tr>
+            <tr>
+              <td>스타일리스트 브리핑</td>
+              <td>팩트 대조 (Fact Verification)</td>
+              <td>기온 수치, 일정 명칭, 아이템명 100% 일치</td>
+              <td>검증된 에디토리얼 템플릿 문장으로 대체</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 카드형 상세 후처리 규칙 -->
+    <div class="post-grid">
+      <div class="card-muse post-item-card">
+        <div class="post-item-head">
+          <span class="tag-editorial lavender"><span class="dot"></span>AR Engine Guard</span>
+          <span class="body-sm font-serif">Rule 01</span>
+        </div>
+        <h3 class="headline-sm">가상 피팅 이미지 검증</h3>
+        <p class="body-md">생성형 가상 피팅은 체형을 인위적으로 날씬하게 왜곡하기 쉽습니다. MUSE는 본래 체형 마스크와 85% 이상 일치하지 않는 피팅 이미지는 절대 노출하지 않습니다.</p>
+        <div class="io-badge-group">
+          <div class="io-row"><span class="io-label">IN</span><span class="body-sm">생성된 드레이핑 프레임, 실측 신체 마스크</span></div>
+          <div class="io-row"><span class="io-label">RULE</span><span class="body-sm">CIE ΔE2000 &lt; 8.0, 하프미러 광학 30% 투과율 보정</span></div>
+        </div>
+      </div>
+
+      <div class="card-muse post-item-card">
+        <div class="post-item-head">
+          <span class="tag-editorial"><span class="dot"></span>Curation Logic</span>
+          <span class="body-sm font-serif">Rule 02</span>
+        </div>
+        <h3 class="headline-sm">스타일 다양성 & 반복 억제</h3>
+        <p class="body-md">추천 점수가 높아도 매일 검정 재킷만 추천되면 신뢰를 잃습니다. Style A(안정형), Style B(트렌드), Style C(새로운 시도)의 벡터 거리를 계산해 서로 완전히 다른 3가지 룩을 제안합니다.</p>
+        <div class="io-badge-group">
+          <div class="io-row"><span class="io-label">RULE</span><span class="body-sm">7일 내 동일 착용 배제, Style A/B/C 간 코사인 유사도 &lt; 0.65</span></div>
+          <div class="io-row"><span class="io-label">OUT</span><span class="body-sm">완전히 차별화된 3-Option 코디네이션 카드</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 원칙과 설계 목표 ======================= -->
+<section id="goals">
+  <div class="wrap grid">
+    <div class="principles-col">
+      <span class="tag-editorial lavender"><span class="dot"></span>Core Philosophy</span>
+      <h2 class="headline-lg" style="margin-top:1rem">MUSE가 고수하는<br><span class="font-italic">4대 원칙</span></h2>
+      <ul class="principles-list">
+        <li>
+          <strong>01. 원본 신체 영상은 집 밖으로 나가지 않습니다</strong>
+          <span>모든 얼굴과 신체 실루엣 측정은 거울 내부 온디바이스 NPU에서 완결되며, 클라우드에는 익명화된 수치만 전송됩니다.</span>
+        </li>
+        <li>
+          <strong>02. 불확실한 데이터로 취향을 학습하지 않습니다</strong>
+          <span>조명이 불균일하거나 본인 확인 신뢰도가 낮은 날의 선택은 화면에만 임시 표시하고 Style DNA 학습 데이터셋에서 배제합니다.</span>
+        </li>
+        <li>
+          <strong>03. 판매 목적의 편향을 두지 않습니다</strong>
+          <span>메인 코디 추천은 항상 사용자가 옷장에 보유한 옷이 최우선이며, 미보유 쇼핑 상품은 별도 옵션으로만 명확히 구분 제안합니다.</span>
+        </li>
+        <li>
+          <strong>04. AI 생성의 실패는 숨기지 않습니다</strong>
+          <span>조명이나 왜곡으로 인해 피팅 품질이 기준에 못 미칠 경우 어설픈 합성 대신 실측 치수 비교표로 정직하게 전환합니다.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="goals-col">
+      <span class="tag-editorial"><span class="dot"></span>Performance Targets</span>
+      <h2 class="headline-lg" style="margin-top:1rem">엔지니어링 목표 수치</h2>
+      <div class="card-muse" style="margin-top:2rem; overflow:hidden">
+        <table class="muse-table">
+          <thead>
+            <tr>
+              <th scope="col">지표 항목</th>
+              <th scope="col">설계 목표 기준</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>버튼 터치 후 오늘의 추천 룩 렌더링 (90% 백분위)</td>
+              <td class="num"><strong>&lt; 2.0 초</strong></td>
+            </tr>
+            <tr>
+              <td>AR 실시간 가상 피팅 드레이핑 응답</td>
+              <td class="num"><strong>&lt; 50 ms</strong></td>
+            </tr>
+            <tr>
+              <td>배경 행거 옷을 사용자 착용 의류로 오인식할 확률</td>
+              <td class="num"><strong>&lt; 0.8%</strong></td>
+            </tr>
+            <tr>
+              <td>D65 조명 보정 후 표준 색차 (ΔE2000)</td>
+              <td class="num"><strong>≤ 5.0</strong></td>
+            </tr>
+            <tr>
+              <td>신체 주요 둘레(가슴, 허리) 실측 오차 범위</td>
+              <td class="num"><strong>≤ 1.8 cm</strong></td>
+            </tr>
+            <tr>
+              <td>클라우드 서버로의 원본 얼굴 노출 건수</td>
+              <td class="num"><strong>0 건 (완전 보장)</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="body-sm" style="margin-top:1rem; color:var(--ink-muted)">
+        * 위 수치는 서울 시범 거주 가구 20곳의 파일럿 테스트 하드웨어 실측 데이터를 기준으로 지속 최적화되고 있습니다.
+      </p>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- 푸터 -->
+<footer>
+  <div class="wrap">
+    <div class="brand-group">
+      <span class="brand-wordmark">MUSE</span>
+      <span class="body-sm" style="color:var(--ink-muted)">Your Personal AI Stylist · Atelier Ambient Intelligence</span>
+    </div>
+    <span class="body-sm" style="color:var(--ink-muted)">© 2025 MUSE Atelier Inc. All rights reserved.</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // 인터랙티브 비교 슬라이더
+  var arch = document.getElementById('arch');
+  var slider = document.getElementById('slider');
+  function updateSlider(val) {
+    arch.style.setProperty('--p', val + '%');
+  }
+  slider.addEventListener('input', function() {
+    updateSlider(slider.value);
+  });
+  updateSlider(slider.value);
+
+  // 전처리 파이프라인 탭 전환
+  var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+  tabButtons.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      tabButtons.forEach(function(b) {
+        b.setAttribute('aria-selected', 'false');
+        var panelId = b.getAttribute('aria-controls');
+        var panel = document.getElementById(panelId);
+        if (panel) panel.hidden = true;
+      });
+      btn.setAttribute('aria-selected', 'true');
+      var targetId = btn.getAttribute('aria-controls');
+      var targetPanel = document.getElementById(targetId);
+      if (targetPanel) targetPanel.hidden = false;
+    });
+  });
+})();
+</script>
+</body>
+</html>
