@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MUSE — Your Personal AI Stylist</title>
+<!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "inverse-primary": "#c8c6c5",
+            "on-primary-fixed-variant": "#474646",
+            "on-error-container": "#93000a",
+            "surface": "#faf9f6",
+            "inverse-on-surface": "#f2f1ee",
+            "primary-container": "#1c1b1b",
+            "surface-container-low": "#f4f3f1",
+            "secondary-fixed": "#e6deff",
+            "surface-variant": "#e3e2e0",
+            "on-tertiary-container": "#d3579a",
+            "on-secondary-container": "#3c2a89",
+            "tertiary-container": "#3d0026",
+            "outline": "#747878",
+            "on-secondary-fixed": "#1b0062",
+            "surface-container": "#efeeeb",
+            "on-surface-variant": "#444748",
+            "primary-fixed": "#e5e2e1",
+            "secondary-fixed-dim": "#c9beff",
+            "secondary": "#6050af",
+            "error": "#ba1a1a",
+            "surface-container-lowest": "#ffffff",
+            "error-container": "#ffdad6",
+            "outline-variant": "#c4c7c7",
+            "on-primary-fixed": "#1c1b1b",
+            "surface-dim": "#dbdad7",
+            "surface-bright": "#faf9f6",
+            "on-error": "#ffffff",
+            "on-background": "#1a1c1a",
+            "on-surface": "#1a1c1a",
+            "background": "#faf9f6",
+            "primary": "#000000",
+            "secondary-container": "#a898fd",
+            "tertiary-fixed-dim": "#ffafd3",
+            "on-secondary": "#ffffff",
+            "surface-container-high": "#e9e8e5",
+            "surface-container-highest": "#e3e2e0",
+            "surface-tint": "#5f5e5e",
+            "tertiary": "#000000",
+            "inverse-surface": "#2f312f",
+            "on-tertiary-fixed-variant": "#85145a",
+            "on-secondary-fixed-variant": "#483795",
+            "on-primary-container": "#858383",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed": "#3d0026",
+            "primary-fixed-dim": "#c8c6c5",
+            "tertiary-fixed": "#ffd8e7",
+            "on-primary": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-mobile": "1.25rem",
+            "space-md": "1.25rem",
+            "gutter-mobile": "1rem",
+            "space-lg": "2rem",
+            "margin": "2.5rem",
+            "gutter": "1.5rem",
+            "space-sm": "0.75rem",
+            "space-xs": "0.375rem",
+            "space-xl": "3.5rem"
+          },
+          "fontFamily": {
+            "display-hero-mobile": ["Playfair Display"],
+            "headline-lg-mobile": ["Playfair Display"],
+            "label-tag": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "label-uppercase": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-md": ["Playfair Display"],
+            "headline-lg": ["Playfair Display"],
+            "title-editorial": ["Plus Jakarta Sans"],
+            "headline-sm": ["Playfair Display"],
+            "display-hero": ["Playfair Display"]
+          },
+          "fontSize": {
+            "display-hero-mobile": ["38px", { "lineHeight": "46px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "label-tag": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+            "body-md": ["14px", { "lineHeight": "22px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400" }],
+            "label-uppercase": ["11px", { "lineHeight": "14px", "letterSpacing": "0.14em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "headline-md": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "headline-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.015em", "fontWeight": "400" }],
+            "title-editorial": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-sm": ["22px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "500" }],
+            "display-hero": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .glass-frost {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(250, 249, 246, 0.78);
+      border-top: 1px solid rgba(255, 255, 255, 0.85);
+      border-left: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 20px 40px -15px rgba(96, 80, 175, 0.08), 0 0 1px 1px rgba(18, 18, 18, 0.04);
+    }
+    .glass-mirror-widget {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 12px 30px -8px rgba(18, 18, 18, 0.06);
+    }
+    .editorial-border {
+      border: 1px solid rgba(18, 18, 18, 0.08);
+    }
+    .editorial-border-light {
+      border: 1px solid rgba(18, 18, 18, 0.05);
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- ========================================================================= -->
+<!-- 1. TOP NAV BAR (Shared Component JSON Blueprint)                          -->
+<!-- ========================================================================= -->
+<header class="docked full-width top-0 sticky z-50 bg-surface/80 dark:bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant/30 dark:border-outline/20 transition-all duration-300 ease-out">
+<div class="flex justify-between items-center w-full max-w-7xl mx-auto px-6 md:px-10 py-5">
+<!-- Brand Logo -->
+<a class="font-display-hero text-headline-md tracking-tight font-normal text-primary dark:text-on-surface flex items-center gap-2" href="#">
+<span>MUSE</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary inline-block"></span>
+</a>
+<!-- Desktop Navigation Links -->
+<nav class="hidden md:flex items-center gap-8 font-label-uppercase text-label-uppercase">
+<a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#about">About</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#how-it-works">How it works</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#features">Features</a>
+<a class="text-primary dark:text-on-surface font-semibold border-b border-primary dark:border-inverse-primary pb-1" href="#virtual-try-on">Virtual Try-On</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#my-style">My Style</a>
+</nav>
+<!-- Trailing Action -->
+<div class="flex items-center gap-3">
+<button class="hidden sm:inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary-container px-6 py-2.5 rounded-xl font-label-uppercase text-label-uppercase tracking-wider transition-all duration-200 hover:shadow-[0_4px_20px_rgba(96,80,175,0.25)]" onclick="document.getElementById('cta-section').scrollIntoView({behavior: 'smooth'})">
+<span>Meet MUSE</span>
+<span class="material-symbols-outlined text-secondary-fixed text-base" data-icon="auto_awesome">auto_awesome</span>
+</button>
+<button aria-label="Menu" class="md:hidden p-2 rounded-lg text-primary hover:bg-surface-container">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- 2. HERO SECTION                                                           -->
+<!-- ========================================================================= -->
+<section class="relative pt-8 pb-20 md:py-24 max-w-7xl mx-auto px-6 md:px-10 overflow-hidden">
+<!-- Ambient lavender halo in background -->
+<div class="absolute top-1/4 left-1/3 w-96 h-96 rounded-full bg-secondary-fixed/40 blur-3xl pointer-events-none -z-10"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-center">
+<!-- Left Editorial Narrative -->
+<div class="lg:col-span-5 flex flex-col items-start space-y-6">
+<div class="flex flex-wrap items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-uppercase text-label-uppercase">
+<span class="material-symbols-outlined text-[13px] fill-icon" data-icon="auto_awesome">auto_awesome</span>
+            AI PICK
+          </span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-uppercase text-label-uppercase">
+            92% MATCH
+          </span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-uppercase text-label-uppercase">
+            OOTD CURATION
+          </span>
+</div>
+<div>
+<span class="font-display-hero text-headline-sm md:text-headline-md tracking-tight text-on-surface-variant italic block mb-1">MUSE</span>
+<h1 class="font-headline-lg md:font-display-hero text-headline-lg md:text-display-hero text-primary tracking-tight font-medium leading-[1.12]">
+            나를 가장 잘 아는<br/>
+<span class="italic font-normal">AI Personal</span> Stylist
+          </h1>
+<p class="mt-3 font-title-editorial text-title-editorial text-secondary tracking-wide">
+            Dress for your mood. Style for your day.
+          </p>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed max-w-lg">
+          체형, 취향, 내 옷장, 날씨와 일정까지. <br class="hidden sm:inline"/>MUSE가 오늘의 나에게 가장 어울리는 스타일을 추천합니다.
+        </p>
+<!-- CTA Buttons -->
+<div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto">
+<a class="inline-flex justify-center items-center gap-3 bg-primary text-on-primary hover:bg-primary-container px-7 py-3.5 rounded-xl font-label-uppercase text-label-uppercase tracking-wider transition-all duration-300 shadow-sm hover:shadow-[0_8px_30px_rgba(96,80,175,0.28)] hover:-translate-y-0.5" href="#features">
+<span>오늘의 스타일 만나보기</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+<a class="inline-flex justify-center items-center gap-2 bg-transparent editorial-border text-primary hover:bg-surface-container px-7 py-3.5 rounded-xl font-label-uppercase text-label-uppercase tracking-wider transition-all duration-200" href="#how-it-works">
+<span>MUSE 알아보기</span>
+</a>
+</div>
+<!-- Micro Social Proof / Subtle Footnote -->
+<div class="pt-4 flex items-center gap-4 text-outline font-body-sm text-body-sm border-t border-outline-variant/30 w-full">
+<div class="flex -space-x-2 overflow-hidden">
+<span class="inline-block h-7 w-7 rounded-full ring-2 ring-surface bg-surface-container-high text-[10px] font-bold flex items-center justify-center text-primary">29</span>
+<span class="inline-block h-7 w-7 rounded-full ring-2 ring-surface bg-primary text-[10px] font-bold flex items-center justify-center text-white">ZR</span>
+<span class="inline-block h-7 w-7 rounded-full ring-2 ring-surface bg-secondary-fixed text-[10px] font-bold flex items-center justify-center text-on-secondary-fixed">VG</span>
+</div>
+<span>Curated with modern Seoul &amp; Tokyo contemporary fashion labels</span>
+</div>
+</div>
+<!-- Right Smart Mirror Presentation with High-Res Image & Interactive Glass Widgets -->
+<div class="lg:col-span-7 relative">
+<div class="relative mx-auto max-w-2xl rounded-2xl overflow-hidden editorial-border shadow-[0_25px_60px_-15px_rgba(0,0,0,0.08)] bg-surface-container-lowest">
+<img alt="MUSE Smart Mirror lifestyle scene in modern sunlit studio apartment" class="w-full h-auto object-cover aspect-[16/10] sm:aspect-[16/9] lg:aspect-[16/11]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWsihqSnK6tR84pj1Ma4INorEhdF-VMKxYQa_O1n4-uYmq7d8OtGNwl-HCVUG7Epgx2E7RzELnG3ZBzq7HtHBx1bj5YYwXOsShYLMJyiDuqtIjkuaRmvZDkIURBhmVtKaQmcu1pkYgh_hC1K0EuHsyjv65vDyb0jOzx_C-DeuJcgYazyn4B4RM_WcV8VFdtT5z6ooh-4wBsOwx-0UIc-eKVteL-eIuh3XVzqUjfLY"/>
+<!-- Interactive UI Callout Overlays inside photo mirror (Floating HUD Elements) -->
+<div class="absolute top-4 sm:top-6 left-4 sm:left-6 flex flex-col gap-2.5 max-w-[210px] sm:max-w-[240px] pointer-events-none">
+<!-- Mood Card -->
+<div class="glass-mirror-widget p-3 rounded-xl border border-white/80">
+<span class="font-label-uppercase text-[10px] text-on-surface-variant block uppercase tracking-wider">Today's Mood</span>
+<span class="font-title-editorial text-body-md font-semibold text-primary">Soft Minimal</span>
+</div>
+<!-- Weather Card -->
+<div class="glass-mirror-widget px-3 py-2 rounded-xl flex items-center gap-2.5 border border-white/80">
+<span class="material-symbols-outlined text-outline text-lg">cloud</span>
+<div>
+<span class="font-label-tag text-xs font-semibold text-primary block">17°C Cloudy</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">Seoul · Breezy spring</span>
+</div>
+</div>
+<!-- Schedule Card -->
+<div class="glass-mirror-widget px-3 py-2 rounded-xl flex items-center gap-2 border border-white/80">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-tag text-xs text-primary font-medium">Presentation at 3 PM</span>
+</div>
+</div>
+<!-- Bottom Floating Recommendation Badge -->
+<div class="absolute bottom-4 sm:bottom-6 right-4 sm:right-6 pointer-events-auto">
+<div class="glass-mirror-widget p-3 sm:p-4 rounded-xl flex items-center gap-3 border border-white/90 shadow-lg">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest flex items-center justify-center editorial-border">
+<span class="material-symbols-outlined text-secondary text-xl">styler</span>
+</div>
+<div class="text-left">
+<div class="flex items-center gap-2">
+<span class="font-label-tag text-xs font-semibold text-primary">Look 01 / Look 02</span>
+<span class="px-1.5 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold">92% Match</span>
+</div>
+<span class="font-body-sm text-[11px] text-on-surface-variant block">Soft Crop Jacket + Silver Bag</span>
+</div>
+<button class="ml-1 px-3 py-1.5 bg-primary text-white rounded-lg font-label-uppercase text-[10px] tracking-wider hover:bg-secondary transition-colors">
+                Try it on
+              </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 3. PROBLEM SECTION (The Daily Dilemma)                                    -->
+<!-- ========================================================================= -->
+<section class="py-20 md:py-28 bg-surface-container-low border-y border-outline-variant/30 relative" id="about">
+<div class="max-w-7xl mx-auto px-6 md:px-10">
+<div class="max-w-2xl mx-auto text-center mb-14">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">EVERYDAY WARDROBE FRICTION</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-medium">
+          매일 반복되는 “오늘 뭐 입지?”
+        </h2>
+<p class="mt-4 font-body-lg text-body-lg text-on-surface-variant">
+          MUSE는 단순히 옷을 추천하는 것이 아니라, 당신에게 꼭 맞는 스타일을 찾아줍니다.
+        </p>
+</div>
+<!-- Asymmetrical Editorial Chat Bubble Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+<!-- Thought 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl editorial-border relative transition-transform hover:-translate-y-1 duration-200">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline text-xl mt-0.5">help_outline</span>
+<div>
+<p class="font-title-editorial text-title-editorial text-primary">“이 옷이 나한테 어울릴까?”</p>
+<p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">모델 착용 사진과 내 체형의 차이 때문에 구매하고도 옷장 속에 그대로 방치되는 옷들.</p>
+</div>
+</div>
+</div>
+<!-- Thought 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl editorial-border relative transition-transform hover:-translate-y-1 duration-200">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline text-xl mt-0.5">event</span>
+<div>
+<p class="font-title-editorial text-title-editorial text-primary">“오늘 일정에는 너무 꾸민 것 같나?”</p>
+<p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">캐주얼 미팅인지 격식 있는 발표인지, 애매한 TPO 사이에서 생기는 스타일링 망설임.</p>
+</div>
+</div>
+</div>
+<!-- Thought 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl editorial-border relative transition-transform hover:-translate-y-1 duration-200">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline text-xl mt-0.5">checkroom</span>
+<div>
+<p class="font-title-editorial text-title-editorial text-primary">“옷은 많은데 정작 입을 게 없어.”</p>
+<p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">가득 찬 옷장 앞에서 매일 아침 15분 이상 서성이며 겪는 아침 루틴의 소모적 피로감.</p>
+</div>
+</div>
+</div>
+<!-- Thought 4 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl editorial-border relative transition-transform hover:-translate-y-1 duration-200 lg:col-span-1">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline text-xl mt-0.5">visibility</span>
+<div>
+<p class="font-title-editorial text-title-editorial text-primary">“온라인에서 예뻤는데 내가 입으면 어떨까?”</p>
+<p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">직접 입어보지 않고는 감이 안 오는 실루엣과 소재의 드레이프감.</p>
+</div>
+</div>
+</div>
+<!-- Thought 5 -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl editorial-border relative transition-transform hover:-translate-y-1 duration-200 lg:col-span-2">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-xl mt-0.5">shopping_bag</span>
+<div>
+<p class="font-title-editorial text-title-editorial text-primary">“이 코디에 어떤 가방을 들어야 하지?”</p>
+<p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">상의와 팬츠는 골랐지만 신발과 백, 실버 액세서리까지 완결된 룩을 완성하는 마무리의 부재.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Core Quote Banner -->
+<div class="mt-12 p-8 rounded-2xl bg-surface-container-lowest editorial-border text-center max-w-4xl mx-auto shadow-sm">
+<p class="font-display-hero-mobile md:font-headline-md text-headline-sm md:text-headline-md text-primary font-normal leading-relaxed">
+          “MUSE는 옷을 추천하는 것이 아니라 <br class="sm:hidden"/><span class="italic font-medium underline decoration-secondary-container decoration-2 underline-offset-4">나에게 어울리는 스타일</span>을 찾아줍니다.”
+        </p>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 4. HOW MUSE UNDERSTANDS YOU (4 Key Data Pillars)                          -->
+<!-- ========================================================================= -->
+<section class="py-24 md:py-32 max-w-7xl mx-auto px-6 md:px-10" id="how-it-works">
+<div class="text-center max-w-3xl mx-auto mb-16">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">4 DATA PILLARS</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-medium">
+        MUSE는 나를 어떻게 이해할까?
+      </h2>
+<p class="mt-4 font-body-lg text-body-lg text-on-surface-variant">
+        편향된 트렌드 대신, 오직 사용자에게 집중된 4가지 핵심 축을 통해 당신의 스타일 DNA를 모델링합니다.
+      </p>
+</div>
+<!-- Central Intelligence Hub Diagram -->
+<div class="relative">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+<!-- Pillar 1: Body -->
+<div class="bg-surface-container-lowest p-7 rounded-2xl editorial-border flex flex-col justify-between hover:shadow-lg transition-all duration-300">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-2xl">accessibility_new</span>
+</div>
+<span class="font-label-uppercase text-label-uppercase text-secondary block mb-1">01 / SILHOUETTE</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-2">BODY (체형과 신체 비율)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              키, 어깨 라인, 골반 비율과 다리 길이를 입체적으로 분석하여 가장 돋보이는 핏과 기장감을 도출합니다.
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline font-label-tag text-xs">
+<span>실루엣 밸런스</span>
+<span class="font-semibold text-primary">Golden Ratio</span>
+</div>
+</div>
+<!-- Pillar 2: Style -->
+<div class="bg-surface-container-lowest p-7 rounded-2xl editorial-border flex flex-col justify-between hover:shadow-lg transition-all duration-300">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-2xl">palette</span>
+</div>
+<span class="font-label-uppercase text-label-uppercase text-secondary block mb-1">02 / PREFERENCE</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-2">STYLE (나의 취향)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              좋아하는 모노톤 팔레트, 선호하는 오버사이즈 핏, 미니멀하거나 아방가르드한 감성 선호도를 점진적으로 학습합니다.
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline font-label-tag text-xs">
+<span>취향 데이터셋</span>
+<span class="font-semibold text-primary">Adaptive Memory</span>
+</div>
+</div>
+<!-- Pillar 3: Closet -->
+<div class="bg-surface-container-lowest p-7 rounded-2xl editorial-border flex flex-col justify-between hover:shadow-lg transition-all duration-300">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-2xl">dry_cleaning</span>
+</div>
+<span class="font-label-uppercase text-label-uppercase text-secondary block mb-1">03 / INVENTORY</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-2">CLOSET (나의 옷장)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              스마트 미러 촬영 한 번으로 보유 중인 상·하의, 슈즈, 가방을 디지털 아카이빙하여 100% 실현 가능한 코디를 제안합니다.
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline font-label-tag text-xs">
+<span>디지털 아카이브</span>
+<span class="font-semibold text-primary">Virtual Wardrobe</span>
+</div>
+</div>
+<!-- Pillar 4: Context -->
+<div class="bg-surface-container-lowest p-7 rounded-2xl editorial-border flex flex-col justify-between hover:shadow-lg transition-all duration-300">
+<div>
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary mb-6">
+<span class="material-symbols-outlined text-2xl">calendar_today</span>
+</div>
+<span class="font-label-uppercase text-label-uppercase text-secondary block mb-1">04 / ENVIRONMENT</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-2">CONTEXT (오늘의 상황)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              실시간 날씨와 온습도, 캘린더 미팅의 성격(PT, 캐주얼 런치, 디너 파티), 방문 장소의 TPO를 복합 연산합니다.
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline font-label-tag text-xs">
+<span>환경 맥락</span>
+<span class="font-semibold text-primary">TPO Sync Engine</span>
+</div>
+</div>
+</div>
+<!-- Center Core Visual Connection Bar -->
+<div class="mt-10 p-6 rounded-2xl bg-surface-container-high/60 border border-outline-variant/40 flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-lg fill-icon" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div>
+<span class="font-label-uppercase text-label-uppercase text-secondary">CORE ENGINE</span>
+<h4 class="font-title-editorial text-title-editorial text-primary">MUSE Core Intelligence Layer</h4>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xl text-left md:text-right">
+          신체 비율 × 취향 벡터 × 실제 보유 의류 × 오늘의 TPO가 실시간으로 교차 연산되어 0.2초 내에 최적의 3가지 착장을 렌더링합니다.
+        </p>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 5. MAIN FEATURE SECTION ('One Mirror. Your Entire Style.')               -->
+<!-- ========================================================================= -->
+<section class="py-24 bg-surface-container-low border-t border-outline-variant/30" id="features">
+<div class="max-w-7xl mx-auto px-6 md:px-10">
+<div class="max-w-3xl mb-16">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">CORE CAPABILITIES</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-medium">
+          One Mirror. Your Entire Style.
+        </h2>
+<p class="mt-3 font-body-lg text-body-lg text-on-surface-variant">
+          거울 앞에 서는 것만으로 시작되는 지능형 스타일링의 5가지 시그니처 경험.
+        </p>
+</div>
+<!-- Bento Grid for Features -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Feature 1: AI Outfit Recommendation (Large Bento 7 cols) -->
+<div class="md:col-span-7 bg-surface-container-lowest p-8 rounded-3xl editorial-border flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-uppercase text-[11px] font-semibold">FEATURE 01</span>
+<span class="font-body-sm text-xs text-outline">Smart Mirror Synchronized</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-3">AI Outfit Recommendation</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-lg mb-6">
+              당신의 신체 비율과 당일 무드에 기반하여 완전한 착장 레이어링을 제시합니다.
+            </p>
+</div>
+<!-- Interactive Outfit Card Simulation -->
+<div class="bg-surface-container p-5 rounded-2xl border border-outline-variant/40">
+<div class="flex items-center justify-between pb-3 border-b border-outline-variant/30 mb-4">
+<span class="font-label-uppercase text-label-uppercase text-primary font-bold">TODAY'S LOOK : SOFT MINIMAL</span>
+<span class="font-label-tag text-xs bg-surface-container-lowest px-2 py-0.5 rounded text-secondary font-semibold">92% Match</span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/20">
+<span class="material-symbols-outlined text-outline text-xl mb-1">styler</span>
+<span class="font-label-uppercase text-[10px] text-on-surface-variant block">TOP</span>
+<span class="font-body-sm text-xs font-medium text-primary">Ivory Knit</span>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/20">
+<span class="material-symbols-outlined text-outline text-xl mb-1">airline_seat_legroom_reduced</span>
+<span class="font-label-uppercase text-[10px] text-on-surface-variant block">BOTTOM</span>
+<span class="font-body-sm text-xs font-medium text-primary">Charcoal Wide</span>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/20">
+<span class="material-symbols-outlined text-outline text-xl mb-1">dry_cleaning</span>
+<span class="font-label-uppercase text-[10px] text-on-surface-variant block">OUTER</span>
+<span class="font-body-sm text-xs font-medium text-primary">Black Cropped</span>
+</div>
+<div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/20">
+<span class="material-symbols-outlined text-outline text-xl mb-1">shopping_bag</span>
+<span class="font-label-uppercase text-[10px] text-on-surface-variant block">ACC</span>
+<span class="font-body-sm text-xs font-medium text-primary">Silver Bag</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Feature 2: Context-Aware Styling (5 cols) -->
+<div class="md:col-span-5 bg-surface-container-lowest p-8 rounded-3xl editorial-border flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-uppercase text-[11px] font-semibold">FEATURE 02</span>
+<span class="material-symbols-outlined text-secondary">cloud_done</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-3">Context-Aware Styling</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              날씨와 캘린더를 연동해 TPO에 오차 없는 스타일링 어드바이스를 전달합니다.
+            </p>
+</div>
+<div class="mt-6 p-4 rounded-2xl bg-secondary-fixed/30 border border-secondary/20">
+<div class="flex items-center gap-2 mb-2 text-on-secondary-fixed font-label-tag text-xs font-bold">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>17°C Cloudy · 3:00 PM Presentation</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface italic">
+              “오늘은 중요한 발표가 있어 포멀하면서 편안한 크롭 블레이저 룩을 추천해요.”
+            </p>
+</div>
+</div>
+<!-- Feature 3: Virtual Try-On (5 cols) -->
+<div class="md:col-span-5 bg-surface-container-lowest p-8 rounded-3xl editorial-border flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-uppercase text-[11px] font-semibold">FEATURE 03</span>
+<span class="material-symbols-outlined text-secondary">view_in_ar</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-3">Virtual Try-On</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-4">
+              아직 구매하지 않은 29CM, ZARA 위시리스트 아이템을 거울 속 내 모습 위에 왜곡 없이 실시간 피팅합니다.
+            </p>
+</div>
+<div class="p-4 bg-surface-container rounded-2xl flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center text-xs font-semibold">AR</span>
+<div>
+<span class="font-title-editorial text-xs font-semibold text-primary block">Instant Silhouette Warping</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">0.05초 고정밀 3D 드레이핑</span>
+</div>
+</div>
+<span class="px-2 py-1 bg-surface-container-lowest text-xs rounded border border-outline-variant/40 font-mono">Active</span>
+</div>
+</div>
+<!-- Feature 4: Smart Closet (7 cols) -->
+<div class="md:col-span-7 bg-surface-container-lowest p-8 rounded-3xl editorial-border flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-uppercase text-[11px] font-semibold">FEATURE 04</span>
+<span class="material-symbols-outlined text-outline">category</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-3">Smart Digital Closet</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-lg mb-6">
+              내가 가진 옷들의 카테고리, 컬러군, 착용 빈도를 자동으로 분류하고 잊혀진 아이템의 새로운 매칭을 제안합니다.
+            </p>
+</div>
+<!-- Closet Category Rails -->
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 rounded-lg bg-surface-container font-label-tag text-xs text-primary font-medium flex items-center gap-1.5">
+<span>Tops</span> <span class="text-outline text-[11px]">34</span>
+</span>
+<span class="px-3 py-1.5 rounded-lg bg-surface-container font-label-tag text-xs text-primary font-medium flex items-center gap-1.5">
+<span>Bottoms</span> <span class="text-outline text-[11px]">21</span>
+</span>
+<span class="px-3 py-1.5 rounded-lg bg-surface-container font-label-tag text-xs text-primary font-medium flex items-center gap-1.5">
+<span>Outerwear</span> <span class="text-outline text-[11px]">18</span>
+</span>
+<span class="px-3 py-1.5 rounded-lg bg-surface-container font-label-tag text-xs text-primary font-medium flex items-center gap-1.5">
+<span>Shoes</span> <span class="text-outline text-[11px]">12</span>
+</span>
+<span class="px-3 py-1.5 rounded-lg bg-surface-container font-label-tag text-xs text-primary font-medium flex items-center gap-1.5">
+<span>Bags</span> <span class="text-outline text-[11px]">9</span>
+</span>
+<span class="px-3 py-1.5 rounded-lg bg-surface-container font-label-tag text-xs text-primary font-medium flex items-center gap-1.5">
+<span>Accessories</span> <span class="text-outline text-[11px]">15</span>
+</span>
+</div>
+</div>
+<!-- Feature 5: Personal Style Memory (Span full 12 cols) -->
+<div class="md:col-span-12 bg-surface-container-lowest p-8 md:p-10 rounded-3xl editorial-border">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+<div>
+<span class="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-uppercase text-[11px] font-semibold">FEATURE 05</span>
+<h3 class="font-headline-sm text-headline-sm text-primary mt-2">Personal Style Memory</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">사용할수록 더 정교해지는 지속적 스타일 진화 루프</p>
+</div>
+<div class="font-label-uppercase text-xs tracking-wider text-secondary font-bold">
+              LEARNING PROGRESSION
+            </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="p-5 rounded-2xl bg-surface-container border border-outline-variant/30">
+<span class="font-label-uppercase text-xs font-bold text-outline">DAY 01</span>
+<p class="font-title-editorial text-body-lg text-primary mt-2">“Minimal 스타일을 선호하시나요?”</p>
+<p class="font-body-sm text-xs text-on-surface-variant mt-2">초기 실루엣 선호도 탐색 및 베이직 아이템 취향 수집</p>
+</div>
+<div class="p-5 rounded-2xl bg-surface-container border border-outline-variant/30 relative">
+<span class="font-label-uppercase text-xs font-bold text-secondary">DAY 30</span>
+<p class="font-title-editorial text-body-lg text-primary mt-2">“블랙 아우터 + 와이드핏 조합 선호도 84%”</p>
+<p class="font-body-sm text-xs text-on-surface-variant mt-2">반복 착용 패턴과 계절별 실루엣 조합의 데이터 모델 완성</p>
+</div>
+<div class="p-5 rounded-2xl bg-surface-container-high border border-secondary/30 relative">
+<span class="font-label-uppercase text-xs font-bold text-primary">DAY 100+</span>
+<p class="font-title-editorial text-body-lg text-primary mt-2">“MUSE knows your style completely”</p>
+<p class="font-body-sm text-xs text-on-surface-variant mt-2">선택 전 이미 준비된 가장 완벽한 3가지 맞춤 스타일 제안</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 6. USER EXPERIENCE STORY ('Your Morning with MUSE')                       -->
+<!-- ========================================================================= -->
+<section class="py-24 md:py-32 max-w-7xl mx-auto px-6 md:px-10">
+<div class="text-center max-w-3xl mx-auto mb-20">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">SEAMLESS MORNING RHYTHM</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-medium">
+        Your Morning with MUSE
+      </h2>
+<p class="mt-4 font-body-lg text-body-lg text-on-surface-variant">
+        외출 전 옷장 앞에서 낭비하던 20분을 단 5분의 명쾌하고 설레는 스타일링 경험으로 바꿉니다.
+      </p>
+</div>
+<!-- Timeline Journey -->
+<div class="relative max-w-4xl mx-auto">
+<!-- Vertical connecting line -->
+<div class="absolute left-6 md:left-1/2 top-4 bottom-4 w-px bg-outline-variant/50 -translate-x-1/2"></div>
+<div class="space-y-12">
+<!-- Step 1 -->
+<div class="relative flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-12 pl-14 md:pl-0">
+<div class="md:w-1/2 md:text-right">
+<span class="font-label-uppercase text-xs font-bold text-secondary">07:50 AM</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mt-1">거울 앞에 서다</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">센서가 착용자를 인식하며 미러 디스플레이가 앰비언트 모드에서 스타일링 모드로 전환됩니다.</p>
+</div>
+<div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-surface border-4 border-primary z-10"></div>
+<div class="md:w-1/2">
+<span class="inline-block px-3 py-1 rounded bg-surface-container font-label-tag text-xs text-outline">Wake-up Sensor Active</span>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="relative flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-12 pl-14 md:pl-0">
+<div class="md:w-1/2 md:text-right order-1 md:order-1">
+<span class="inline-block px-3 py-1 rounded bg-surface-container font-label-tag text-xs text-outline">Calendar &amp; Weather Sync</span>
+</div>
+<div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-surface border-4 border-secondary z-10"></div>
+<div class="md:w-1/2 order-2 md:order-2">
+<span class="font-label-uppercase text-xs font-bold text-secondary">08:00 AM</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mt-1">날씨(14°C) &amp; 발표 일정 자동 브리핑</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">“오늘 오후 3시 디자인 스프린트 발표가 있습니다. 쌀쌀한 환절기 날씨에 맞는 블레이저를 추천합니다.”</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="relative flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-12 pl-14 md:pl-0">
+<div class="md:w-1/2 md:text-right">
+<span class="font-label-uppercase text-xs font-bold text-secondary">08:02 AM</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mt-1">Look 01 / 02 / 03 큐레이션 제시</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">소장 중인 슬랙스와 니트를 기본으로, TPO 일치도가 가장 높은 3가지 룩을 거울 표면에 나란히 렌더링.</p>
+</div>
+<div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-surface border-4 border-outline z-10"></div>
+<div class="md:w-1/2">
+<span class="inline-block px-3 py-1 rounded bg-secondary-fixed text-on-secondary-fixed font-label-tag text-xs">3 Curation Options</span>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="relative flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-12 pl-14 md:pl-0">
+<div class="md:w-1/2 md:text-right order-1 md:order-1">
+<span class="inline-block px-3 py-1 rounded bg-surface-container font-label-tag text-xs text-outline">Voice / Touch Feedback</span>
+</div>
+<div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-surface border-4 border-outline z-10"></div>
+<div class="md:w-1/2 order-2 md:order-2">
+<span class="font-label-uppercase text-xs font-bold text-secondary">08:04 AM</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mt-1">빠른 사용자 피드백 반영</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">“두 번째 룩에 실버 백 매치해줘” — 즉각적인 음성 요청을 받아 가방 및 주얼리 옵션을 교체 피팅합니다.</p>
+</div>
+</div>
+<!-- Step 5 -->
+<div class="relative flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-12 pl-14 md:pl-0">
+<div class="md:w-1/2 md:text-right">
+<span class="font-label-uppercase text-xs font-bold text-secondary">08:05 AM</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mt-1">“Wear this look” 원클릭 결정</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">선택 완료 즉시 착용 히스토리가 기록되고 외출 준비가 끝납니다.</p>
+</div>
+<div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-secondary border-4 border-surface z-10"></div>
+<div class="md:w-1/2">
+<span class="inline-block px-3 py-1 rounded bg-primary text-white font-label-tag text-xs">Ready to Walk Out</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Big highlight typography -->
+<div class="mt-20 text-center">
+<p class="font-display-hero-mobile md:font-headline-lg text-headline-sm md:text-headline-lg text-primary font-medium tracking-tight">
+        “5분 만에 오늘의 완벽한 스타일 완성.”
+      </p>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 7. VIRTUAL TRY-ON SHOWCASE ('Don’t imagine it. Try it.')                  -->
+<!-- ========================================================================= -->
+<section class="py-24 md:py-32 bg-surface-container-low border-t border-outline-variant/30" id="virtual-try-on">
+<div class="max-w-7xl mx-auto px-6 md:px-10">
+<div class="max-w-3xl mx-auto text-center mb-16">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">AR MIRROR FITTING</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-medium">
+          Don’t imagine it. Try it.
+        </h2>
+<p class="mt-4 font-body-lg text-body-lg text-on-surface-variant">
+          상상으로 옷을 사지 마세요. 실제 내 체형 위로 떨어지는 실루엣과 드레이프를 거울 속에서 먼저 경험합니다.
+        </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+<!-- Side-by-Side Before/Virtual Try-on Image Card -->
+<div class="lg:col-span-7">
+<div class="bg-surface-container-lowest p-3 sm:p-5 rounded-3xl editorial-border shadow-md">
+<img alt="Before Base White Tee and Jeans vs Virtual Try-On Black Blazer Suit Look with Silver Bag" class="w-full h-auto rounded-2xl object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFsK2GRsCiISJmWhZT-U4dnYfXOOyLS101oA5axHuSMpm1m7KZCmOV454SOuAMjepyOmQ4rr17hWMr9-SobWovwcVnmV3-XWj-MPNS4943erb4ToFxJlbGd9mUcMB-rBhl7XCCxblcBUCw8oLhB8nsAEsoqoJkMaq_nOM3-pWm7LgwjqHd1HYa4rs5P7AUafkwD28R9QhNP_OQoMs9gMDGetIyQ0PBH7C-H0i816U"/>
+<div class="flex items-center justify-between mt-4 px-2 font-label-tag text-xs text-outline">
+<span class="font-semibold text-primary">COLLABORATION ARCHIVE</span>
+<span>ZARA · 29CM Curated Selection</span>
+</div>
+</div>
+</div>
+<!-- Interactive Item Curation Card & Editorial Breakdown -->
+<div class="lg:col-span-5 flex flex-col space-y-6">
+<div class="bg-surface-container-lowest p-8 rounded-3xl editorial-border">
+<div class="flex items-center justify-between pb-4 border-b border-outline-variant/30 mb-6">
+<span class="font-label-uppercase text-label-uppercase text-secondary">TRY-ON SELECTION</span>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-tag text-xs font-bold">92% Match</span>
+</div>
+<div class="space-y-4">
+<h3 class="font-headline-sm text-headline-sm text-primary">Black Cropped Jacket</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                크롭된 기장감과 정제된 숄더 라인으로 다리를 길어 보이게 연출하는 테일러드 실루엣. 화이트 티셔츠 위로 가상 레이어링되었습니다.
+              </p>
+<div class="flex items-baseline gap-3 pt-2">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">₩89,000</span>
+<span class="font-body-sm text-xs text-outline line-through">₩119,000</span>
+</div>
+</div>
+<!-- Try-on Toggle Actions -->
+<div class="mt-8 pt-6 border-t border-outline-variant/30 flex flex-col gap-3">
+<button class="w-full py-3.5 px-6 rounded-xl bg-primary text-white font-label-uppercase text-label-uppercase tracking-wider hover:bg-secondary transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">view_in_ar</span>
+<span>거울에서 입어보기 (Try on)</span>
+</button>
+<button class="w-full py-3 px-6 rounded-xl bg-transparent editorial-border text-primary font-label-uppercase text-label-uppercase tracking-wider hover:bg-surface-container transition-colors">
+                29CM에서 상품 상세 보기
+              </button>
+</div>
+</div>
+<!-- Styling Note Box -->
+<div class="p-6 rounded-2xl bg-surface-container border border-outline-variant/40">
+<div class="flex items-center gap-2 mb-2 font-label-tag text-xs font-semibold text-primary">
+<span class="material-symbols-outlined text-secondary text-sm">lightbulb</span>
+<span>MUSE Stylist Curation Note</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              기존에 착용 중인 데님을 그대로 유지해도 좋지만, 슬림한 블랙 와이드 슬랙스와 실버 미니 백을 함께 매칭할 경우 포멀함과 모던함의 밸런스가 극대화됩니다.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 8. PERSONALIZATION SECTION ('MY STYLE DNA')                               -->
+<!-- ========================================================================= -->
+<section class="py-24 md:py-32 max-w-7xl mx-auto px-6 md:px-10" id="my-style">
+<div class="text-center max-w-3xl mx-auto mb-16">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">ALGORITHMIC IDENTITY</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-medium">
+        The more you use MUSE, <br class="sm:hidden"/>the more it becomes yours.
+      </h2>
+<p class="mt-4 font-body-lg text-body-lg text-on-surface-variant">
+        어제의 선택과 오늘의 무드를 기록하여 나만의 고유한 스타일 DNA를 시각화합니다.
+      </p>
+</div>
+<!-- Style DNA Dashboard -->
+<div class="bg-surface-container-lowest rounded-3xl editorial-border p-8 md:p-12 shadow-sm max-w-5xl mx-auto">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-8 border-b border-outline-variant/30 gap-4">
+<div>
+<span class="font-label-uppercase text-xs font-bold text-secondary">ARCHIVAL REPORT</span>
+<h3 class="font-headline-sm text-headline-sm text-primary mt-1">MY STYLE DNA DASHBOARD</h3>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-label-tag text-xs font-semibold text-primary">Active Profile: Jiwon K.</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10">
+<!-- Aesthetic Percentage Bars -->
+<div>
+<h4 class="font-label-uppercase text-label-uppercase text-outline tracking-wider mb-6">AESTHETIC AFFINITY</h4>
+<div class="space-y-5">
+<div>
+<div class="flex justify-between font-label-tag text-xs mb-1.5 font-semibold">
+<span class="text-primary">Minimal</span>
+<span class="text-secondary">87%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-primary h-2 rounded-full" style="width: 87%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-tag text-xs mb-1.5 font-semibold">
+<span class="text-primary">Casual</span>
+<span class="text-secondary">79%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-primary/80 h-2 rounded-full" style="width: 79%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-tag text-xs mb-1.5 font-semibold">
+<span class="text-primary">Street Contemporary</span>
+<span class="text-secondary">72%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-primary/60 h-2 rounded-full" style="width: 72%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-tag text-xs mb-1.5 font-semibold">
+<span class="text-primary">Feminine Accent</span>
+<span class="text-secondary">41%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-primary/40 h-2 rounded-full" style="width: 41%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Palettes & Fits -->
+<div class="flex flex-col justify-between space-y-6">
+<div>
+<h4 class="font-label-uppercase text-label-uppercase text-outline tracking-wider mb-3">FAVORITE SILHOUETTES</h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 bg-surface-container rounded-lg font-body-sm text-xs text-primary font-medium">Wide / Relaxed Trousers</span>
+<span class="px-3 py-1.5 bg-surface-container rounded-lg font-body-sm text-xs text-primary font-medium">Cropped Tailored Jackets</span>
+<span class="px-3 py-1.5 bg-surface-container rounded-lg font-body-sm text-xs text-primary font-medium">Boxy Crewneck Knits</span>
+</div>
+</div>
+<div>
+<h4 class="font-label-uppercase text-label-uppercase text-outline tracking-wider mb-3">DOMINANT COLOR PALETTE</h4>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-black border border-outline-variant/40" title="Pure Black"></span>
+<span class="font-label-tag text-xs text-primary">Black</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-stone-400 border border-outline-variant/40" title="Heather Gray"></span>
+<span class="font-label-tag text-xs text-primary">Heather Gray</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-slate-200 border border-outline-variant/40" title="Chrome Silver"></span>
+<span class="font-label-tag text-xs text-primary">Silver</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 rounded-full bg-sky-100 border border-outline-variant/40" title="Soft Fog Blue"></span>
+<span class="font-label-tag text-xs text-primary">Fog Blue</span>
+</div>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container border border-outline-variant/30">
+<span class="font-label-uppercase text-[10px] text-secondary font-bold uppercase tracking-wider block mb-1">Frequently Selected Items</span>
+<span class="font-body-sm text-xs font-semibold text-primary">Cropped Jacket, Wide Trousers, Silver Metallic Accessories</span>
+</div>
+</div>
+</div>
+<!-- Core philosophy banner -->
+<div class="mt-10 pt-8 border-t border-outline-variant/30 text-center">
+<p class="font-headline-sm text-title-editorial md:text-headline-sm text-primary font-medium italic">
+          “MUSE는 유행을 쫓지 않고, 오직 당신의 고유한 취향을 배웁니다.”
+        </p>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 9. SYSTEM ARCHITECTURE & FUTURE VISION                                    -->
+<!-- ========================================================================= -->
+<section class="py-24 bg-surface-container-low border-t border-outline-variant/30">
+<div class="max-w-7xl mx-auto px-6 md:px-10">
+<!-- System loop flow -->
+<div class="mb-20 text-center max-w-4xl mx-auto">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">SYSTEM LOOP</span>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-medium mb-10">
+          Understand Me → Style Me → Learn Me
+        </h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+<div class="p-6 bg-surface-container-lowest rounded-2xl editorial-border">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center font-bold text-xs text-primary mb-4">1</div>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-1">Understand Me</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">체형, 취향, 옷장, 오늘의 날씨 및 캘린더 일정을 실시간으로 파악합니다.</p>
+</div>
+<div class="p-6 bg-surface-container-lowest rounded-2xl editorial-border">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-xs mb-4">2</div>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-1">Style Me</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">최적의 3가지 착장을 큐레이션하고 거울 위 실시간 버추얼 피팅으로 확인합니다.</p>
+</div>
+<div class="p-6 bg-surface-container-lowest rounded-2xl editorial-border">
+<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs mb-4">3</div>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-1">Learn Me</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">선택된 착장과 사용자의 피드백을 축적하여 다음 날의 추천 정확도를 높입니다.</p>
+</div>
+</div>
+</div>
+<!-- Future Vision Cards -->
+<div class="mt-16">
+<div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+<div>
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-1">NEXT-GEN ROADMAP</span>
+<h3 class="font-headline-md text-headline-md text-primary font-medium">From Smart Mirror to Personal Style OS</h3>
+</div>
+<span class="font-label-tag text-xs text-outline">Upcoming Modules</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+<!-- Card 1 -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest editorial-border flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary text-2xl mb-3">color_lens</span>
+<h4 class="font-title-editorial text-sm font-semibold text-primary">Personal Color Analysis</h4>
+<p class="font-body-sm text-[11px] text-on-surface-variant mt-1">피부 톤과 조명 환경에 따른 사계절 퍼스널 컬러 자동 진단</p>
+</div>
+<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">COMING NEXT</span>
+</div>
+<!-- Card 2 -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest editorial-border flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary text-2xl mb-3">face</span>
+<h4 class="font-title-editorial text-sm font-semibold text-primary">AI Hair Style Simulation</h4>
+<p class="font-body-sm text-[11px] text-on-surface-variant mt-1">착장 실루엣과 얼굴형에 최적화된 헤어 스타일링 가이드</p>
+</div>
+<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">COMING NEXT</span>
+</div>
+<!-- Card 3 -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest editorial-border flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary text-2xl mb-3">shopping_cart_checkout</span>
+<h4 class="font-title-editorial text-sm font-semibold text-primary">Smart Shopping Concierge</h4>
+<p class="font-body-sm text-[11px] text-on-surface-variant mt-1">내 옷장과의 호환성을 검증해 주는 스마트 위시리스트</p>
+</div>
+<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">COMING NEXT</span>
+</div>
+<!-- Card 4 -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest editorial-border flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary text-2xl mb-3">insights</span>
+<h4 class="font-title-editorial text-sm font-semibold text-primary">Digital Wardrobe Analytics</h4>
+<p class="font-body-sm text-[11px] text-on-surface-variant mt-1">의류 착용 주기 분석 및 친환경 리세일 타이밍 제안</p>
+</div>
+<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">COMING NEXT</span>
+</div>
+<!-- Card 5 -->
+<div class="p-5 rounded-2xl bg-surface-container-lowest editorial-border flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary text-2xl mb-3">graphic_eq</span>
+<h4 class="font-title-editorial text-sm font-semibold text-primary">Voice Stylist AI</h4>
+<p class="font-body-sm text-[11px] text-on-surface-variant mt-1">자연스러운 대화로 스타일링을 수정하는 보이스 컨시어지</p>
+</div>
+<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">COMING NEXT</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- 10. FINAL CTA BANNER & FOOTER (Shared Component JSON Blueprint)           -->
+<!-- ========================================================================= -->
+<!-- Evocative Luxury Banner -->
+<section class="py-28 md:py-36 bg-surface text-center relative overflow-hidden" id="cta-section">
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none -z-10 opacity-30">
+<div class="w-[600px] h-[600px] rounded-full bg-secondary-fixed/50 blur-[100px]"></div>
+</div>
+<div class="max-w-4xl mx-auto px-6">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-4">THE FUTURE OF YOUR MORNING</span>
+<h2 class="font-headline-lg md:font-display-hero text-headline-lg md:text-display-hero text-primary tracking-tight font-medium leading-tight">
+        “Tomorrow, ask your mirror.”
+      </h2>
+<p class="mt-6 font-title-editorial text-title-editorial text-on-surface-variant">
+        내일 아침, 옷장보다 먼저 MUSE에게 물어보세요.
+      </p>
+<div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+<button class="w-full sm:w-auto px-10 py-4 bg-primary text-white rounded-xl font-label-uppercase text-label-uppercase tracking-widest hover:bg-primary-container hover:shadow-[0_10px_35px_rgba(96,80,175,0.35)] transition-all duration-300">
+          Meet MUSE
+        </button>
+<button class="w-full sm:w-auto px-8 py-4 bg-transparent editorial-border text-primary rounded-xl font-label-uppercase text-label-uppercase tracking-widest hover:bg-surface-container transition-colors">
+          REQUEST LOOKBOOK
+        </button>
+</div>
+<p class="mt-8 font-body-sm text-xs text-outline">
+        Private Beta Invitation available for Seoul &amp; Tokyo Residents · Limited 500 Atelier Units
+      </p>
+</div>
+</section>
+<!-- Footer (Rendered strictly from Shared Components JSON) -->
+<footer class="w-full mt-auto bg-surface-container-low dark:bg-surface-container-high border-t border-outline-variant/40 dark:border-outline/30 transition-colors duration-200 ease-in-out">
+<div class="w-full max-w-7xl mx-auto px-6 md:px-10 py-16 flex flex-col md:flex-row justify-between items-start gap-10">
+<!-- Brand & Copyright -->
+<div class="space-y-4 max-w-sm">
+<div class="font-display-hero text-headline-sm font-normal text-primary dark:text-on-surface flex items-center gap-2">
+<span>MUSE</span>
+<span class="text-xs font-title-editorial text-on-surface-variant font-normal">· Your Personal AI Stylist</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline leading-relaxed">
+          © 2025 MUSE Atelier Inc. All rights reserved. Sculpted by ambient intelligence.
+        </p>
+<p class="font-label-uppercase text-[10px] text-outline tracking-wider uppercase">
+          Crafted for discerning wardrobes in Seoul &amp; Tokyo.
+        </p>
+</div>
+<!-- Navigation Links from JSON -->
+<div class="flex flex-wrap gap-x-8 gap-y-3 font-body-sm text-body-sm">
+<a class="text-primary dark:text-on-surface font-medium hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Philosophy</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Lookbook</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Virtual Atelier</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Journal</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Privacy &amp; Legal</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Contact Concierge</a>
+</div>
+</div>
+</footer>
+</body></html>
