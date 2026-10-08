@@ -161,11 +161,12 @@
 <span class="w-1.5 h-1.5 rounded-full bg-secondary inline-block"></span>
 </a>
 <!-- Desktop Navigation Links -->
-<nav class="hidden md:flex items-center gap-8 font-label-uppercase text-label-uppercase">
+<nav class="hidden lg:flex items-center gap-5 font-label-uppercase text-label-uppercase">
 <a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#about">About</a>
 <a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#how-it-works">How it works</a>
 <a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#features">Features</a>
 <a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="./data-pipeline.html">Data Pipeline</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="./ai-research.html">AI Research</a>
 <a class="text-primary dark:text-on-surface font-semibold border-b border-primary dark:border-inverse-primary pb-1" href="#virtual-try-on">Virtual Try-On</a>
 <a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#my-style">My Style</a>
 </nav>
@@ -175,14 +176,24 @@
 <span>Meet MUSE</span>
 <span class="material-symbols-outlined text-secondary-fixed text-base" data-icon="auto_awesome">auto_awesome</span>
 </button>
-<a href="./data-pipeline.html" aria-label="Data Pipeline" class="md:hidden p-2 rounded-lg text-primary hover:bg-surface-container">
+<a href="./data-pipeline.html" aria-label="Data Pipeline" class="lg:hidden p-2 rounded-lg text-primary hover:bg-surface-container">
 <span class="material-symbols-outlined">account_tree</span>
 </a>
-<button aria-label="Menu" class="md:hidden p-2 rounded-lg text-primary hover:bg-surface-container">
+<button id="muse-site-menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="muse-site-mobile-menu" class="lg:hidden p-2 rounded-lg text-primary hover:bg-surface-container">
 <span class="material-symbols-outlined">menu</span>
 </button>
 </div>
 </div>
+
+<!-- MUSE AI Research: mobile site navigation -->
+<nav id="muse-site-mobile-menu" aria-label="모바일 사이트 메뉴" class="hidden lg:hidden border-t border-outline-variant/30 bg-surface px-6 py-5">
+  <div class="max-w-7xl mx-auto grid grid-cols-2 gap-4 font-label-uppercase text-sm text-on-surface-variant">
+    <a href="./index.html">Home</a><a href="./data-pipeline.html">Data Pipeline</a>
+    <a href="./ai-research.html">AI Research</a><a href="#about">About</a>
+    <a href="#how-it-works">How it works</a><a href="#features">Features</a>
+    <a href="#virtual-try-on">Virtual Try-On</a><a href="#my-style">My Style</a>
+  </div>
+</nav>
 </header>
 <!-- ========================================================================= -->
 <!-- 2. HERO SECTION                                                           -->
@@ -1054,4 +1065,21 @@
 </div>
 </div>
 </footer>
+
+<!-- muse-ai-research-mobile-nav-v1 -->
+<script>
+(() => {
+  const button = document.getElementById('muse-site-menu-toggle');
+  const menu = document.getElementById('muse-site-mobile-menu');
+  if (!button || !menu) return;
+  const setOpen = open => {
+    menu.classList.toggle('hidden', !open);
+    button.setAttribute('aria-expanded', String(open));
+    button.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+  };
+  button.addEventListener('click', () => setOpen(menu.classList.contains('hidden')));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+})();
+</script>
 </body></html>

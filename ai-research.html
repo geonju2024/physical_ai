@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MUSE — AI Model Strategy &amp; Learning Pipeline</title>
+<!-- Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-high": "#e9e8e5",
+            "inverse-on-surface": "#f2f1ee",
+            "inverse-surface": "#2f312f",
+            "inverse-primary": "#c8c6c5",
+            "primary-fixed-dim": "#c6c6c6",
+            "error": "#ba1a1a",
+            "surface-tint": "#5e5e5e",
+            "on-error": "#ffffff",
+            "tertiary-fixed": "#e2e2e2",
+            "on-background": "#1a1c1a",
+            "secondary-fixed-dim": "#c9beff",
+            "on-error-container": "#93000a",
+            "surface-container-highest": "#e3e2e0",
+            "surface-container-low": "#f4f3f1",
+            "surface-dim": "#dbdad7",
+            "secondary": "#6050af",
+            "secondary-container": "#a898fd",
+            "on-tertiary-container": "#d3579a",
+            "on-primary-fixed-variant": "#474646",
+            "on-primary-container": "#858383",
+            "outline-variant": "#cfc4c5",
+            "on-secondary-fixed-variant": "#483795",
+            "on-secondary": "#ffffff",
+            "secondary-fixed": "#e6deff",
+            "tertiary-fixed-dim": "#ffafd3",
+            "surface-container-lowest": "#ffffff",
+            "on-primary": "#ffffff",
+            "surface-container": "#efeeeb",
+            "on-secondary-container": "#3e2c8b",
+            "error-container": "#ffdad6",
+            "on-secondary-fixed": "#1b0062",
+            "on-primary-fixed": "#1b1b1b",
+            "on-surface": "#1a1c1a",
+            "primary": "#000000",
+            "primary-container": "#1b1b1b",
+            "tertiary-container": "#3d0026",
+            "surface-bright": "#faf9f6",
+            "primary-fixed": "#e5e2e1",
+            "on-tertiary-fixed-variant": "#474747",
+            "tertiary": "#000000",
+            "on-tertiary-fixed": "#1b1b1b",
+            "surface-variant": "#e3e2e0",
+            "on-tertiary": "#ffffff",
+            "on-surface-variant": "#4c4546",
+            "background": "#faf9f6",
+            "surface": "#faf9f6",
+            "outline": "#747878"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin": "2.5rem",
+            "space-lg": "2rem",
+            "space-md": "1.25rem",
+            "space-xs": "0.375rem",
+            "margin-mobile": "1.25rem",
+            "gutter-mobile": "1rem",
+            "gutter": "1.5rem",
+            "space-xl": "3.5rem",
+            "space-sm": "0.75rem"
+          },
+          "fontFamily": {
+            "body-lg": ["Plus Jakarta Sans"],
+            "display-hero-mobile": ["Playfair Display"],
+            "label-tag": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "headline-sm": ["Playfair Display"],
+            "headline-lg": ["Playfair Display"],
+            "headline-lg-mobile": ["Playfair Display"],
+            "label-uppercase": ["Plus Jakarta Sans"],
+            "headline-md": ["Playfair Display"],
+            "display-hero": ["Playfair Display"],
+            "title-editorial": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-lg": ["16px", { "lineHeight": "26px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "display-hero-mobile": ["38px", { "lineHeight": "46px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "label-tag": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400" }],
+            "headline-sm": ["22px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "500" }],
+            "headline-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.015em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "label-uppercase": ["11px", { "lineHeight": "14px", "letterSpacing": "0.14em", "fontWeight": "600" }],
+            "headline-md": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "display-hero": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "title-editorial": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "22px", "letterSpacing": "0.01em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .thin-border {
+      border: 1px solid rgba(207, 196, 197, 0.45);
+    }
+    .lavender-glow {
+      box-shadow: 0 10px 30px -10px rgba(96, 80, 175, 0.12);
+    }
+    .lavender-pill-glow {
+      box-shadow: 0 4px 14px 0 rgba(168, 152, 253, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- TOP APP BAR (Shared Components JSON Anchor) -->
+<header class="bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md text-primary dark:text-inverse-primary docked full-width top-0 sticky z-50 border-b border-outline-variant/40 dark:border-outline/20">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 flex justify-between items-center h-20 w-full">
+<!-- Wordmark -->
+<a class="flex items-center gap-2.5" href="./index.html">
+<span class="font-display-hero text-headline-md tracking-tight font-normal text-primary dark:text-inverse-primary">MUSE</span>
+<span class="w-2 h-2 rounded-full bg-secondary ring-4 ring-secondary-fixed"></span>
+</a>
+<!-- Desktop Navigation Links -->
+<nav class="hidden lg:flex items-center space-x-5">
+<a class="text-primary dark:text-inverse-primary font-title-editorial text-title-editorial border-b-2 border-primary dark:border-inverse-primary pb-1" href="#architecture">Architecture</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-uppercase text-label-uppercase tracking-wider transition-colors hover:text-secondary dark:hover:text-secondary-fixed" href="#modules">Modules</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-uppercase text-label-uppercase tracking-wider transition-colors hover:text-secondary dark:hover:text-secondary-fixed" href="#roadmap">Roadmap</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-uppercase text-label-uppercase tracking-wider transition-colors hover:text-secondary dark:hover:text-secondary-fixed" href="#data-strategy">Data Strategy</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-uppercase text-label-uppercase tracking-wider transition-colors hover:text-secondary dark:hover:text-secondary-fixed" href="#validation">Validation</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-label-uppercase text-label-uppercase tracking-wider hover:text-secondary transition-colors" href="./data-pipeline.html">Data Pipeline</a>
+</nav>
+<!-- Trailing Action Buttons -->
+<div class="flex items-center gap-2 sm:gap-4">
+<button id="ai-mobile-menu-toggle" type="button" class="lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-outline-variant/60 text-primary hover:bg-surface-container-low" aria-label="메뉴 열기" aria-controls="ai-mobile-menu" aria-expanded="false"><span class="material-symbols-outlined">menu</span></button>
+<a class="hidden sm:inline-flex text-on-surface hover:text-secondary font-label-uppercase text-label-uppercase px-4 py-2.5 rounded-lg border border-outline-variant/60 transition-colors" href="./index.html">
+          Back to Home
+        </a>
+<a class="inline-flex bg-primary text-on-primary font-label-uppercase text-label-uppercase px-5 py-2.5 rounded-lg transition-transform active:scale-95 hover:bg-primary-container shadow-sm" href="#cta">
+          Discover MUSE
+        </a>
+</div>
+</div>
+<nav id="ai-mobile-menu" aria-label="모바일 페이지 메뉴" class="hidden lg:hidden bg-surface/95 border-t border-outline-variant/30 px-6 py-5">
+<div class="max-w-7xl mx-auto grid grid-cols-2 gap-4 text-sm font-semibold text-on-surface-variant">
+<a href="./index.html">Home</a><a href="./data-pipeline.html">Data Pipeline</a>
+<a href="#architecture">Architecture</a><a href="#modules">Modules</a>
+<a href="#roadmap">Roadmap</a><a href="#data-strategy">Data Strategy</a>
+<a href="#validation">Validation</a><a href="#cta">Discover MUSE</a>
+</div>
+</nav>
+</header>
+<main>
+<!-- SECTION 01: HERO -->
+<section class="relative pt-12 pb-24 md:py-28 overflow-hidden border-b border-outline-variant/30" id="overview">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+<!-- Left: Editorial Typography & Positioning -->
+<div class="lg:col-span-7 flex flex-col items-start">
+<!-- Category Pill -->
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container border border-outline-variant/60 mb-6">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant">AI MODEL STRATEGY / TRAINING &amp; VALIDATION • OCTOBER 08, 2026</span>
+</div>
+<!-- Main Headline -->
+<h1 class="font-display-hero text-headline-lg-mobile md:text-display-hero text-primary mb-4 leading-none">
+              The Intelligence Behind MUSE.
+            </h1>
+<!-- Korean Sub-headline -->
+<p class="font-headline-sm text-headline-sm text-secondary italic mb-6">
+              “나를 이해하는 스타일링, 그 뒤에 있는 AI.”
+            </p>
+<!-- Subtitle Description -->
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-8 leading-relaxed">
+              MUSE는 하나의 거대한 단일 모델 대신, 각 기능에 극도로 최적화된 복수의 AI 모델을 유기적으로 연결하는 모듈형 아키텍처를 설계합니다. 경량 온디바이스 비전부터 다차원 패션 임베딩, 그리고 개인화 취향 랭킹까지—MUSE가 사용자를 온전히 이해하는 지능형 파이프라인을 공개합니다.
+            </p>
+<!-- Editorial Pull Stats Grid -->
+<div class="grid grid-cols-3 gap-6 pt-6 border-t border-outline-variant/40 w-full max-w-xl">
+<div>
+<p class="font-headline-md text-headline-md text-primary font-bold">07</p>
+<p class="font-label-tag text-label-tag text-on-surface-variant">Specialized Modules</p>
+</div>
+<div>
+<p class="font-headline-md text-headline-md text-secondary font-bold">Hybrid</p>
+<p class="font-label-tag text-label-tag text-on-surface-variant">Edge &amp; Cloud Topology</p>
+</div>
+<div>
+<p class="font-headline-md text-headline-md text-primary font-bold">03 Lyr</p>
+<p class="font-label-tag text-label-tag text-on-surface-variant">Validation System</p>
+</div>
+</div>
+</div>
+<!-- Right: Smart Mirror Visual Composition with Ambient Overlays -->
+<div class="lg:col-span-5 relative">
+<div class="relative mx-auto max-w-md bg-surface-container-low rounded-2xl p-4 border border-outline-variant/50 shadow-sm">
+<!-- Mirror Outer Bezel -->
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden bg-surface-container-highest border border-outline-variant/40">
+<img class="w-full h-full object-cover" data-alt="A refined minimalist high-fashion smart mirror standing elegantly inside a softly lit warm alabaster dressing room. A stylish woman in structured monochrome clothing is captured in gentle focus. Translucent ambient lighting accents and refined lavender ambient glows softly accentuate the contours of the full-length standing mirror, creating a luxurious haute-couture editorial mood with warm ivory, porcelain white, and deep obsidian contrasts." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFc3QGLkPk-mM3tm1totKmz1Mrz6eGY547Nk40HeDL3tJJQdaPg5kvdKAl0QzfGmIAK7uSooULxJt0pifip6saOnaxGiYfAUpdPCNeoEDfj-FB0mscFfs1u3O4faqzEbi6yNjf-m10ywxHTHpigyXpqTX_6uQyQjGUzXQlPgXQS2SXZPnAumUK0nS0MliArGI5GSe0NxRn-9Z0x8rMo8KwKBNgp_b1weHpOGDivrXg"/>
+<!-- Mirror Overlay Header HUD -->
+<div class="absolute top-4 left-4 right-4 flex justify-between items-center px-4 py-2.5 rounded-lg bg-surface-container-lowest/80 backdrop-blur-md border border-outline-variant/40">
+<span class="font-label-uppercase text-label-uppercase text-primary font-bold">MUSE INTERFACE • CONCEPT</span>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-label-tag text-label-tag text-on-surface-variant">Edge Processing: Planned</span>
+</div>
+</div>
+<!-- Floating AI Micro-Cards Linked to Mirror Target Points -->
+<!-- Card 1: Pose Analysis -->
+<div class="absolute top-24 left-3 px-3 py-2 rounded-lg bg-surface-container-lowest/90 backdrop-blur-md border border-outline-variant/60 shadow-sm text-left">
+<div class="flex items-center gap-1.5 text-secondary mb-0.5">
+<span class="material-symbols-outlined text-sm">accessibility_new</span>
+<span class="font-label-uppercase text-[10px] font-bold">Body Analysis</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface font-medium">MediaPipe &amp; SCHP [Edge]</p>
+</div>
+<!-- Card 2: Fashion Embedding -->
+<div class="absolute top-44 right-3 px-3 py-2 rounded-lg bg-surface-container-lowest/90 backdrop-blur-md border border-outline-variant/60 shadow-sm text-left">
+<div class="flex items-center gap-1.5 text-secondary mb-0.5">
+<span class="material-symbols-outlined text-sm">diamond</span>
+<span class="font-label-uppercase text-[10px] font-bold">Fashion Embedding</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface font-medium">FashionSigLIP (candidate)</p>
+</div>
+<!-- Card 3: Virtual Try-On -->
+<div class="absolute bottom-20 left-3 px-3 py-2 rounded-lg bg-surface-container-lowest/90 backdrop-blur-md border border-outline-variant/60 shadow-sm text-left">
+<div class="flex items-center gap-1.5 text-secondary mb-0.5">
+<span class="material-symbols-outlined text-sm">styler</span>
+<span class="font-label-uppercase text-[10px] font-bold">Virtual Try-On</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-surface font-medium">CatVTON GPU Stream</p>
+</div>
+<!-- Card 4: Learn Me Ranking -->
+<div class="absolute bottom-4 right-3 px-3.5 py-2.5 rounded-lg bg-secondary-fixed/95 backdrop-blur-md border border-secondary/30 shadow-md text-left">
+<div class="flex items-center gap-1.5 text-on-secondary-fixed mb-0.5">
+<span class="material-symbols-outlined text-sm">favorite</span>
+<span class="font-label-uppercase text-[10px] font-bold">Learn Me</span>
+</div>
+<p class="font-body-sm text-[11px] text-on-secondary-fixed font-semibold">Preference Vector (planned)</p>
+</div>
+</div>
+<!-- Mirror Stand Base Details -->
+<div class="mt-3 text-center">
+<span class="font-label-tag text-label-tag text-on-surface-variant">MUSE Smart Mirror • Architecture Concept</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 02: AI ARCHITECTURE -->
+<section class="py-24 bg-surface-container-low border-b border-outline-variant/30" id="architecture">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<div class="max-w-3xl mb-16">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest border border-outline-variant/60 mb-3">
+<span class="font-label-uppercase text-label-uppercase text-secondary">SYSTEM ARCHITECTURE</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-3">
+            One Mirror. Multiple Intelligences.
+          </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+            하나의 AI가 모든 기능을 처리하지 않습니다. 역할별로 최적화된 AI 모델을 유기적으로 연결하여 지연 시간은 최소화하고 프라이버시와 추천 품질을 고려한 분산 아키텍처를 설계합니다.
+          </p>
+</div>
+<!-- 4-Layer Architectural System Flow -->
+<div class="space-y-6">
+<!-- Layer 1: Input Layer -->
+<div class="bg-surface-container-lowest p-6 md:p-8 rounded-xl border border-outline-variant/50 relative">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-outline-variant/30">
+<div class="flex items-center gap-3">
+<span class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center font-label-tag text-label-tag font-bold text-primary">01</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Input Layer</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">다각도 실시간 비주얼 입력 및 메타데이터 컨텍스트 주입</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded bg-surface-container font-label-tag text-label-tag text-on-surface">Client &amp; Camera Sensor</span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="p-4 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">User Body Image</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-secondary-fixed text-on-secondary-fixed">EDGE</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">미러 전면 RGB 카메라를 통한 실시간 프레임 캡처 (1080p, 30fps)</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">Wardrobe Images</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container-highest text-on-surface">EDGE / CLOUD</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">모바일 앱 등록 의류 및 미러 행거 감지 옷장 인벤토리</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">Personal Preferences</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-secondary-fixed text-on-secondary-fixed">EDGE ENCRYPTED</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">기호 컬러, 기피 체형 노출 부위, 평소 즐겨 입는 무드 태그</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">Weather &amp; Occasion</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container-highest text-on-surface">CLOUD API</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">날씨 API 정보와 동의 기반 일정/TPO 데이터 연계 계획</p>
+</div>
+</div>
+</div>
+<!-- Vertical Connector Line -->
+<div class="flex justify-center -my-3 relative z-10">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest border border-outline-variant/60 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-sm">arrow_downward</span>
+</div>
+</div>
+<!-- Layer 2: Perception Layer -->
+<div class="bg-surface-container-lowest p-6 md:p-8 rounded-xl border border-outline-variant/50 relative">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-outline-variant/30">
+<div class="flex items-center gap-3">
+<span class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center font-label-tag text-label-tag font-bold text-primary">02</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Perception Layer</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">신체 랜드마크 및 의복 요소의 분해와 시각 속성 추출</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded bg-secondary-fixed text-on-secondary-fixed font-label-tag text-label-tag">Hybrid Processing</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="p-5 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">Pose Estimation</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-secondary-fixed text-on-secondary-fixed">EDGE (NPU)</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-2 font-medium">MediaPipe Pose Landmarker</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">실시간 33개 관절 포인트 트래킹. 실시간 키포인트는 엣지 우선 처리 방안을 검토하며 전송 범위와 지연은 시제품에서 확인합니다.</p>
+</div>
+<div class="p-5 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">Clothing Segmentation</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container-highest text-on-surface">EDGE / CLOUD</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-2 font-medium">SCHP &amp; SegFormer-B2</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">상의, 하의, 아우터, 신발 픽셀 단위 분할. 등록 의류 사진은 SAM 2 기반의 클라우드 정밀 마스크 생성 지원.</p>
+</div>
+<div class="p-5 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">Fashion Attributes</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container-highest text-on-surface">CLOUD</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-2 font-medium">SigLIP Custom Classification Heads</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">기장, 넥라인, 소재감, 패턴, 실루엣(오버핏/슬림핏) 등 정의된 의류 속성 체계에 따라 태그 산출을 목표로 합니다.</p>
+</div>
+</div>
+</div>
+<!-- Vertical Connector Line -->
+<div class="flex justify-center -my-3 relative z-10">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest border border-outline-variant/60 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-sm">arrow_downward</span>
+</div>
+</div>
+<!-- Layer 3: Intelligence Layer -->
+<div class="bg-surface-container-lowest p-6 md:p-8 rounded-xl border border-secondary/20 shadow-sm relative">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-outline-variant/30">
+<div class="flex items-center gap-3">
+<span class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center font-label-tag text-label-tag font-bold text-on-secondary-fixed">03</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Intelligence Layer</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">패션 공간 임베딩 및 사용자 고유 취향 벡터 랭킹 엔진</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded bg-secondary text-on-secondary font-label-tag text-label-tag font-medium">Core Value Engine</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="p-5 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">Fashion Embedding</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container-highest text-on-surface">CLOUD</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-2 font-medium">FashionSigLIP Representation</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">의류 이미지를 선정 모델의 출력 차원에 따른 패션 시맨틱 벡터로 투영하여 텍스처와 무드의 미세한 차이를 정밀 벡터화.</p>
+</div>
+<div class="p-5 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">Outfit Compatibility</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container-highest text-on-surface">CLOUD</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-2 font-medium">OutfitTransformer Scorer</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">상의-하의-아우터-신발 간 조화 점수(Compatibility Score: 0~1.0)를 산출하는 조합 그래프 분석.</p>
+</div>
+<div class="p-5 rounded-lg bg-surface-container border border-secondary/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-secondary font-semibold">Personalized Ranking</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-secondary text-on-secondary">LEARN ME</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-2 font-medium">Preference Vector Adaptive Ranker</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">MUSE 핵심 차별화: 일반적인 미적 조화를 사용자의 과거 선택 피드백과 체형 보완 선호도로 재가중치 부여.</p>
+</div>
+</div>
+</div>
+<!-- Vertical Connector Line -->
+<div class="flex justify-center -my-3 relative z-10">
+<div class="w-8 h-8 rounded-full bg-surface-container-lowest border border-outline-variant/60 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-sm">arrow_downward</span>
+</div>
+</div>
+<!-- Layer 4: Experience Layer -->
+<div class="bg-surface-container-lowest p-6 md:p-8 rounded-xl border border-outline-variant/50 relative">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-outline-variant/30">
+<div class="flex items-center gap-3">
+<span class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center font-label-tag text-label-tag font-bold text-primary">04</span>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Experience Layer</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">거울 디스플레이 증강 현실 피팅 및 자연어 스타일링 큐레이션</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded bg-surface-container font-label-tag text-label-tag text-on-surface">Ambient Mirror Delivery</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="p-5 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">Outfit Recommendation</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container-highest text-on-surface">EDGE / CLOUD</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-2 font-medium">Top-3 Curated Combinations</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">거울 화면 우측에 카드 형태로 직관적 노출. 손짓 제스처나 음성으로 즉각 선택 가능.</p>
+</div>
+<div class="p-5 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">Virtual Try-On</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container-highest text-on-surface">CLOUD GPU</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-2 font-medium">CatVTON / High-Fidelity API</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">사용자 실루엣 위에 생성형 모델로 가상 착장 이미지를 합성하고 자연스러움을 평가할 예정입니다.</p>
+</div>
+<div class="p-5 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex items-center justify-between mb-2">
+<span class="font-title-editorial text-body-md text-primary font-semibold">Styling Explanation</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-surface-container-highest text-on-surface">CLOUD LLM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-2 font-medium">Evidence-based Rationale Engine</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">“오늘 최고기온 18도에 어울리는 옥스퍼드 셔츠와 와이드 치노 조합입니다” 형태의 간결한 이유 제시.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 03: 7 AI MODULES (Interactive Bento Grid) -->
+<section class="py-24 bg-surface-bright border-b border-outline-variant/30" id="modules">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+<div class="max-w-2xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container border border-outline-variant/60 mb-3">
+<span class="font-label-uppercase text-label-uppercase text-secondary">SEVEN SPECIALIZED MINDS</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-3">
+              Meet the Minds of MUSE.
+            </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+              사용자를 이해하고, 옷을 분석하고, 가장 잘 어울리는 스타일을 제안하기 위해 상호보완적으로 작동하는 7개의 특화 AI 모듈.
+            </p>
+</div>
+<!-- Interactive Filter Tabs -->
+<div class="flex flex-wrap gap-2 p-1.5 bg-surface-container-low rounded-lg border border-outline-variant/60" id="module-filters">
+<button class="module-filter-btn px-4 py-2 rounded-md font-label-tag text-label-tag transition-all bg-primary text-on-primary font-semibold" data-filter="all" onclick="filterModules('all')">ALL (7)</button>
+<button class="module-filter-btn px-4 py-2 rounded-md font-label-tag text-label-tag transition-all text-on-surface-variant hover:text-primary" data-filter="perception" onclick="filterModules('perception')">PERCEPTION</button>
+<button class="module-filter-btn px-4 py-2 rounded-md font-label-tag text-label-tag transition-all text-on-surface-variant hover:text-primary" data-filter="recommendation" onclick="filterModules('recommendation')">RECOMMENDATION</button>
+<button class="module-filter-btn px-4 py-2 rounded-md font-label-tag text-label-tag transition-all text-on-surface-variant hover:text-primary" data-filter="generation" onclick="filterModules('generation')">GENERATION</button>
+</div>
+</div>
+<!-- Bento Grid of Modules -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="module-cards-grid">
+<!-- MODULE 01 -->
+<div class="module-card group bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/60 hover:border-secondary transition-all hover:shadow-md flex flex-col justify-between" data-category="perception">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">01. BODY</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-tag text-[11px] text-on-surface">EDGE / CLOUD 검증 중</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">Understand Your Shape</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">MediaPipe Pose Landmarker + SegFormer / SCHP</p>
+<!-- Accordion Details -->
+<div class="pt-4 border-t border-outline-variant/30 space-y-2.5">
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">학습 방식:</span>
+<span class="font-medium text-right text-primary">Pretrained + Rule-based</span>
+</div>
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">주요 역할:</span>
+<span class="font-medium text-right text-primary">신체 비율, 어깨/골반 라인 측정</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-dashed border-outline-variant/40">
+<span class="font-label-tag text-[11px] font-semibold text-secondary">Why We Chose It:</span>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-1 leading-normal">
+                경량 포즈 추정 모델을 엣지 기기에서 활용하는 방안을 검토합니다. 실제 처리 속도와 개인정보 보호 성능은 시제품에서 측정합니다.
+              </p>
+</div>
+</div>
+<!-- MODULE 02 -->
+<div class="module-card group bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/60 hover:border-secondary transition-all hover:shadow-md flex flex-col justify-between" data-category="perception">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">02. SMART CLOSET</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-tag text-[11px] text-on-surface">CLOUD</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">Know Your Wardrobe</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">SAM 2 + SigLIP Multi-Attribute Heads</p>
+<div class="pt-4 border-t border-outline-variant/30 space-y-2.5">
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">학습 방식:</span>
+<span class="font-medium text-right text-primary">Zero-shot → Fine-tuning</span>
+</div>
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">주요 역할:</span>
+<span class="font-medium text-right text-primary">옷장 의류 자동 누끼 및 속성 태깅</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-dashed border-outline-variant/40">
+<span class="font-label-tag text-[11px] font-semibold text-secondary">Why We Chose It:</span>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-1 leading-normal">
+                배경과 옷걸이가 섞인 복잡한 사진에서도 의류의 정확한 실루엣을 분리해내어 카탈로그 수준으로 디지털화합니다.
+              </p>
+</div>
+</div>
+<!-- MODULE 03 -->
+<div class="module-card group bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/60 hover:border-secondary transition-all hover:shadow-md flex flex-col justify-between" data-category="recommendation">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">03. FASHION DNA</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-tag text-[11px] text-on-surface">CLOUD</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">The Language of Style</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">FashionSigLIP / FashionCLIP</p>
+<div class="pt-4 border-t border-outline-variant/30 space-y-2.5">
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">학습 방식:</span>
+<span class="font-medium text-right text-primary">Frozen Encoder + LoRA</span>
+</div>
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">주요 역할:</span>
+<span class="font-medium text-right text-primary">패션 시맨틱 벡터 공간 투영</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-dashed border-outline-variant/40">
+<span class="font-label-tag text-[11px] font-semibold text-secondary">Why We Chose It:</span>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-1 leading-normal">
+                텍스트와 비주얼 간 패션 어휘를 이해하여 "미니멀 린넨 셋업"과 같은 복합 스타일 감성을 정량 벡터로 해석합니다.
+              </p>
+</div>
+</div>
+<!-- MODULE 04 -->
+<div class="module-card group bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/60 hover:border-secondary transition-all hover:shadow-md flex flex-col justify-between" data-category="recommendation">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">04. STYLE MATCHING</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-tag text-[11px] text-on-surface">CLOUD</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">Find What Works Together</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">OutfitTransformer Family</p>
+<div class="pt-4 border-t border-outline-variant/30 space-y-2.5">
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">학습 방식:</span>
+<span class="font-medium text-right text-primary">Polyvore Compatibility Fine-tune</span>
+</div>
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">주요 역할:</span>
+<span class="font-medium text-right text-primary">다중 아이템 조화도 점수화</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-dashed border-outline-variant/40">
+<span class="font-label-tag text-[11px] font-semibold text-secondary">Why We Chose It:</span>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-1 leading-normal">
+                단순 1:1 매칭을 넘어 아우터, 상의, 하의, 신발 간의 전체적 균형미와 색상 대비를 총괄적으로 연산합니다.
+              </p>
+</div>
+</div>
+<!-- MODULE 05 (LEARN ME - HIGHLIGHTED CORE MODULE) -->
+<div class="module-card group bg-surface-container-lowest p-6 rounded-xl border-2 border-secondary relative hover:shadow-lg transition-all flex flex-col justify-between md:col-span-2 lg:col-span-2" data-category="recommendation">
+<div class="absolute -top-3 right-6 bg-secondary text-on-secondary px-3 py-0.5 rounded-full font-label-tag text-[11px] font-bold tracking-wider uppercase">
+              Core Differentiator
+            </div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">05. LEARN ME</span>
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-label-tag text-[11px] font-semibold">CLOUD ADAPTIVE</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-1">Learn Your Preferences</h3>
+<p class="font-body-md text-body-md text-secondary font-medium mb-4">Personalized Preference Ranking &amp; Habit Feedback Vector</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-outline-variant/30">
+<div class="space-y-1.5 text-xs">
+<p class="font-label-tag text-on-surface-variant">학습 및 적응 방식:</p>
+<p class="font-medium text-primary">Rule-based Hard Filtering + User Preference Vector Adaptive Re-ranking</p>
+</div>
+<div class="space-y-1.5 text-xs">
+<p class="font-label-tag text-on-surface-variant">핵심 역할:</p>
+<p class="font-medium text-primary">사용자가 실제로 자주 입는 핏, 기피하는 색상, 아침마다 선택한 룩북 피드백 반영</p>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-secondary/20 bg-surface-container-low/70 p-4 rounded-lg">
+<span class="font-label-tag text-[11px] font-bold text-secondary">Why We Chose It (MUSE의 심장):</span>
+<p class="font-body-sm text-[13px] text-on-surface mt-1 leading-relaxed">
+                패션 데이터셋의 일반적인 스타일이 아무리 훌륭해도 "사용자 본인이 거울 앞에서 어색해하는 옷"은 실패한 추천입니다. LEARN ME는 사용자의 데일리 착용 결정 로그를 바탕으로 오직 단 한 사람만을 위한 맞춤 가중치로 추천 순위를 실시간 재구성합니다.
+              </p>
+</div>
+</div>
+<!-- MODULE 06 -->
+<div class="module-card group bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/60 hover:border-secondary transition-all hover:shadow-md flex flex-col justify-between" data-category="generation">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">06. VIRTUAL FIT</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-tag text-[11px] text-on-surface">CLOUD GPU</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">See It Before You Wear It</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">CatVTON / IDM-VTON / High-End VTO API</p>
+<div class="pt-4 border-t border-outline-variant/30 space-y-2.5">
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">접근 방식:</span>
+<span class="font-medium text-right text-primary">Pretrained Inference / API-first</span>
+</div>
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">주요 역할:</span>
+<span class="font-medium text-right text-primary">사실적 드레이프 합성 및 주름 시뮬레이션</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-dashed border-outline-variant/40">
+<span class="font-label-tag text-[11px] font-semibold text-secondary">Why We Chose It:</span>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-1 leading-normal">
+                옷을 실제로 갈아입지 않고도 거울 디스플레이 안에서 실물에 가까운 핏감과 실루엣을 직관적으로 확인하도록 지원합니다.
+              </p>
+</div>
+</div>
+<!-- MODULE 07 -->
+<div class="module-card group bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/60 hover:border-secondary transition-all hover:shadow-md flex flex-col justify-between md:col-span-2 lg:col-span-1" data-category="generation">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">07. AI STYLIST</span>
+<span class="px-2 py-0.5 rounded bg-surface-container font-label-tag text-[11px] text-on-surface">CLOUD LLM</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-1">Explain the Choice</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">LLM with Structured Evidence Reasoning</p>
+<div class="pt-4 border-t border-outline-variant/30 space-y-2.5">
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">학습 방식:</span>
+<span class="font-medium text-right text-primary">Prompt Engineering + Context Injection</span>
+</div>
+<div class="flex justify-between items-start text-xs">
+<span class="font-label-tag text-on-surface-variant">주요 역할:</span>
+<span class="font-medium text-right text-primary">날씨·체형·TPO 맞춤형 감성 설명문 생성</span>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-dashed border-outline-variant/40">
+<span class="font-label-tag text-[11px] font-semibold text-secondary">Why We Chose It:</span>
+<p class="font-body-sm text-[12px] text-on-surface-variant mt-1 leading-normal">
+                단순 점수 출력이 아닌 신뢰할 수 있는 구체적 근거를 감각적인 언어로 사용자에게 전달하여 착용 결정을 돕습니다.
+              </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 04: TRAINING ROADMAP -->
+<section class="py-24 bg-surface-container-low border-b border-outline-variant/30" id="roadmap">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<div class="max-w-3xl mb-16">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest border border-outline-variant/60 mb-3">
+<span class="font-label-uppercase text-label-uppercase text-secondary">LEARNING PIPELINE</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-3">
+            How MUSE Learns.
+          </h2>
+<p class="font-headline-sm text-headline-sm text-secondary italic mb-4">
+            “이미 학습된 지식에서 출발해, 나만의 취향을 이해하기까지.”
+          </p>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+            MUSE의 학습은 단발성 모델 학습이 아닌 점진적 고도화 파이프라인으로 설계되었습니다. 각 단계는 엄격한 품질 게이트(Gate)를 통과할 때만 다음 단계로 전환됩니다.
+            <span class="font-semibold text-primary block mt-1">※ 본 로드맵은 MUSE 팀의 향후 연구 개발 및 실증 계획을 나타냅니다.</span>
+</p>
+</div>
+<!-- 4-Stage Timeline with Gates -->
+<div class="relative grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Step 00 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/60 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant font-bold">STAGE 00</span>
+<span class="w-3 h-3 rounded-full bg-outline"></span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Zero-shot Baseline</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6">
+                사전학습된 기반 모델을 추가 훈련 없이 거울 인터페이스에 연결해 초기 기준 성능을 정량화하고 예외 상황(Edge Cases)을 수집합니다.
+              </p>
+</div>
+<!-- Gate -->
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant/60 mt-4">
+<span class="font-label-tag text-[10px] font-bold text-on-surface uppercase tracking-wider block mb-1">Gate 01 Requirement</span>
+<p class="font-body-sm text-xs text-on-surface-variant">
+                초기 성능과 지연 시간 기준선 측정 완료
+              </p>
+</div>
+</div>
+<!-- Step 01 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/60 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">STAGE 01</span>
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Fine-tuning</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6">
+                DeepFashion2 및 Polyvore 데이터셋을 기반으로 전용 속성 분류 헤드와 호환성 점수 연산 모듈을 패션 도메인 데이터로 추가 학습합니다.
+              </p>
+</div>
+<!-- Gate -->
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant/60 mt-4">
+<span class="font-label-tag text-[10px] font-bold text-on-surface uppercase tracking-wider block mb-1">Gate 02 Requirement</span>
+<p class="font-body-sm text-xs text-on-surface-variant">
+                실제 거울 카메라 화각에서의 세그멘테이션 mIoU 0.80 달성
+              </p>
+</div>
+</div>
+<!-- Step 02 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/60 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">STAGE 02</span>
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Real-world Adaptation</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6">
+                스마트 미러가 설치되는 가정 내 실내 조명(할로겐/LED), 역광, 다양한 신체 거리에 대응하는 도메인 적응(Domain Adaptation)을 거칩니다.
+              </p>
+</div>
+<!-- Gate -->
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant/60 mt-4">
+<span class="font-label-tag text-[10px] font-bold text-on-surface uppercase tracking-wider block mb-1">Gate 03 Requirement</span>
+<p class="font-body-sm text-xs text-on-surface-variant">
+                실사용자 사용자 비교 실험에서 규칙 기반 추천 대비 수용률 개선 확인
+              </p>
+</div>
+</div>
+<!-- Step 03 (Personalization Highlight) -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border-2 border-secondary flex flex-col justify-between relative shadow-sm">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">STAGE 03</span>
+<span class="w-3 h-3 rounded-full bg-secondary ring-4 ring-secondary-fixed"></span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Personalization</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6">
+                사용자의 실제 거울 앞 선택 로그와 "오늘 이 옷 착용하기" 터치 반응을 반영하여 개인화 벡터를 점진적으로 업데이트합니다.
+              </p>
+</div>
+<!-- Gate -->
+<div class="p-3.5 rounded-lg bg-secondary-fixed/50 border border-secondary/30 mt-4">
+<span class="font-label-tag text-[10px] font-bold text-on-secondary-fixed uppercase tracking-wider block mb-1">Ongoing Continuous Loop</span>
+<p class="font-body-sm text-xs text-on-secondary-fixed">
+                시간순 평가에서 개인화 추천이 비개인화 기준선을 개선
+              </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 05: DATA STRATEGY -->
+<section class="py-24 bg-surface-bright border-b border-outline-variant/30" id="data-strategy">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<div class="max-w-3xl mb-16">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container border border-outline-variant/60 mb-3">
+<span class="font-label-uppercase text-label-uppercase text-secondary">DATA ARCHITECTURE</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-3">
+            From Datasets to Real Life.
+          </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+            공개 벤치마크 데이터셋으로 기본 성능을 검증하고, 스마트 미러의 실제 실내 환경 데이터셋을 직접 구축하여 MUSE만의 정교한 경험을 완성합니다.
+          </p>
+</div>
+<!-- Comparative 2-Column Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+<!-- Column A: Public Datasets -->
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/60 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-sm text-headline-sm text-primary">Column A: Public Datasets</h3>
+<span class="px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-semibold">
+                  상업적 라이선스 검토 중
+                </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                전 세계 패션 비전 연구를 선도하는 정규 데이터셋을 분석하여 모듈별 사전학습 기반을 구성합니다.
+              </p>
+<div class="space-y-4">
+<div class="p-4 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex justify-between items-center mb-1">
+<span class="font-title-editorial text-sm font-semibold text-primary">DeepFashion2 &amp; Fashionpedia</span>
+<span class="text-xs font-label-tag text-on-surface-variant">Category &amp; Segmentation</span>
+</div>
+<p class="font-body-sm text-xs text-on-surface-variant">정밀 의류 마스크 및 상세 카테고리 랜드마크 학습용</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex justify-between items-center mb-1">
+<span class="font-title-editorial text-sm font-semibold text-primary">Polyvore Outfits Dataset</span>
+<span class="text-xs font-label-tag text-on-surface-variant">Outfit Compatibility</span>
+</div>
+<p class="font-body-sm text-xs text-on-surface-variant">공개 코디 조합 데이터로 멀티 아이템 호환성 학습 검토</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex justify-between items-center mb-1">
+<span class="font-title-editorial text-sm font-semibold text-primary">VITON-HD &amp; DressCode</span>
+<span class="text-xs font-label-tag text-on-surface-variant">Virtual Try-On Benchmarks</span>
+</div>
+<p class="font-body-sm text-xs text-on-surface-variant">고해상도 패션 피팅 이미지 및 변형 왜곡 보정 평가 기준선</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<div class="flex justify-between items-center mb-1">
+<span class="font-title-editorial text-sm font-semibold text-primary">AI Hub K-Fashion Dataset</span>
+<span class="text-xs font-label-tag text-on-surface-variant">Domestic Fit &amp; Trends</span>
+</div>
+<p class="font-body-sm text-xs text-on-surface-variant">한국인 표준 체형 및 국내 스트리트·오피스 트렌드 정합성 확보</p>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/30 text-xs text-on-surface-variant">
+              ※ 각 데이터셋의 라이선스 조항(비상업용 연구 라이선스 여부)을 분리하여 안전한 상용화 파이프라인만 분리 배포합니다.
+            </div>
+</div>
+<!-- Column B: MUSE Real-World Dataset -->
+<div class="bg-surface-container-lowest p-8 rounded-xl border-2 border-secondary/40 flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-sm text-headline-sm text-primary">Column B: MUSE Real-world</h3>
+<span class="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed text-xs font-semibold">
+                  MUSE Target Collection
+                </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                스마트 미러가 위치할 실제 침실·드레스룸 환경에서 추출되는 실전 중심의 고품질 도메인 데이터 목표치입니다.
+              </p>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40">
+<span class="font-headline-md text-headline-md text-primary font-bold block mb-1">500~1K</span>
+<span class="font-title-editorial text-xs font-semibold text-on-surface block mb-1">Wardrobe Items</span>
+<p class="font-body-sm text-[11px] text-on-surface-variant">다양한 원단(린넨, 가죽, 니트 등)의 조명별 표준 촬영 데이터</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40">
+<span class="font-headline-md text-headline-md text-secondary font-bold block mb-1">20~30</span>
+<span class="font-title-editorial text-xs font-semibold text-on-surface block mb-1">Mirror Cohorts</span>
+<p class="font-body-sm text-[11px] text-on-surface-variant">스마트 미러 실사용 프로토타입 환경에서의 신체 화각 데이터</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40">
+<span class="font-headline-md text-headline-md text-primary font-bold block mb-1">200~300</span>
+<span class="font-title-editorial text-xs font-semibold text-on-surface block mb-1">Outfit Sets</span>
+<p class="font-body-sm text-[11px] text-on-surface-variant">스타일 전문가 또는 패션 관심 사용자가 평가할 예정인 조합 세트</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-container border border-outline-variant/40">
+<span class="font-headline-md text-headline-md text-secondary font-bold block mb-1">Active</span>
+<span class="font-title-editorial text-xs font-semibold text-on-surface block mb-1">Feedback Logs</span>
+<p class="font-body-sm text-[11px] text-on-surface-variant">추천 수용, 거절, 재추천 트리거 등 실시간 인터랙션 로그</p>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/30 text-xs text-on-surface-variant">
+              ※ 수집 전 동의와 데이터 최소화·접근 통제·보관 기간·삭제 절차를 수립할 계획입니다.
+            </div>
+</div>
+</div>
+<!-- Visual Flow Banner -->
+<div class="p-6 rounded-xl bg-surface-container-low border border-outline-variant/60 flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-2xl">hub</span>
+<div>
+<p class="font-title-editorial text-body-md font-semibold text-primary">Data Synthesis Pipeline</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Public Fashion Data → Intelligent Preprocessing → Real-world Adaptation</p>
+</div>
+</div>
+<div class="flex items-center gap-2 text-xs font-label-tag text-on-surface">
+<span class="px-3 py-1.5 rounded bg-surface-container-lowest border border-outline-variant/50">1. Augmentation</span>
+<span class="text-secondary">→</span>
+<span class="px-3 py-1.5 rounded bg-surface-container-lowest border border-outline-variant/50">2. Lighting Normalization</span>
+<span class="text-secondary">→</span>
+<span class="px-3 py-1.5 rounded bg-surface-container-lowest border border-outline-variant/50">3. Domain Adaptation</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 06: MODEL VALIDATION -->
+<section class="py-24 bg-surface-container-low border-b border-outline-variant/30" id="validation">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<div class="max-w-3xl mb-12">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest border border-outline-variant/60 mb-3">
+<span class="font-label-uppercase text-label-uppercase text-secondary">3-LAYER VALIDATION</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-3">
+            How Do We Know It Works?
+          </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+            AI 모델의 알고리즘 정확도뿐 아니라, 거울 앞에서의 응답 속도와 실제 사용자의 스타일링 만족도까지 3중 레이어로 엄격하게 검증합니다.
+          </p>
+</div>
+<!-- Interactive 3-Layer Tab Switcher -->
+<div class="flex flex-wrap gap-2 mb-8 border-b border-outline-variant/40 pb-4" id="validation-tabs">
+<button class="val-tab-btn px-5 py-2.5 rounded-lg font-label-tag text-label-tag transition-all bg-primary text-on-primary font-semibold" id="val-tab-1" onclick="switchValLayer(1)">
+            LAYER 01 — Model Quality (알고리즘 정확도)
+          </button>
+<button class="val-tab-btn px-5 py-2.5 rounded-lg font-label-tag text-label-tag transition-all text-on-surface-variant hover:text-primary" id="val-tab-2" onclick="switchValLayer(2)">
+            LAYER 02 — System Performance (응답 속도)
+          </button>
+<button class="val-tab-btn px-5 py-2.5 rounded-lg font-label-tag text-label-tag transition-all text-on-surface-variant hover:text-primary" id="val-tab-3" onclick="switchValLayer(3)">
+            LAYER 03 — User Experience (최종 핵심 검증)
+          </button>
+</div>
+<!-- Validation Content Panels -->
+<!-- Layer 01: Model Quality -->
+<div class="val-panel block" id="val-panel-1">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/50">
+<span class="font-label-tag text-[11px] text-secondary font-bold uppercase tracking-wider block mb-2">Category Accuracy</span>
+<p class="font-headline-lg text-headline-lg text-primary font-bold mb-1">≥ 90%</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">Initial Target / 검증 목표</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                상의, 하의, 아우터 등 주요 의류 카테고리 톱-1 분류 정확도
+              </p>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/50">
+<span class="font-label-tag text-[11px] text-secondary font-bold uppercase tracking-wider block mb-2">Segmentation Quality</span>
+<p class="font-headline-lg text-headline-lg text-primary font-bold mb-1">≥ 0.80</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">mIoU Target / 실내 조명</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                복잡한 드레스룸 배경에서 의복 윤곽선 분리 정확도
+              </p>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/50">
+<span class="font-label-tag text-[11px] text-secondary font-bold uppercase tracking-wider block mb-2">Compatibility AUC</span>
+<p class="font-headline-lg text-headline-lg text-primary font-bold mb-1">≥ 0.85</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">Outfit Matching AUC</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                전문 스타일리스트 정답 셋 대비 코디 조합 조화도 판별력
+              </p>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/50">
+<span class="font-label-tag text-[11px] text-secondary font-bold uppercase tracking-wider block mb-2">Pose Tracking PCK</span>
+<p class="font-headline-lg text-headline-lg text-primary font-bold mb-1">≥ 92%</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">PCK@0.2 Criterion</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                거울 전면 1.5m~3.0m 거리 내 신체 주요 관절점 정확한 위치 검출
+              </p>
+</div>
+</div>
+</div>
+<!-- Layer 02: System Performance -->
+<div class="val-panel hidden" id="val-panel-2">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/50">
+<span class="font-label-tag text-[11px] text-primary font-bold uppercase tracking-wider block mb-2">Pose Estimation FPS</span>
+<p class="font-headline-lg text-headline-lg text-primary font-bold mb-1">≥ 15 FPS</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">On-Device Edge Limit</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                사용자의 움직임에 거울 UI가 딜레이 없이 부드럽게 추종하는 반응 속도
+              </p>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/50">
+<span class="font-label-tag text-[11px] text-primary font-bold uppercase tracking-wider block mb-2">Outfit Recommend Latency</span>
+<p class="font-headline-lg text-headline-lg text-primary font-bold mb-1">≤ 2.0s</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">End-to-End Response</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                "오늘 뭐 입지?" 호출 시 날씨/일정 고려 톱 3 코디 노출까지의 시간
+              </p>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/50">
+<span class="font-label-tag text-[11px] text-primary font-bold uppercase tracking-wider block mb-2">Clothing Registration</span>
+<p class="font-headline-lg text-headline-lg text-primary font-bold mb-1">≤ 5.0s</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">SAM 2 + Tagging Batch</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                새 옷을 거울 앞에 걸거나 앱에서 촬영 시 누끼 제거 및 속성 태깅 소요 시간
+              </p>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest border border-outline-variant/50">
+<span class="font-label-tag text-[11px] text-primary font-bold uppercase tracking-wider block mb-2">Virtual Try-On Generation</span>
+<p class="font-headline-lg text-headline-lg text-primary font-bold mb-1">≤ 15.0s</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">Cloud GPU Pipeline</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                고해상도 드레이프 가상 피팅 렌더링 완성 후 거울 프리뷰 반영 속도
+              </p>
+</div>
+</div>
+</div>
+<!-- Layer 03: User Experience -->
+<div class="val-panel hidden" id="val-panel-3">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="p-6 rounded-xl bg-surface-container-lowest border-2 border-secondary/50">
+<span class="font-label-tag text-[11px] text-secondary font-bold uppercase tracking-wider block mb-2">Acceptance Rate</span>
+<p class="font-headline-lg text-headline-lg text-secondary font-bold mb-1">≥ 60%</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">Initial Target / 검증 목표</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                거울이 제안한 톱 3 착장 중 실제로 그 날의 코디로 선택된 비율
+              </p>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest border-2 border-secondary/50">
+<span class="font-label-tag text-[11px] text-secondary font-bold uppercase tracking-wider block mb-2">Wearing Rate</span>
+<p class="font-headline-lg text-headline-lg text-secondary font-bold mb-1">≥ 50%</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">Actual Wearing Habit</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                추천받은 코디를 입고 실제 외출 완료 후 만족 로그 기록 비율
+              </p>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest border-2 border-secondary/50">
+<span class="font-label-tag text-[11px] text-secondary font-bold uppercase tracking-wider block mb-2">Re-prompt Frequency</span>
+<p class="font-headline-lg text-headline-lg text-secondary font-bold mb-1">≤ 1.2회</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">Per Styling Session</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                마음에 들지 않아 "다른 옷 보기"를 누르는 세션당 평균 재추천 횟수
+              </p>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest border-2 border-secondary/50">
+<span class="font-label-tag text-[11px] text-secondary font-bold uppercase tracking-wider block mb-2">SUS Usability Score</span>
+<p class="font-headline-lg text-headline-lg text-secondary font-bold mb-1">≥ 75점</p>
+<span class="font-label-tag text-[11px] text-on-surface-variant block mb-3">System Usability Scale</span>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+                전체 스마트 미러 경험에 대한 사용자 사용성 표준 척도 점수
+              </p>
+</div>
+</div>
+</div>
+<div class="mt-8 text-center">
+<p class="font-label-tag text-label-tag text-on-surface-variant">
+            ※ 아래 수치는 실측값이 아닙니다. 표기된 모든 지표는 향후 평가를 위한 초기 목표치이며, 실제 사용자 실험를 통해 실측 검증될 예정입니다.
+          </p>
+</div>
+</div>
+</section>
+<!-- SECTION 07: EDGE & CLOUD COMPUTING -->
+<section class="py-24 bg-surface-bright border-b border-outline-variant/30">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<div class="max-w-3xl mb-16">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container border border-outline-variant/60 mb-3">
+<span class="font-label-uppercase text-label-uppercase text-secondary">HYBRID TOPOLOGY</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-3">
+            Designed for the Real World.
+          </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+            실시간 거울 인터랙션은 기기 내부(Edge)에서 지연 없이 수행하고, 거대한 연산이 필요한 패션 랭킹 및 피팅 생성은 보안 클라우드(Cloud)에서 안전하게 분산 처리합니다.
+          </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch mb-12">
+<!-- Left: Edge Node -->
+<div class="lg:col-span-5 bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/60 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-headline-sm text-headline-sm text-primary">MUSE Smart Mirror (Edge)</span>
+<span class="px-2.5 py-1 rounded bg-secondary-fixed text-on-secondary-fixed font-label-tag text-xs font-semibold">Edge Compute · Candidate</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                침실과 드레스룸에 놓이는 기기 특성상, 엣지 우선 처리를 목표로 하되, VTON 요청에는 서버 영상 처리가 필요할 수 있습니다.
+              </p>
+<ul class="space-y-3.5">
+<li class="flex items-start gap-3 text-sm">
+<span class="material-symbols-outlined text-secondary text-base mt-0.5">check_circle</span>
+<span><strong>실시간 신체 포즈 추적:</strong> MediaPipe 기반 15~30 FPS 연속 제스처 감지</span>
+</li>
+<li class="flex items-start gap-3 text-sm">
+<span class="material-symbols-outlined text-secondary text-base mt-0.5">check_circle</span>
+<span><strong>카메라 프라이버시 제어 정책:</strong> 촬영 동의·상태 표시·명시적 사용 중지 방식 검토</span>
+</li>
+<li class="flex items-start gap-3 text-sm">
+<span class="material-symbols-outlined text-secondary text-base mt-0.5">check_circle</span>
+<span><strong>경량 로컬 캐싱:</strong> 자주 입는 상위 10개 코디 즉시 디스플레이 오프라인 렌더링</span>
+</li>
+</ul>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/30 text-xs font-label-tag text-on-surface-variant">
+              Hardware: Embedded Octa-Core ARM + 6 TOPS Neural Engine
+            </div>
+</div>
+<!-- Center: Encrypted Data Stream -->
+<div class="lg:col-span-2 flex flex-col items-center justify-center py-6">
+<div class="w-full flex lg:flex-col items-center justify-center gap-3 text-center">
+<span class="w-10 h-10 rounded-full bg-surface-container border border-outline-variant/60 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">sync_alt</span>
+</span>
+<span class="font-label-uppercase text-[11px] text-on-surface-variant font-bold tracking-wider">
+                TLS 1.3 / E2EE Encrypted Stream
+              </span>
+<span class="text-xs text-on-surface-variant hidden lg:block">
+                기본은 최소 정보 전송 · VTON용 이미지는 별도 동의 후 처리
+              </span>
+</div>
+</div>
+<!-- Right: Cloud AI Cluster -->
+<div class="lg:col-span-5 bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/60 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-headline-sm text-headline-sm text-primary">MUSE Cloud AI Cluster</span>
+<span class="px-2.5 py-1 rounded bg-surface-container-highest text-on-surface font-label-tag text-xs font-semibold">High-Perf GPU</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                패션 임베딩·개인화 랭킹·가상 피팅 같은 고비용 연산을 서버에서 처리하는 구성을 계획합니다.
+              </p>
+<ul class="space-y-3.5">
+<li class="flex items-start gap-3 text-sm">
+<span class="material-symbols-outlined text-secondary text-base mt-0.5">check_circle</span>
+<span><strong>SAM 2 &amp; SigLIP 정밀 분석:</strong> 새 의류의 세밀한 텍스처 및 주름 분할</span>
+</li>
+<li class="flex items-start gap-3 text-sm">
+<span class="material-symbols-outlined text-secondary text-base mt-0.5">check_circle</span>
+<span><strong>Virtual Try-On 렌더링:</strong> 고화질 CatVTON 디퓨전 합성 및 주름 시뮬레이션</span>
+</li>
+<li class="flex items-start gap-3 text-sm">
+<span class="material-symbols-outlined text-secondary text-base mt-0.5">check_circle</span>
+<span><strong>LLM 스타일리스트 엔진:</strong> 컨텍스트 기반 맞춤형 코디 제안 사유 생성</span>
+</li>
+</ul>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/30 text-xs font-label-tag text-on-surface-variant">
+              Proposed Cloud Stack: PyTorch, Vector Search, VTON API / GPU
+            </div>
+</div>
+</div>
+<!-- Privacy & Trust Protocol Card -->
+<div class="p-6 md:p-8 rounded-xl bg-secondary-fixed/30 border border-secondary/30 flex flex-col md:flex-row items-center gap-6">
+<div class="w-14 h-14 rounded-full bg-surface-container-lowest flex items-center justify-center text-secondary shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-3xl">verified_user</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-1">MUSE Privacy &amp; Trust Protocol</h4>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              MUSE는 <strong>최소 수집·명시적 동의·보관 및 삭제 통제</strong>를 기본 설계 원칙으로 검토합니다. 일반 포즈 추적은 엣지 우선 처리를 목표로 하며, 가상 피팅 기능은 이미지의 서버 전송 및 처리 가능성을 사용자에게 명확히 안내할 계획입니다.
+            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 08: CHALLENGES & NEXT STEPS -->
+<section class="py-24 bg-surface-container-low border-b border-outline-variant/30">
+<div class="max-w-7xl mx-auto px-6 lg:px-12">
+<div class="max-w-3xl mb-16">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-lowest border border-outline-variant/60 mb-3">
+<span class="font-label-uppercase text-label-uppercase text-secondary">TECHNICAL ROADMAP</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-3">
+            What We're Solving Next.
+          </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+            상용화 거울 제품이 되기 위해 우리가 해결하고 있는 4대 핵심 엔지니어링 도전 과제와 개발 마일스톤입니다.
+          </p>
+</div>
+<!-- Bento Grid of 4 Challenges -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+<!-- Challenge 01 -->
+<div class="bg-surface-container-lowest p-6 md:p-8 rounded-xl border border-outline-variant/60">
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">CHALLENGE 01</span>
+<span class="material-symbols-outlined text-on-surface-variant">dataset</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Data Scarcity (데이터 희소성)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              사용자별로 수집되는 옷장·선호 데이터가 적은 초기 상황에서 딥러닝 모델의 콜드 스타트 문제를 해결해야 합니다. 
+              <strong>해결책:</strong> 방대한 사전학습 모델의 범용 표현력과 스타일리스트의 규칙 기반(Rule-based) 코디 알고리즘을 하이브리드로 결합해 초기 추천 성능을 확보하는 방안을 검토합니다.
+            </p>
+</div>
+<!-- Challenge 02 -->
+<div class="bg-surface-container-lowest p-6 md:p-8 rounded-xl border border-outline-variant/60">
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">CHALLENGE 02</span>
+<span class="material-symbols-outlined text-on-surface-variant">wb_incandescent</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Real-world Lighting &amp; Distortion (실내 환경 왜곡)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              가정 내 주백색/전구색 등 복합 조명과 미러 전면 렌즈 왜곡으로 인해 옷의 실제 색상(네이비 vs 블랙)과 핏감이 왜곡될 위험이 있습니다.
+              <strong>해결책:</strong> 화이트밸런스 보정과 카메라 왜곡 보정의 적용 가능성을 실제 촬영 데이터로 검증할 계획입니다.
+            </p>
+</div>
+<!-- Challenge 03 -->
+<div class="bg-surface-container-lowest p-6 md:p-8 rounded-xl border border-outline-variant/60">
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">CHALLENGE 03</span>
+<span class="material-symbols-outlined text-on-surface-variant">lock</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Privacy &amp; User Trust (프라이버시와 신뢰)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              드레스룸이라는 가장 사적인 공간에서 사용자가 안심하고 전신 거울을 바라볼 수 있는 신뢰 체계를 세워야 합니다.
+              <strong>해결책:</strong> 엣지 우선 처리를 검토하고, VTON용 이미지 전송 시 별도 동의를 받으며 최소 수집·일시 처리·삭제 정책을 설계합니다.
+            </p>
+</div>
+<!-- Challenge 04 -->
+<div class="bg-surface-container-lowest p-6 md:p-8 rounded-xl border border-outline-variant/60">
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-uppercase text-label-uppercase text-secondary font-bold">CHALLENGE 04</span>
+<span class="material-symbols-outlined text-on-surface-variant">memory</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Edge Optimization &amp; Licensing (온디바이스 최적화)</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              임베디드 보드의 발열과 전력 소모를 억제하면서 오픈소스 라이선스 제약(GPL 등)을 안전하게 피해야 합니다.
+              <strong>해결책:</strong> ONNX·양자화 등 경량화 방식을 비교하고, 채택 후보 모델과 학습 데이터의 상업적 이용 조건을 개별 검토할 계획입니다.
+            </p>
+</div>
+</div>
+<!-- Next Milestones Checklist -->
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/60">
+<h4 class="font-headline-sm text-headline-sm text-primary mb-6">Upcoming Engineering Milestones</h4>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="flex items-start gap-3 p-3 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<span class="material-symbols-outlined text-outline mt-0.5">check_box_outline_blank</span>
+<div>
+<p class="font-title-editorial text-xs font-semibold text-primary">PHASE 01</p>
+<p class="font-body-sm text-xs text-on-surface-variant">엣지 기기 포즈 FPS 측정 및 최적화</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<span class="material-symbols-outlined text-outline mt-0.5">check_box_outline_blank</span>
+<div>
+<p class="font-title-editorial text-xs font-semibold text-primary">PHASE 02</p>
+<p class="font-body-sm text-xs text-on-surface-variant">옷장 촬영 데이터셋 수집·평가</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<span class="material-symbols-outlined text-outline mt-0.5">check_box_outline_blank</span>
+<div>
+<p class="font-title-editorial text-xs font-semibold text-primary">PHASE 03</p>
+<p class="font-body-sm text-xs text-on-surface-variant">스마트 미러 환경 사용자 비교 평가</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 rounded-lg bg-surface-container-low border border-outline-variant/40">
+<span class="material-symbols-outlined text-outline mt-0.5">check_box_outline_blank</span>
+<div>
+<p class="font-title-editorial text-xs font-semibold text-primary">PHASE 04</p>
+<p class="font-body-sm text-xs text-on-surface-variant">라이선스·배포 가능성 검토 및 MVP 고도화</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 09: FINAL CTA -->
+<section class="py-28 bg-surface-bright text-center relative overflow-hidden" id="cta">
+<div class="max-w-4xl mx-auto px-6 lg:px-12 relative z-10">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase block mb-4">
+          AMBIENT INTELLIGENCE IN HAUTE COUTURE
+        </span>
+<h2 class="font-display-hero text-headline-lg-mobile md:text-display-hero text-primary mb-6">
+          More Than a Mirror.<br/>A Reflection of You.
+        </h2>
+<p class="font-headline-sm text-headline-sm text-secondary italic mb-6">
+          “거울이 나를 비추는 것을 넘어, 나의 취향을 이해하는 순간.”
+        </p>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed">
+          MUSE는 사전학습 AI와 개인화 기술을 유기적으로 결합하여, 누구나 아침마다 더 쉽고 자신 있게 자신의 고유한 스타일을 선택할 수 있는 새로운 라이프스타일을 완성합니다.
+        </p>
+<!-- CTA Buttons adhering strictly to JSON and Design System -->
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+<a class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-on-primary font-label-uppercase text-label-uppercase px-8 py-4 rounded-lg transition-transform active:scale-95 hover:bg-primary-container shadow-md" href="./index.html">
+            Discover MUSE
+          </a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center text-on-surface hover:text-secondary font-label-uppercase text-label-uppercase px-8 py-4 rounded-lg border border-outline-variant/60 hover:border-secondary transition-colors bg-surface-container-lowest" href="./index.html">
+            Back to Home
+          </a>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER (Shared Components JSON Anchor) -->
+<footer class="bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant/40 dark:border-outline/20">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 py-16 flex flex-col md:flex-row justify-between items-center gap-8 w-full">
+<!-- Footer Brand & Copyright Text -->
+<div class="flex flex-col items-center md:items-start gap-2">
+<span class="font-headline-sm text-headline-sm tracking-widest text-primary dark:text-inverse-primary uppercase font-bold">MUSE</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline-variant text-center md:text-left">
+          © 2026 MUSE · AI Research Concept. Model selections and targets are under evaluation.
+        </p>
+</div>
+<!-- Footer Navigation Links -->
+<div class="flex flex-wrap justify-center items-center gap-6 md:gap-8">
+<a class="text-on-surface-variant dark:text-outline-variant font-body-sm text-body-sm transition-opacity duration-200 hover:opacity-90 hover:text-secondary dark:hover:text-secondary-fixed" href="#architecture">Architecture</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-body-sm text-body-sm transition-opacity duration-200 hover:opacity-90 hover:text-secondary dark:hover:text-secondary-fixed" href="#roadmap">Privacy Framework</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-body-sm text-body-sm transition-opacity duration-200 hover:opacity-90 hover:text-secondary dark:hover:text-secondary-fixed" href="#data-strategy">Dataset Standards</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-body-sm text-body-sm transition-opacity duration-200 hover:opacity-90 hover:text-secondary dark:hover:text-secondary-fixed" href="#validation">Model Validation</a>
+<a class="text-on-surface-variant dark:text-outline-variant font-body-sm text-body-sm transition-opacity duration-200 hover:opacity-90 hover:text-secondary dark:hover:text-secondary-fixed" href="./index.html">Ethics Protocol</a>
+</div>
+</div>
+</footer>
+<!-- Interactive JavaScript for Filters and Validation Tabs -->
+<script>
+    // Module Filter Tabs Interaction
+    function filterModules(category) {
+      const cards = document.querySelectorAll('.module-card');
+      const buttons = document.querySelectorAll('.module-filter-btn');
+
+      buttons.forEach(btn => {
+        if (btn.getAttribute('data-filter') === category) {
+          btn.className = "module-filter-btn px-4 py-2 rounded-md font-label-tag text-label-tag transition-all bg-primary text-on-primary font-semibold";
+        } else {
+          btn.className = "module-filter-btn px-4 py-2 rounded-md font-label-tag text-label-tag transition-all text-on-surface-variant hover:text-primary";
+        }
+      });
+
+      cards.forEach(card => {
+        if (category === 'all' || card.getAttribute('data-category') === category) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Validation 3-Layer Tab Switcher Interaction
+    function switchValLayer(layerIndex) {
+      // Hide all panels
+      for (let i = 1; i <= 3; i++) {
+        const panel = document.getElementById(`val-panel-${i}`);
+        const tab = document.getElementById(`val-tab-${i}`);
+        if (i === layerIndex) {
+          panel.classList.remove('hidden');
+          panel.classList.add('block');
+          tab.className = "val-tab-btn px-5 py-2.5 rounded-lg font-label-tag text-label-tag transition-all bg-primary text-on-primary font-semibold";
+        } else {
+          panel.classList.remove('block');
+          panel.classList.add('hidden');
+          tab.className = "val-tab-btn px-5 py-2.5 rounded-lg font-label-tag text-label-tag transition-all text-on-surface-variant hover:text-primary";
+        }
+      }
+    }
+    // Accessible mobile navigation for the new page
+    (() => {
+      const toggle = document.getElementById('ai-mobile-menu-toggle');
+      const menu = document.getElementById('ai-mobile-menu');
+      if (!toggle || !menu) return;
+      const setOpen = (open) => {
+        menu.classList.toggle('hidden', !open);
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+      };
+      toggle.addEventListener('click', () => setOpen(menu.classList.contains('hidden')));
+      menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setOpen(false)));
+      document.addEventListener('keydown', event => { if (event.key === 'Escape') setOpen(false); });
+    })();
+  </script>
+</body></html>
