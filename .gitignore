@@ -1,0 +1,7 @@
+# Local backups and one-off installer artifacts
+.muse-backups/
+__pycache__/
+*.pyc
+install_muse_mvp.py
+install_muse_ai_research.py
+patch_data_pipeline.py

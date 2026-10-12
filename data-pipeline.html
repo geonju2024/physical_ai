@@ -4,12 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
-<title>MUSE 데이터 처리 기술 | 전처리와 후처리</title>
-<meta name="description" content="AI 스마트미러 MUSE가 드레스룸 환경에서 체형, 옷장, 날씨, 일정, 피드백 데이터를 정돈하는 전처리와 후처리 아키텍처">
+<title>MUSE — Data Pipeline | MVP 전처리·후처리</title>
+<meta name="description" content="MUSE MVP의 MediaPipe, ToF, 촬영 매트, FashionSigLIP, 규칙 엔진, VTON API 기반 전처리·후처리 설계">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Noto+Serif+KR:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 <style>
 /* ============ Editorial Muse 디자인 토큰 & 감성 테마 ============ */
 :root {
@@ -51,6 +50,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+[id] { scroll-margin-top: 84px; }
 body {
   margin: 0;
   background-color: var(--canvas);
@@ -244,6 +244,26 @@ section {
   box-shadow: var(--shadow-hover);
   background: #222;
 }
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.nav-toggle {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--outline);
+  background: var(--surface-glass);
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+.nav-toggle:hover { background: rgba(18, 18, 18, 0.05); }
 
 /* 카드 컴포넌트 */
 .card-muse {
@@ -688,6 +708,31 @@ footer .brand-wordmark { font-size: 22px; }
 
 /* 미디어 쿼리 */
 @media (max-width: 1024px) {
+  .nav-toggle { display: inline-flex; }
+  .topbar nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0.5rem 2rem 1.25rem;
+    background: var(--canvas);
+    border-bottom: 1px solid var(--hairline);
+    box-shadow: var(--shadow-glass);
+  }
+  .topbar nav.is-open { display: flex; }
+  .topbar nav a {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--outline-subtle);
+  }
+  .topbar nav a:last-child { border-bottom: 0; }
+  .panel-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
   .hero .copy, .hero .mirror-showcase,
   .field .section-intro, .field .rows,
   .flow-head, .pre .section-intro, .post .section-intro,
@@ -708,6 +753,10 @@ footer .brand-wordmark { font-size: 22px; }
 }
 @media (max-width: 768px) {
   .wrap { padding: 0 1.25rem; }
+  .topbar nav { padding: 0.5rem 1.25rem 1.25rem; }
+  .brand-sub { display: none; }
+  .hero .actions { flex-wrap: wrap; }
+  .table-card-head { flex-wrap: wrap; gap: 0.75rem; padding: 1.25rem; }
   section { padding: 64px 0; }
   .field-card {
     grid-template-columns: 1fr;
@@ -716,8 +765,11 @@ footer .brand-wordmark { font-size: 22px; }
   .field-card::before { display: none; }
   .panel-card { padding: 1.5rem; }
 }
+@media (max-width: 480px) {
+  .topbar .action-btn { display: none; }
+}
 </style>
-</head>
+<!-- MUSE MVP CONTENT REVISION: 2026-10-12 --></head>
 <body>
 
 <!-- 상단 에디토리얼 글래스 헤더 -->
@@ -727,15 +779,19 @@ footer .brand-wordmark { font-size: 22px; }
       <a class="brand-wordmark" href="./index.html" aria-label="MUSE 메인 홈페이지로 돌아가기">MUSE</a>
       <span class="brand-sub">Atelier Intelligence</span>
     </div>
-    <nav aria-label="문서 네비게이션">
-      <a href="#field">현장 조사</a>
+    <nav id="dp-nav" aria-label="문서 네비게이션">
+      <a href="./index.html">Home</a>
+      <a href="#field">설계 과제</a>
       <a href="#flow">데이터 흐름</a>
       <a href="#pre">전처리</a>
       <a href="#post">후처리</a>
       <a href="#goals">원칙과 목표</a>
       <a href="./ai-research.html">AI Research</a>
     </nav>
-    <a href="#pre" class="action-btn">Inspect Pipeline</a>
+    <div class="topbar-actions">
+      <a href="#pre" class="action-btn">Inspect Pipeline</a>
+      <button class="nav-toggle" id="dp-nav-toggle" type="button" aria-controls="dp-nav" aria-expanded="false" aria-label="메뉴 열기">☰</button>
+    </div>
   </div>
 </header>
 
@@ -744,11 +800,11 @@ footer .brand-wordmark { font-size: 22px; }
   <div class="wrap grid">
     <div class="copy">
       <div class="lead-meta">
-        <span class="tag-editorial lavender"><span class="dot"></span>Data Processing Architecture</span>
+        <span class="tag-editorial lavender"><span class="dot"></span>MVP Data Processing Architecture</span>
         <span class="tag-editorial">Edge & Cloud Hybrid</span>
       </div>
       <h1 class="display-hero">거울 앞에 서기 전에,<br><span class="font-italic">데이터부터</span> 정돈합니다.</h1>
-      <p class="lede">조명도, 배경도, 거울과의 거리도 집집마다 다른 드레스룸 환경. MUSE는 듀얼 ToF 센서와 온디바이스 비전 기술을 통해 실제 현장의 노이즈를 전처리에서 걸러내고, AI 생성 결과는 후처리 검증을 거친 뒤 비로소 거울 표면에 띄웁니다.</p>
+      <p class="lede">거울의 카메라·ToF 깊이 정보는 기기 안에서 자세와 체형 특징으로 변환합니다. 옷장 사진은 촬영 매트와 크로마키로 정리하고, MUSE 서버는 FashionSigLIP과 스타일링 규칙으로 코디를 추천합니다. 가상 피팅 이미지는 별도 동의 후 파트너 API로 생성하도록 설계합니다.</p>
       <div class="actions">
         <a class="btn-primary" href="#pre">전처리 파이프라인</a>
         <a class="btn-ghost" href="#post">후처리 검증 기준</a>
@@ -808,11 +864,11 @@ footer .brand-wordmark { font-size: 22px; }
           <rect x="72" y="62" width="156" height="352" rx="16" fill="none" stroke="#9d8df1" stroke-width="1.5" stroke-dasharray="6 5"/>
           <g font-family="Plus Jakarta Sans, Noto Sans KR, sans-serif" font-size="10.5" fill="#121212" font-weight="600">
             <rect x="180" y="58" width="84" height="22" rx="11" fill="#ede9fe"/>
-            <text x="222" y="73" text-anchor="middle" fill="#5544a8">얼굴 온디바이스</text>
+            <text x="222" y="73" text-anchor="middle" fill="#5544a8">MediaPipe 포즈</text>
             <rect x="200" y="292" width="94" height="22" rx="11" fill="#ede9fe"/>
-            <text x="247" y="307" text-anchor="middle" fill="#5544a8">D65 색 보정</text>
+            <text x="247" y="307" text-anchor="middle" fill="#5544a8">로컬 신체 정보</text>
             <rect x="194" y="432" width="98" height="22" rx="11" fill="#ede9fe"/>
-            <text x="243" y="447" text-anchor="middle" fill="#5544a8">ToF 심도 분리</text>
+            <text x="243" y="447" text-anchor="middle" fill="#5544a8">ToF 깊이 분석</text>
           </g>
         </svg>
 
@@ -834,77 +890,39 @@ footer .brand-wordmark { font-size: 22px; }
 
 <main>
 <!-- ======================= 현장 조사 ======================= -->
-<section class="field" id="field">
-  <div class="wrap grid">
-    <div class="section-intro">
-      <span class="tag-editorial field"><span class="dot"></span>Field Observation</span>
-      <h2 class="headline-lg">시범 가정 드레스룸에서<br>발견한 현실적 제약</h2>
-      <p>MUSE 엔지니어링 팀은 20여 가구의 드레스룸 현장을 실측 조사했습니다. 불규칙한 조명, 배경 행거, 1초도 가만히 있지 않는 출근길 행동 양식이 전처리 파이프라인의 기준값이 되었습니다.</p>
-    </div>
-
-    <div class="rows">
-      <div class="field-card">
-        <div class="field-side">
-          <span class="tag-editorial field"><span class="dot"></span>현장 제약</span>
-          <h3 class="title-editorial">카메라 뒤에 걸린 배경 의류</h3>
-          <p class="body-md">배경 행거의 옷을 착용 의류로 오인하고, 베이지색 벽지는 피부색과 경계가 모호해 분리 오차를 유발했습니다.</p>
-        </div>
-        <div class="field-side">
-          <span class="tag-editorial lavender"><span class="dot"></span>MUSE 솔루션</span>
-          <h3 class="title-editorial">듀얼 ToF 심도 거리 분리</h3>
-          <p class="body-md">사용자 실루엣 기준 ±40cm 심도 범위 밖의 모든 배경을 원천 차단하고 초기 설치 시 빈 공간 맵을 메모리합니다.</p>
-        </div>
-      </div>
-
-      <div class="field-card">
-        <div class="field-side">
-          <span class="tag-editorial field"><span class="dot"></span>현장 제약</span>
-          <h3 class="title-editorial">혼합 조명과 조도 편차 (100~600 lux)</h3>
-          <p class="body-md">형광등, 난백색 LED, 자연광 혼합으로 동일 의류도 아침과 저녁에 완전히 다른 색상 코드로 인식되었습니다.</p>
-        </div>
-        <div class="field-side">
-          <span class="tag-editorial lavender"><span class="dot"></span>MUSE 솔루션</span>
-          <h3 class="title-editorial">미러 내장 링 라이트 주도 촬영</h3>
-          <p class="body-md">촬영 0.5초간 내장 플래시 500lux를 조사해 광원을 통일하고 D65 표준 색온도로 캘리브레이션합니다.</p>
-        </div>
-      </div>
-
-      <div class="field-card">
-        <div class="field-side">
-          <span class="tag-editorial field"><span class="dot"></span>현장 제약</span>
-          <h3 class="title-editorial">바쁜 아침, 0.5초의 멈춤도 없음</h3>
-          <p class="body-md">옷을 갈아입으며 움직이는 상태가 대다수이며, 대기 시간이 2초를 초과하면 사용 피로도가 급격히 상승했습니다.</p>
-        </div>
-        <div class="field-side">
-          <span class="tag-editorial lavender"><span class="dot"></span>MUSE 솔루션</span>
-          <h3 class="title-editorial">0.5초 15연사 선명도 랭킹 선별</h3>
-          <p class="body-md">블러 및 움직임 점수 상위 3장을 선별하고, 오늘의 추천 코디는 새벽 6시 클라우드에서 사전 연산해 둡니다.</p>
-        </div>
-      </div>
-
-      <div class="field-card">
-        <div class="field-side">
-          <span class="tag-editorial field"><span class="dot"></span>현장 제약</span>
-          <h3 class="title-editorial">드레스룸 상시 카메라에 대한 불안</h3>
-          <p class="body-md">사적인 침실/옷방 공간에서 렌즈가 항상 사용자를 지켜보고 있다는 우려가 존재했습니다.</p>
-        </div>
-        <div class="field-side">
-          <span class="tag-editorial lavender"><span class="dot"></span>MUSE 솔루션</span>
-          <h3 class="title-editorial">하드웨어 셔터 & 물리 버튼 트리거</h3>
-          <p class="body-md">버튼을 터치할 때만 카메라가 활성화되며, 얼굴과 배경을 지운 신체 키포인트 데이터만 서버로 안전하게 전송합니다.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<section class="field" id="field"><div class="wrap grid">
+      <div class="section-intro"><span class="tag-editorial field"><span class="dot"></span>MVP Design Considerations</span>
+      <h2 class="headline-lg">드레스룸 환경을 고려한<br>설계 과제</h2>
+      <p>다음 항목은 실사용 환경에서 점검할 과제와 MVP 대응 계획입니다. 완료된 현장 실증이나 측정 결과를 의미하지 않습니다.</p></div>
+      <div class="rows"><div class="field-card">
+      <div class="field-side"><span class="tag-editorial field"><span class="dot"></span>설계 과제</span>
+        <h3 class="title-editorial">집마다 다른 카메라 거리·배경</h3><p class="body-md">거울 앞의 인물과 주변 물체가 함께 촬영될 수 있습니다.</p></div>
+      <div class="field-side"><span class="tag-editorial lavender"><span class="dot"></span>MVP 접근</span>
+        <h3 class="title-editorial">MediaPipe + ToF 엣지 처리</h3><p class="body-md">카메라 영상은 거울에서 포즈 랜드마크·깊이 특징으로 변환하고, 원본 연속 영상은 외부로 보내지 않는 설계를 검증합니다.</p></div>
+    </div><div class="field-card">
+      <div class="field-side"><span class="tag-editorial field"><span class="dot"></span>설계 과제</span>
+        <h3 class="title-editorial">옷 사진의 배경과 조명</h3><p class="body-md">스마트폰 조명과 의류 색상에 따라 배경 제거·색상 판독 품질이 달라질 수 있습니다.</p></div>
+      <div class="field-side"><span class="tag-editorial lavender"><span class="dot"></span>MVP 접근</span>
+        <h3 class="title-editorial">촬영 매트 + 크로마키</h3><p class="body-md">촬영 매트에서 배경을 분리하고 결과를 사용자가 확인하도록 해 간단한 등록 흐름을 구성합니다.</p></div>
+    </div><div class="field-card">
+      <div class="field-side"><span class="tag-editorial field"><span class="dot"></span>설계 과제</span>
+        <h3 class="title-editorial">바쁜 아침의 응답 지연</h3><p class="body-md">매일 추천을 받는 경험에서는 지연과 외부 API 호출 비용을 모두 관리해야 합니다.</p></div>
+      <div class="field-side"><span class="tag-editorial lavender"><span class="dot"></span>MVP 접근</span>
+        <h3 class="title-editorial">규칙 기반 추천 + 캐시</h3><p class="body-md">FashionSigLIP 특징 벡터를 재사용하고 규칙 코드로 Top 3를 고르며, 실패 시 최근 코디 캐시를 보여주도록 설계합니다.</p></div>
+    </div><div class="field-card">
+      <div class="field-side"><span class="tag-editorial field"><span class="dot"></span>설계 과제</span>
+        <h3 class="title-editorial">개인정보와 외부 AI 서비스</h3><p class="body-md">신체 영상, 의류 이미지, 가상 피팅용 사용자 이미지는 서로 다른 처리 정책이 필요합니다.</p></div>
+      <div class="field-side"><span class="tag-editorial lavender"><span class="dot"></span>MVP 접근</span>
+        <h3 class="title-editorial">목적별 데이터 경로 분리</h3><p class="body-md">일반 영상은 기기 내부에서 처리합니다. 옷 사진은 태깅 API로, 동의받은 사용자 이미지만 가상 피팅 API로 보냅니다.</p></div>
+    </div></div></div></section>
 
 <!-- ======================= 데이터 흐름 섹션 ======================= -->
 <section class="section-alt" id="flow">
   <div class="wrap grid">
     <div class="flow-head section-intro">
       <span class="tag-editorial lavender"><span class="dot"></span>End-to-End Pipeline</span>
-      <h2 class="headline-lg">데이터가 거울에 닿기까지</h2>
-      <p>지연 시간과 프라이버시가 핵심인 신체 데이터는 <strong>온디바이스 Edge</strong>에서, 컴퓨팅 파워가 요구되는 카탈로그 분석은 <strong>Cloud</strong>에서 병렬 처리됩니다.</p>
+      <h2 class="headline-lg">데이터가 개인화 코디가 되기까지</h2>
+      <p>신체 영상은 <strong>Mirror Edge</strong>에서 MediaPipe·ToF로 처리하고, 옷장 이미지와 선호 정보는 <strong>MUSE Server / Partner API</strong> 경로로 구분합니다. 파트너 API에 사용자 이미지를 보내는 가상 피팅은 별도 동의가 필요합니다.</p>
     </div>
 
     <div class="card-muse flow-container card-glass">
@@ -917,7 +935,7 @@ footer .brand-wordmark { font-size: 22px; }
         <!-- 데이터 인풋 노드 -->
         <g font-family="Plus Jakarta Sans, Noto Sans KR, sans-serif" font-size="12.5" font-weight="500">
           <rect x="20" y="24" width="130" height="34" rx="17" fill="#ffffff" stroke="#c4c7c7"/>
-          <text x="85" y="46" text-anchor="middle" fill="#121212">신체 실루엣</text>
+          <text x="85" y="46" text-anchor="middle" fill="#121212">RGB 카메라</text>
 
           <rect x="20" y="70" width="130" height="34" rx="17" fill="#ffffff" stroke="#c4c7c7"/>
           <text x="85" y="92" text-anchor="middle" fill="#121212">ToF 깊이 센서</text>
@@ -929,26 +947,26 @@ footer .brand-wordmark { font-size: 22px; }
           <text x="85" y="206" text-anchor="middle" fill="#121212">모바일 옷장 사진</text>
 
           <rect x="20" y="230" width="130" height="34" rx="17" fill="#ffffff" stroke="#c4c7c7"/>
-          <text x="85" y="252" text-anchor="middle" fill="#121212">제휴 쇼핑몰 상품</text>
+          <text x="85" y="252" text-anchor="middle" fill="#121212">상품 이미지</text>
 
           <rect x="20" y="276" width="130" height="34" rx="17" fill="#ffffff" stroke="#c4c7c7"/>
           <text x="85" y="298" text-anchor="middle" fill="#121212">날씨 & 캘린더 TPO</text>
 
           <!-- Edge 박스 -->
           <rect x="210" y="16" width="220" height="146" rx="20" fill="#f8f7ff" stroke="#9d8df1" stroke-width="1.5"/>
-          <text x="320" y="48" text-anchor="middle" font-weight="700" font-size="14" fill="#5544a8">MUSE Edge 전처리</text>
-          <text x="320" y="74" text-anchor="middle" fill="#444748" font-size="12">온디바이스 얼굴 마스킹</text>
-          <text x="320" y="94" text-anchor="middle" fill="#444748" font-size="12">ToF 배경 분리 (±40cm)</text>
-          <text x="320" y="114" text-anchor="middle" fill="#444748" font-size="12">로컬 오프라인 버퍼링</text>
-          <text x="320" y="134" text-anchor="middle" fill="#9d8df1" font-size="11" font-weight="600">&lt; 50ms Ultra-low Latency</text>
+          <text x="320" y="48" text-anchor="middle" font-weight="700" font-size="14" fill="#5544a8">Mirror Edge</text>
+          <text x="320" y="74" text-anchor="middle" fill="#444748" font-size="12">MediaPipe Pose / Hands</text>
+          <text x="320" y="94" text-anchor="middle" fill="#444748" font-size="12">ToF 깊이 분석</text>
+          <text x="320" y="114" text-anchor="middle" fill="#444748" font-size="12">영상 기기 내 처리</text>
+          <text x="320" y="134" text-anchor="middle" fill="#9d8df1" font-size="11" font-weight="600">15 FPS 이상 목표</text>
 
           <!-- Cloud 박스 -->
           <rect x="210" y="174" width="220" height="146" rx="20" fill="#faf9f6" stroke="#c4c7c7" stroke-width="1.5"/>
-          <text x="320" y="206" text-anchor="middle" font-weight="700" font-size="14" fill="#121212">MUSE Cloud 전처리</text>
-          <text x="320" y="232" text-anchor="middle" fill="#444748" font-size="12">촬영 매트 색/왜곡 보정</text>
-          <text x="320" y="252" text-anchor="middle" fill="#444748" font-size="12">표준 치수(단면/둘레) 변환</text>
-          <text x="320" y="272" text-anchor="middle" fill="#444748" font-size="12">일정 TPO 격식/활동성 파싱</text>
-          <text x="320" y="292" text-anchor="middle" fill="#444748" font-size="12">피드백 시간 감쇠 가중치</text>
+          <text x="320" y="206" text-anchor="middle" font-weight="700" font-size="14" fill="#121212">등록 / API 입력</text>
+          <text x="320" y="232" text-anchor="middle" fill="#444748" font-size="12">크로마키 배경 제거</text>
+          <text x="320" y="252" text-anchor="middle" fill="#444748" font-size="12">Vision LLM 의류 태깅</text>
+          <text x="320" y="272" text-anchor="middle" fill="#444748" font-size="12">날씨·일정 정리</text>
+          <text x="320" y="292" text-anchor="middle" fill="#444748" font-size="12">Wear / Pass 저장</text>
 
           <!-- 연결선 -->
           <path d="M150 41 H208" stroke="#9d8df1" stroke-width="1.5" marker-end="url(#arrow)"/>
@@ -960,17 +978,24 @@ footer .brand-wordmark { font-size: 22px; }
 
           <!-- AI 코어 모델 -->
           <rect x="490" y="96" width="160" height="136" rx="20" fill="#ffffff" stroke="#121212" stroke-width="1.5"/>
-          <text x="570" y="132" text-anchor="middle" font-weight="700" font-size="14" fill="#121212">MUSE AI Core</text>
-          <text x="570" y="158" text-anchor="middle" fill="#444748" font-size="12">3D 체형 추정</text>
-          <text x="570" y="178" text-anchor="middle" fill="#444748" font-size="12">TPO 코디네이션 큐레이션</text>
-          <text x="570" y="198" text-anchor="middle" fill="#444748" font-size="12">AR 의류 시뮬레이션</text>
+          <text x="570" y="132" text-anchor="middle" font-weight="700" font-size="14" fill="#121212">MUSE Server</text>
+          <text x="570" y="158" text-anchor="middle" fill="#444748" font-size="12">FashionSigLIP</text>
+          <text x="570" y="178" text-anchor="middle" fill="#444748" font-size="12">스타일 규칙 · Top 3</text>
+          <text x="570" y="198" text-anchor="middle" fill="#444748" font-size="12">취향 벡터 랭킹</text>
+
+          <!-- 외부 VTON API (동의 시에만) -->
+          <rect x="490" y="256" width="160" height="56" rx="16" fill="#f8f7ff" stroke="#9d8df1" stroke-dasharray="5 4"/>
+          <text x="570" y="279" text-anchor="middle" font-weight="700" font-size="12" fill="#5544a8">VTON API · 외부</text>
+          <text x="570" y="298" text-anchor="middle" fill="#444748" font-size="11">별도 동의 시에만 요청</text>
+          <path d="M570 232 V254" stroke="#9d8df1" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+          <path d="M650 284 C680 284 680 214 698 214" stroke="#9d8df1" stroke-width="1.5" stroke-dasharray="4 3" fill="none" marker-end="url(#arrow)"/>
 
           <!-- 후처리 검증 박스 -->
           <rect x="700" y="96" width="130" height="136" rx="20" fill="#121212"/>
           <text x="765" y="142" text-anchor="middle" font-weight="700" font-size="14" fill="#ffffff">후처리 검증</text>
-          <text x="765" y="168" text-anchor="middle" fill="#c4c7c7" font-size="12">체형 왜곡 방지</text>
-          <text x="765" y="188" text-anchor="middle" fill="#c4c7c7" font-size="12">ΔE2000 색차 검사</text>
-          <text x="765" y="208" text-anchor="middle" fill="#c4c7c7" font-size="12">기후/반복 필터</text>
+          <text x="765" y="168" text-anchor="middle" fill="#c4c7c7" font-size="12">JSON·태그 검증</text>
+          <text x="765" y="188" text-anchor="middle" fill="#c4c7c7" font-size="12">VTON 결과 품질</text>
+          <text x="765" y="208" text-anchor="middle" fill="#c4c7c7" font-size="12">TPO·7일 반복 필터</text>
 
           <!-- 연결 -->
           <path d="M430 89 C460 89 460 144 488 144" stroke="#9d8df1" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
@@ -988,315 +1013,67 @@ footer .brand-wordmark { font-size: 22px; }
 </section>
 
 <!-- ======================= 전처리 파이프라인 ======================= -->
-<section class="pre" id="pre">
-  <div class="wrap grid">
-    <div class="section-intro">
-      <span class="tag-editorial lavender"><span class="dot"></span>Pre-Processing Specs</span>
-      <h2 class="headline-lg">6대 데이터 소스의 정돈 단계</h2>
-      <p>체형, 옷장, 날씨 등 각 데이터의 성격과 민감도에 따라 최적화된 온디바이스 / 클라우드 파이프라인을 통과합니다.</p>
-    </div>
-
-    <!-- 탭 내비게이션 -->
-    <div class="tabs-wrap" role="tablist" aria-label="전처리 데이터 유형">
-      <button class="tab-btn" role="tab" id="t-body" aria-controls="p-body" aria-selected="true">
-        <span>신체 실루엣</span>
-      </button>
-      <button class="tab-btn" role="tab" id="t-depth" aria-controls="p-depth" aria-selected="false">
-        <span>ToF 심도</span>
-      </button>
-      <button class="tab-btn" role="tab" id="t-closet" aria-controls="p-closet" aria-selected="false">
-        <span>디지털 옷장</span>
-      </button>
-      <button class="tab-btn" role="tab" id="t-shop" aria-controls="p-shop" aria-selected="false">
-        <span>쇼핑몰 카탈로그</span>
-      </button>
-      <button class="tab-btn" role="tab" id="t-ctx" aria-controls="p-ctx" aria-selected="false">
-        <span>날씨 & 일정</span>
-      </button>
-      <button class="tab-btn" role="tab" id="t-fb" aria-controls="p-fb" aria-selected="false">
-        <span>착용 피드백</span>
-      </button>
-    </div>
-
-    <!-- 탭 1: 신체 이미지 -->
-    <div class="card-muse panel-card" role="tabpanel" id="p-body" aria-labelledby="t-body">
-      <div class="panel-meta">
-        <span class="tag-editorial lavender"><span class="dot"></span>Edge 온디바이스 처리</span>
-        <h3 class="headline-md" style="margin-top:1rem">신체 이미지</h3>
-        <p class="body-md">2초 내 스타일링 제안이 완료되어야 하므로 모든 RGB 분석 및 얼굴 마스킹은 기기 자체 NPU에서 온디바이스로 완료됩니다.</p>
-        <div class="io-badge-group">
-          <div class="io-row"><span class="io-label">IN</span><span class="body-sm">4K 카메라 센서 RGB 스트림</span></div>
-          <div class="io-row"><span class="io-label">OUT</span><span class="body-sm">얼굴 비식별화 키포인트 맵 (1024×768)</span></div>
-        </div>
-      </div>
-      <div class="panel-steps-container">
-        <ol class="timeline-steps">
-          <li><div><strong>버튼 터치 시에만 카메라 활성화</strong><span>항시 감시형 촬영을 배제하고 사용자 명시적 터치 시에만 세션이 오픈됩니다.</span></div></li>
-          <li><div><strong>거리 센서 기준 거리 (1.9~2.6m) 확인</strong><span>거울과 사용자 사이 최적 피팅 화각을 확인하고 벗어날 시 스마트 가이드를 표시합니다.</span></div></li>
-          <li><div><strong>내장 링 라이트 조사 후 15연사</strong><span>400~600 lux 균일 조명 하에서 0.5초 동안 초고속 버스트 캡처를 실행합니다.</span></div></li>
-          <li><div><strong>모션 블러 평가 상위 3장 선별</strong><span>가장 흔들림이 적고 선명한 프레임 3장을 가중치 평가하여 픽업합니다.</span></div></li>
-          <li><div><strong>카메라 렌즈 왜곡(Fisheye) 보정</strong><span>공장 출하 캘리브레이션 매트릭스를 기반으로 가장자리 왜곡을 수평 정렬합니다.</span></div></li>
-          <li><div><strong>ToF 심도 기반 실루엣 분리</strong><span>사용자 기준 ±40cm 이내의 신체 영역만 분리해 옷걸이 및 가구 노이즈를 완전 제거합니다.</span></div></li>
-          <li><div><strong>얼굴 마스킹 및 실루엣 정규화</strong><span>외부 전송용 이미지는 얼굴 영역을 완전 블러링하고 체형 비율 데이터만 암호화 전송합니다.</span></div></li>
-        </ol>
-      </div>
-    </div>
-
-    <!-- 탭 2: 깊이 -->
-    <div class="card-muse panel-card" role="tabpanel" id="p-depth" aria-labelledby="t-depth" hidden>
-      <div class="panel-meta">
-        <span class="tag-editorial lavender"><span class="dot"></span>Edge 온디바이스 처리</span>
-        <h3 class="headline-md" style="margin-top:1rem">ToF 깊이 센서</h3>
-        <p class="body-md">거울, 유리 창문, TV 등의 광택 반사로 인한 3D 노이즈를 필터링하여 정확한 체형 치수(어깨, 가슴, 허리)를 산출합니다.</p>
-      </div>
-      <div class="panel-steps-container">
-        <ol class="timeline-steps">
-          <li><div><strong>설치 공간 빈 배경 정적 맵 학습</strong><span>첫 부팅 시 30초간 빈 드레스룸의 심도 맵을 스캔해 반사 노이즈 좌표를 마스킹합니다.</span></div></li>
-          <li><div><strong>유효 작동 심도 (0.5~3.5m) 클리핑</strong><span>지나치게 가깝거나 거울 뒤 가상 깊이 평면(허상)에 위치한 포인트는 즉각 배제합니다.</span></div></li>
-          <li><div><strong>시공간 결합 필터링</strong><span>정적 프레임 간 가중 평균 및 바이래터럴 필터로 외곽선 에지를 정밀 보존합니다.</span></div></li>
-          <li><div><strong>바닥 평면 수평 정렬 보정</strong><span>바닥면과의 각도를 계산해 스탠드 기울기가 2° 이상 틀어졌을 경우 알림을 발송합니다.</span></div></li>
-          <li><div><strong>3D 포인트 클라우드 다운샘플링</strong><span>5mm 복셀 그리드로 압축해 실시간 체형 추정 모델의 인퍼런스 속도를 극대화합니다.</span></div></li>
-        </ol>
-      </div>
-    </div>
-
-    <!-- 탭 3: 디지털 옷장 -->
-    <div class="card-muse panel-card" role="tabpanel" id="p-closet" aria-labelledby="t-closet" hidden>
-      <div class="panel-meta">
-        <span class="tag-editorial"><span class="dot"></span>Cloud 파이프라인</span>
-        <h3 class="headline-md" style="margin-top:1rem">스마트 클로젯 사진</h3>
-        <p class="body-md">MUSE 스마트 촬영 매트 위에 올려둔 옷을 모바일 앱으로 촬영하면 실제 규격, 직조 패턴, 대표 컬러를 자동 디지털화합니다.</p>
-      </div>
-      <div class="panel-steps-container">
-        <ol class="timeline-steps">
-          <li><div><strong>매트 4코너 마커 투영 변환</strong><span>비스듬히 찍힌 모바일 사진을 1:1 수직 시점 정사영 영상으로 자동 교정합니다 (1px = 1mm).</span></div></li>
-          <li><div><strong>컬러 패치 기반 광원 화이트밸런스 복원</strong><span>주변 조명의 색 왜곡을 색차 차트로 역산하여 실물 본연의 색상으로 캘리브레이션합니다.</span></div></li>
-          <li><div><strong>의류 경계 자동 누끼 세그멘테이션</strong><span>매트 그린 스크린 영역과 경계를 분리하고 모헤어/시스루 소재 특성을 태깅합니다.</span></div></li>
-          <li><div><strong>CIE Lab 색공간 대표 3색 추출</strong><span>사람의 지각에 가장 부합하는 Lab 색공간에서 하이라이트를 배제한 베이스 컬러를 산출합니다.</span></div></li>
-          <li><div><strong>실측 치수(총장, 어깨단면) 자동 계측</strong><span>픽셀당 밀리미터 단위를 기반으로 옷의 실측 치수를 데이터베이스에 바인딩합니다.</span></div></li>
-        </ol>
-      </div>
-    </div>
-
-    <!-- 탭 4: 쇼핑몰 상품 -->
-    <div class="card-muse panel-card" role="tabpanel" id="p-shop" aria-labelledby="t-shop" hidden>
-      <div class="panel-meta">
-        <span class="tag-editorial"><span class="dot"></span>Cloud 일일 배치</span>
-        <h3 class="headline-md" style="margin-top:1rem">제휴 쇼핑몰 카탈로그</h3>
-        <p class="body-md">29CM, W컨셉, 무신사 등 주요 파트너사의 신규 상품 정보를 표준 규격으로 매일 자동 인제스천합니다.</p>
-      </div>
-      <div class="panel-steps-container">
-        <ol class="timeline-steps">
-          <li><div><strong>누끼 단독컷 / 모델 착용컷 분리</strong><span>AR 가상 드레이핑에 적합한 흰 배경 단독 상품 컷을 최우선 추출합니다.</span></div></li>
-          <li><div><strong>브랜드별 사이즈 체계 표준화</strong><span>브랜드마다 상이한 S/M/L, 26/28 표기를 실측 밀리미터 단면 테이블로 통일 변환합니다.</span></div></li>
-          <li><div><strong>고해상도 텍스처 맵 생성</strong><span>드레이핑 시 직물 결이 무너지지 않도록 1024×768 표준 텍스처 맵을 구성합니다.</span></div></li>
-        </ol>
-      </div>
-    </div>
-
-    <!-- 탭 5: 날씨 & 일정 -->
-    <div class="card-muse panel-card" role="tabpanel" id="p-ctx" aria-labelledby="t-ctx" hidden>
-      <div class="panel-meta">
-        <span class="tag-editorial"><span class="dot"></span>Cloud 실시간 처리</span>
-        <h3 class="headline-md" style="margin-top:1rem">날씨 & 일정 컨텍스트</h3>
-        <p class="body-md">외출 시간대 기온과 일정의 TPO 격식을 유기적으로 파싱해 출근 룩과 주말 캐주얼을 영리하게 분기합니다.</p>
-      </div>
-      <div class="panel-steps-container">
-        <ol class="timeline-steps">
-          <li><div><strong>외출 체감온도 및 강수 확률 매핑</strong><span>종일 평균 기온이 아닌, 사용자가 외출하는 시간대의 풍속/체감온도를 타깃팅합니다.</span></div></li>
-          <li><div><strong>일정 약어("ㄱㅅ 미팅" 등) 자연어 해석</strong><span>개인 캘린더 사전 및 LLM 컨텍스트 파서로 TPO 포멀 지수(1~5단계)를 추출합니다.</span></div></li>
-          <li><div><strong>프라이버시 익명화</strong><span>일정 세부 텍스트는 영구 저장하지 않으며 '격식 미팅, 실내 위주' 메타데이터만 활용합니다.</span></div></li>
-        </ol>
-      </div>
-    </div>
-
-    <!-- 탭 6: 피드백 -->
-    <div class="card-muse panel-card" role="tabpanel" id="p-fb" aria-labelledby="t-fb" hidden>
-      <div class="panel-meta">
-        <span class="tag-editorial"><span class="dot"></span>Hybrid 처리</span>
-        <h3 class="headline-md" style="margin-top:1rem">착용 피드백 & Style DNA</h3>
-        <p class="body-md">거울에서의 선택(Wear / Pass / Swap)과 모바일 피드백을 가공해 취향 DNA를 점진적으로 정교화합니다.</p>
-      </div>
-      <div class="panel-steps-container">
-        <ol class="timeline-steps">
-          <li><div><strong>7일 로컬 오프라인 큐</strong><span>와이파이가 일시 단절되어도 거울 로컬 스토리지에 반응을 안전 보관 후 재동기화합니다.</span></div></li>
-          <li><div><strong>시간 감쇠(Time-decay) 가중치 적용</strong><span>계절 변화와 취향 이동을 고려하여 60일 이전 선택은 반영 가중치를 50% 감쇠합니다.</span></div></li>
-          <li><div><strong>버튼 연타 및 오작동 필터</strong><span>1초 이내 발생한 중복 입력은 단일 신호로 정규화하여 학습 왜곡을 방지합니다.</span></div></li>
-        </ol>
-      </div>
-    </div>
-  </div>
-</section>
+<section class="pre" id="pre"><div class="wrap grid">
+      <div class="section-intro"><span class="tag-editorial lavender"><span class="dot"></span>MVP Pre-Processing</span>
+        <h2 class="headline-lg">6대 데이터 소스의 정돈 단계</h2>
+        <p>원본 신체 영상은 거울 내부에 두고, 의류 사진과 파생 메타데이터는 용도별 처리 경로를 분리합니다. 각 처리 단계는 구현 및 품질 검증 예정입니다.</p></div>
+      <div class="tabs-wrap" role="tablist" aria-label="전처리 데이터 유형"><button class="tab-btn" role="tab" id="t-body" aria-controls="p-body" aria-selected="true"><span>MediaPipe 포즈</span></button><button class="tab-btn" role="tab" id="t-depth" aria-controls="p-depth" aria-selected="false"><span>ToF 심도</span></button><button class="tab-btn" role="tab" id="t-closet" aria-controls="p-closet" aria-selected="false"><span>디지털 옷장</span></button><button class="tab-btn" role="tab" id="t-shop" aria-controls="p-shop" aria-selected="false"><span>상품 이미지</span></button><button class="tab-btn" role="tab" id="t-ctx" aria-controls="p-ctx" aria-selected="false"><span>날씨 & 일정</span></button><button class="tab-btn" role="tab" id="t-fb" aria-controls="p-fb" aria-selected="false"><span>착용 피드백</span></button></div>
+      <div class="card-muse panel-card" role="tabpanel" id="p-body" aria-labelledby="t-body">
+      <div class="panel-meta"><span class="tag-editorial lavender"><span class="dot"></span>EDGE · RGB 입력</span>
+        <h3 class="headline-md" style="margin-top:1rem">MediaPipe 신체 포즈</h3><p class="body-md">거울에서 카메라 영상을 처리해 33점 포즈 랜드마크와 신체 비율 특징을 추출합니다. MediaPipe 출력만으로 실제 신체 치수가 정확히 측정되는 것은 아닙니다.</p><div class="io-badge-group"><div class="io-row"><span class="io-label">IN</span><span class="body-sm">거울 RGB 카메라 영상</span></div><div class="io-row"><span class="io-label">OUT</span><span class="body-sm">포즈·제스처·체형 비율 파생값</span></div></div></div>
+      <div class="panel-steps-container"><ol class="timeline-steps"><li><div><strong>사용자가 거울 세션 시작</strong><span>신체 영상은 로컬 세션에서만 처리하는 방향으로 설계합니다.</span></div></li><li><div><strong>MediaPipe Pose / Hands 추론</strong><span>자세와 손짓 인식에 사용할 랜드마크·이벤트를 추출합니다.</span></div></li><li><div><strong>입력 품질 확인</strong><span>가림·모션 블러·인물 프레임 밖 이탈을 감지해 재시도를 안내합니다.</span></div></li><li><div><strong>파생 데이터 생성</strong><span>추천에 필요한 최소 신체 특징값만 서버에 전달하도록 설계합니다.</span></div></li></ol></div>
+    </div><div class="card-muse panel-card" role="tabpanel" id="p-depth" aria-labelledby="t-depth" hidden>
+      <div class="panel-meta"><span class="tag-editorial lavender"><span class="dot"></span>EDGE · 센서</span>
+        <h3 class="headline-md" style="margin-top:1rem">ToF 깊이 보정</h3><p class="body-md">ToF는 신체 치수 추정에 활용할 깊이 정보를 제공합니다. 센서 구성, 설치 거리, 오차 보정 방식에 대한 실제 측정이 필요합니다.</p><div class="io-badge-group"><div class="io-row"><span class="io-label">IN</span><span class="body-sm">ToF 깊이 프레임</span></div><div class="io-row"><span class="io-label">OUT</span><span class="body-sm">보정한 거리·체형 특징값</span></div></div></div>
+      <div class="panel-steps-container"><ol class="timeline-steps"><li><div><strong>거리·깊이값 확인</strong><span>유효 촬영 범위와 반사·장애물의 영향을 확인합니다.</span></div></li><li><div><strong>RGB-Depth 정렬</strong><span>MediaPipe 포즈 좌표와 ToF 깊이값을 같은 기준으로 결합할 방법을 검토합니다.</span></div></li><li><div><strong>신체 특징 산출</strong><span>추정 체형 비율·치수는 오차와 신뢰도를 함께 표시하도록 설계합니다.</span></div></li><li><div><strong>개인정보 최소화</strong><span>원본 깊이 맵을 상시 업로드하지 않고 필요한 파생값만 사용합니다.</span></div></li></ol></div>
+    </div><div class="card-muse panel-card" role="tabpanel" id="p-closet" aria-labelledby="t-closet" hidden>
+      <div class="panel-meta"><span class="tag-editorial lavender"><span class="dot"></span>APP · CHROMAKEY + API</span>
+        <h3 class="headline-md" style="margin-top:1rem">촬영 매트 기반 옷장 등록</h3><p class="body-md">옷장 등록은 모바일 앱에서 촬영 매트를 이용하고, 규칙 기반 크로마키로 배경을 제거한 뒤 비전 LLM을 1회 호출하는 방식입니다.</p><div class="io-badge-group"><div class="io-row"><span class="io-label">IN</span><span class="body-sm">촬영 매트의 의류 사진</span></div><div class="io-row"><span class="io-label">OUT</span><span class="body-sm">의류 마스크·검증한 태그·패션 임베딩</span></div></div></div>
+      <div class="panel-steps-container"><ol class="timeline-steps"><li><div><strong>의류 사진 촬영</strong><span>매트 위에 펼친 옷 사진을 사용자 동의에 따라 수집합니다.</span></div></li><li><div><strong>크로마키 배경 제거</strong><span>그린/단색 매트와 옷의 경계를 분리하고 품질을 검사합니다.</span></div></li><li><div><strong>Vision LLM 태깅</strong><span>카테고리·색·패턴·핏·계절 정보를 미리 정의한 목록에서 고르고, 케어라벨 사진이 있으면 함께 읽습니다(별도 OCR 모델 없음).</span></div></li><li><div><strong>JSON 검사 및 사용자 확인</strong><span>소재 등 불확실한 속성은 빈값으로 남기고 사용자가 수정합니다.</span></div></li><li><div><strong>의류 DB 등록</strong><span>원본 이미지·태그·FashionSigLIP 벡터를 필요한 범위에서 관리합니다.</span></div></li></ol></div>
+    </div><div class="card-muse panel-card" role="tabpanel" id="p-shop" aria-labelledby="t-shop" hidden>
+      <div class="panel-meta"><span class="tag-editorial lavender"><span class="dot"></span>SERVER / PARTNER API</span>
+        <h3 class="headline-md" style="margin-top:1rem">쇼핑몰 상품 이미지</h3><p class="body-md">사용자가 확인할 상품 이미지·메타데이터를 별도 경로로 수집하고, 없는 옷의 유사 검색과 선택형 가상 피팅에 사용하도록 설계합니다.</p><div class="io-badge-group"><div class="io-row"><span class="io-label">IN</span><span class="body-sm">사용 가능한 상품 이미지·메타데이터</span></div><div class="io-row"><span class="io-label">OUT</span><span class="body-sm">유사 상품 후보·VTON용 의류 이미지</span></div></div></div>
+      <div class="panel-steps-container"><ol class="timeline-steps"><li><div><strong>상품 정보 사용 가능 여부 확인</strong><span>상품 이미지·사이즈·가격 정보는 라이선스와 이용 권한을 확인한 뒤 연결합니다.</span></div></li><li><div><strong>FashionSigLIP 임베딩</strong><span>보유 의류와 상품 이미지의 패션 특징 유사도를 계산합니다.</span></div></li><li><div><strong>가상 피팅 선택</strong><span>VTON은 사용자가 명시적으로 요청할 때만 별도 처리합니다.</span></div></li></ol></div>
+    </div><div class="card-muse panel-card" role="tabpanel" id="p-ctx" aria-labelledby="t-ctx" hidden>
+      <div class="panel-meta"><span class="tag-editorial lavender"><span class="dot"></span>SERVER · RULES</span>
+        <h3 class="headline-md" style="margin-top:1rem">날씨와 일정 기반 TPO</h3><p class="body-md">일상 컨텍스트를 모델로 다시 학습하지 않고 날씨·일정 정보를 간단한 규칙으로 필터링합니다.</p><div class="io-badge-group"><div class="io-row"><span class="io-label">IN</span><span class="body-sm">날씨 API·동의된 일정 메타데이터</span></div><div class="io-row"><span class="io-label">OUT</span><span class="body-sm">TPO 태그·추천 후보 Top 3</span></div></div></div>
+      <div class="panel-steps-container"><ol class="timeline-steps"><li><div><strong>외출 시간대 날씨</strong><span>체감온도와 강수 조건을 해당 시간대에 맞춰 조회합니다.</span></div></li><li><div><strong>일정 분류</strong><span>사용자가 동의한 일정에서 격식·활동성 같은 최소 태그를 추출합니다.</span></div></li><li><div><strong>의류 필터링</strong><span>체감 10℃ 이하 아우터 우선, 비 오는 날 스웨이드 제외 등의 초안 규칙을 적용합니다.</span></div></li><li><div><strong>Top 3 랭킹</strong><span>규칙을 통과한 코디를 개인 선호 벡터와 비교해 순위화합니다.</span></div></li></ol></div>
+    </div><div class="card-muse panel-card" role="tabpanel" id="p-fb" aria-labelledby="t-fb" hidden>
+      <div class="panel-meta"><span class="tag-editorial lavender"><span class="dot"></span>EDGE → SERVER</span>
+        <h3 class="headline-md" style="margin-top:1rem">Wear / Pass 취향 업데이트</h3><p class="body-md">FashionSigLIP 모델 가중치를 다시 학습시키지 않고, 선택 이력의 패션 임베딩을 합산·감쇠하여 선호 벡터를 갱신합니다.</p><div class="io-badge-group"><div class="io-row"><span class="io-label">IN</span><span class="body-sm">Wear / Pass 이벤트</span></div><div class="io-row"><span class="io-label">OUT</span><span class="body-sm">갱신된 선호 벡터와 랭킹</span></div></div></div>
+      <div class="panel-steps-container"><ol class="timeline-steps"><li><div><strong>Wear / Pass 선택 기록</strong><span>반응과 옷 아이디·시간을 간결한 이벤트로 기록합니다.</span></div></li><li><div><strong>중복 입력 방지</strong><span>버튼 연타 등 우발적인 반복 이벤트는 병합합니다.</span></div></li><li><div><strong>60일 시간 감쇠 정책</strong><span>오래된 선택의 반영 비중을 낮추는 규칙을 실험합니다.</span></div></li><li><div><strong>다음 추천에 반영</strong><span>옷의 선호 유사도와 TPO 규칙을 다시 결합합니다.</span></div></li></ol></div>
+    </div></div></section>
 
 <!-- ======================= 후처리 검증 기준 ======================= -->
-<section class="post section-alt" id="post">
-  <div class="wrap grid">
-    <div class="section-intro">
-      <span class="tag-editorial lavender"><span class="dot"></span>Post-Processing Guardrails</span>
-      <h2 class="headline-lg">거울에 비추기 전, 엄격한 품질 검증</h2>
-      <p>AI 모델이 생성한 결과가 아무리 시각적으로 그럴듯해도, 왜곡된 체형이나 잘못된 색상은 잘못된 쇼핑과 실망으로 이어집니다. MUSE는 다음 기준을 통과한 결과물만 렌더링합니다.</p>
-    </div>
-
-    <!-- 핵심 통과 기준 요약표 -->
-    <div class="card-muse table-card">
-      <div class="table-card-head">
-        <h3 class="headline-sm">검증 매트릭스 & 폴백(Fallback) 정책</h3>
-        <span class="tag-editorial lavender"><span class="dot"></span>Strict Quality Gate</span>
-      </div>
-      <div class="table-wrap">
-        <table class="muse-table">
-          <thead>
-            <tr>
-              <th scope="col">결과물 영역</th>
-              <th scope="col">핵심 검사 항목</th>
-              <th scope="col">허용 통과 기준</th>
-              <th scope="col">기준 미달 시 페일세이프(Fallback)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>가상 피팅 (Try-On)</td>
-              <td>체형 실루엣 일치율</td>
-              <td class="num">윤곽 겹침 85% 이상</td>
-              <td>날씬 보정 방지 위해 즉각 재생성</td>
-            </tr>
-            <tr>
-              <td>가상 피팅 (Try-On)</td>
-              <td>의류 실물 색상 일치</td>
-              <td class="num">ΔE2000 ≤ 8.0</td>
-              <td>의류 영역만 색 보정, 15 초과 시 재생성</td>
-            </tr>
-            <tr>
-              <td>가상 피팅 (Try-On)</td>
-              <td>패턴 및 텍스처 보존</td>
-              <td>특징점 보존 점수 충족</td>
-              <td>"실물 패턴과 차이가 있을 수 있습니다" 배지</td>
-            </tr>
-            <tr>
-              <td>TPO 코디네이션</td>
-              <td>기상 및 외출 조건 적합성</td>
-              <td>비 올 시 스웨이드 제외, 체감 10℃↓ 아우터 필수</td>
-              <td>부적합 아이템 자동 교체</td>
-            </tr>
-            <tr>
-              <td>TPO 코디네이션</td>
-              <td>착용 반복 방지 (Anti-repeat)</td>
-              <td>최근 7일 동일 조합, 3일 연속 동일 상의 배제</td>
-              <td>차순위 조합 큐레이션으로 재정렬</td>
-            </tr>
-            <tr>
-              <td>스타일리스트 브리핑</td>
-              <td>팩트 대조 (Fact Verification)</td>
-              <td>기온 수치, 일정 명칭, 아이템명 100% 일치</td>
-              <td>검증된 에디토리얼 템플릿 문장으로 대체</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- 카드형 상세 후처리 규칙 -->
-    <div class="post-grid">
-      <div class="card-muse post-item-card">
-        <div class="post-item-head">
-          <span class="tag-editorial lavender"><span class="dot"></span>AR Engine Guard</span>
-          <span class="body-sm font-serif">Rule 01</span>
-        </div>
-        <h3 class="headline-sm">가상 피팅 이미지 검증</h3>
-        <p class="body-md">생성형 가상 피팅은 체형을 인위적으로 날씬하게 왜곡하기 쉽습니다. MUSE는 본래 체형 마스크와 85% 이상 일치하지 않는 피팅 이미지는 절대 노출하지 않습니다.</p>
-        <div class="io-badge-group">
-          <div class="io-row"><span class="io-label">IN</span><span class="body-sm">생성된 드레이핑 프레임, 실측 신체 마스크</span></div>
-          <div class="io-row"><span class="io-label">RULE</span><span class="body-sm">CIE ΔE2000 &lt; 8.0, 하프미러 광학 30% 투과율 보정</span></div>
-        </div>
-      </div>
-
-      <div class="card-muse post-item-card">
-        <div class="post-item-head">
-          <span class="tag-editorial"><span class="dot"></span>Curation Logic</span>
-          <span class="body-sm font-serif">Rule 02</span>
-        </div>
-        <h3 class="headline-sm">스타일 다양성 & 반복 억제</h3>
-        <p class="body-md">추천 점수가 높아도 매일 검정 재킷만 추천되면 신뢰를 잃습니다. Style A(안정형), Style B(트렌드), Style C(새로운 시도)의 벡터 거리를 계산해 서로 완전히 다른 3가지 룩을 제안합니다.</p>
-        <div class="io-badge-group">
-          <div class="io-row"><span class="io-label">RULE</span><span class="body-sm">7일 내 동일 착용 배제, Style A/B/C 간 코사인 유사도 &lt; 0.65</span></div>
-          <div class="io-row"><span class="io-label">OUT</span><span class="body-sm">완전히 차별화된 3-Option 코디네이션 카드</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<section class="post section-alt" id="post"><div class="wrap grid">
+      <div class="section-intro"><span class="tag-editorial lavender"><span class="dot"></span>MVP Post-Processing</span>
+        <h2 class="headline-lg">추천 결과를 보여주기 전, 품질을 확인합니다</h2>
+        <p>API의 응답을 그대로 노출하지 않고 입력·태그·추천 조건을 확인하며, 문제가 있으면 재촬영·캐시·상품 정보 안내로 전환하는 후처리 정책을 설계합니다.</p></div>
+      <div class="card-muse table-card"><div class="table-card-head"><h3 class="headline-sm">MVP 품질 검사와 폴백 정책</h3>
+      <span class="tag-editorial lavender"><span class="dot"></span>Planned Validation</span></div>
+      <div class="table-wrap"><table class="muse-table"><thead><tr><th scope="col">영역</th><th scope="col">검사 항목</th><th scope="col">개발 검토 기준</th><th scope="col">문제 발생 시 대응</th></tr></thead>
+      <tbody><tr><td>의류 등록</td><td>크로마키 경계 오류</td><td>매트·조명별 마스크 품질 평가</td><td>사용자 확인 및 재촬영 안내</td></tr><tr><td>AI 태깅</td><td>잘못된 카테고리·소재 입력</td><td>JSON 스키마와 고정 태그 사전 검증</td><td>불확실한 값 보류, 사용자 수정</td></tr><tr><td>날씨·일정 추천</td><td>계절·격식 부적합</td><td>TPO 규칙 및 최근 7일 반복 여부</td><td>후보 제외 후 차순위 추천</td></tr><tr><td>가상 피팅</td><td>인체·의류 형상 왜곡</td><td>실루엣 일치도 등 비교 지표 검토</td><td>이미지 미표시, 상품·사이즈 정보 제공</td></tr><tr><td>가상 피팅</td><td>의류 색·패턴 변화</td><td>ΔE2000 등 색차 지표 실험 검토</td><td>결과 경고 또는 재생성 안내</td></tr><tr><td>API 실패</td><td>타임아웃·요금·장애</td><td>응답 상태와 캐시 가용성 확인</td><td>최근 코디 캐시·설명 템플릿 사용</td></tr></tbody></table></div></div>
+      <div class="post-grid">
+       <div class="card-muse post-item-card"><div class="post-item-head"><span class="tag-editorial lavender"><span class="dot"></span>VTON API Guard</span><span class="body-sm font-serif">Rule 01</span></div>
+        <h3 class="headline-sm">동의 기반 가상 피팅 검증</h3><p class="body-md">사용자가 동의한 이미지로만 API를 요청합니다. 체형 실루엣 유사도 85% 및 색차 ΔE2000 8.0 등의 값은 향후 검증할 후보 지표이며, 신뢰할 수 있는 비교 기준 이미지와 평가 방법을 먼저 확정해야 합니다.</p>
+        <div class="io-badge-group"><div class="io-row"><span class="io-label">IN</span><span class="body-sm">동의된 이미지 · VTON 생성 결과</span></div>
+         <div class="io-row"><span class="io-label">OUT</span><span class="body-sm">품질 안내 또는 상품 치수 정보 폴백</span></div></div></div>
+       <div class="card-muse post-item-card"><div class="post-item-head"><span class="tag-editorial"><span class="dot"></span>Styling Rules</span><span class="body-sm font-serif">Rule 02</span></div>
+        <h3 class="headline-sm">날씨·TPO·반복 추천 확인</h3><p class="body-md">최근 7일 동일 착용 반복을 줄이고, 날씨와 일정 격식에 맞는 코디를 우선 선택합니다. FashionSigLIP 벡터는 선호도 순위 계산에 활용되며 모델 재학습은 하지 않습니다.</p>
+        <div class="io-badge-group"><div class="io-row"><span class="io-label">RULE</span><span class="body-sm">체감온도 · 강수 · TPO · 착용 이력</span></div>
+        <div class="io-row"><span class="io-label">OUT</span><span class="body-sm">설명 가능한 코디 Top 3 · 캐시 폴백</span></div></div></div>
+      </div></div></section>
 
 <!-- ======================= 원칙과 설계 목표 ======================= -->
-<section id="goals">
-  <div class="wrap grid">
-    <div class="principles-col">
-      <span class="tag-editorial lavender"><span class="dot"></span>Core Philosophy</span>
-      <h2 class="headline-lg" style="margin-top:1rem">MUSE가 고수하는<br><span class="font-italic">4대 원칙</span></h2>
-      <ul class="principles-list">
-        <li>
-          <strong>01. 원본 신체 영상은 집 밖으로 나가지 않습니다</strong>
-          <span>모든 얼굴과 신체 실루엣 측정은 거울 내부 온디바이스 NPU에서 완결되며, 클라우드에는 익명화된 수치만 전송됩니다.</span>
-        </li>
-        <li>
-          <strong>02. 불확실한 데이터로 취향을 학습하지 않습니다</strong>
-          <span>조명이 불균일하거나 본인 확인 신뢰도가 낮은 날의 선택은 화면에만 임시 표시하고 Style DNA 학습 데이터셋에서 배제합니다.</span>
-        </li>
-        <li>
-          <strong>03. 판매 목적의 편향을 두지 않습니다</strong>
-          <span>메인 코디 추천은 항상 사용자가 옷장에 보유한 옷이 최우선이며, 미보유 쇼핑 상품은 별도 옵션으로만 명확히 구분 제안합니다.</span>
-        </li>
-        <li>
-          <strong>04. AI 생성의 실패는 숨기지 않습니다</strong>
-          <span>조명이나 왜곡으로 인해 피팅 품질이 기준에 못 미칠 경우 어설픈 합성 대신 실측 치수 비교표로 정직하게 전환합니다.</span>
-        </li>
-      </ul>
-    </div>
-
-    <div class="goals-col">
-      <span class="tag-editorial"><span class="dot"></span>Performance Targets</span>
-      <h2 class="headline-lg" style="margin-top:1rem">엔지니어링 목표 수치</h2>
-      <div class="card-muse" style="margin-top:2rem; overflow:hidden">
-        <table class="muse-table">
-          <thead>
-            <tr>
-              <th scope="col">지표 항목</th>
-              <th scope="col">설계 목표 기준</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>버튼 터치 후 오늘의 추천 룩 렌더링 (90% 백분위)</td>
-              <td class="num"><strong>&lt; 2.0 초</strong></td>
-            </tr>
-            <tr>
-              <td>AR 실시간 가상 피팅 드레이핑 응답</td>
-              <td class="num"><strong>&lt; 50 ms</strong></td>
-            </tr>
-            <tr>
-              <td>배경 행거 옷을 사용자 착용 의류로 오인식할 확률</td>
-              <td class="num"><strong>&lt; 0.8%</strong></td>
-            </tr>
-            <tr>
-              <td>D65 조명 보정 후 표준 색차 (ΔE2000)</td>
-              <td class="num"><strong>≤ 5.0</strong></td>
-            </tr>
-            <tr>
-              <td>신체 주요 둘레(가슴, 허리) 실측 오차 범위</td>
-              <td class="num"><strong>≤ 1.8 cm</strong></td>
-            </tr>
-            <tr>
-              <td>클라우드 서버로의 원본 얼굴 노출 건수</td>
-              <td class="num"><strong>0 건 (완전 보장)</strong></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="body-sm" style="margin-top:1rem; color:var(--ink-muted)">
-        * 위 수치는 서울 시범 거주 가구 20곳의 파일럿 테스트 하드웨어 실측 데이터를 기준으로 지속 최적화되고 있습니다.
-      </p>
-    </div>
-  </div>
-</section>
+<section id="goals"><div class="wrap grid">
+      <div class="principles-col"><span class="tag-editorial lavender"><span class="dot"></span>MVP Core Philosophy</span>
+        <h2 class="headline-lg" style="margin-top:1rem">MUSE가 지향하는<br><span class="font-italic">4대 원칙</span></h2>
+        <ul class="principles-list"><li><strong>01. 원본 신체 영상은 거울에서 처리합니다</strong><span>일반 포즈 분석 영상은 기기 외부로 보내지 않는 구조로 설계합니다. 가상 피팅 이미지 전송은 별도 동의를 받은 경우에만 가능합니다.</span></li><li><strong>02. 사용자 데이터는 목적에 맞게 분리합니다</strong><span>태깅 API에는 옷 사진을, 추천 서버에는 필요한 파생 정보를 전달하도록 설계하며 API 보관·학습 정책을 검토합니다.</span></li><li><strong>03. 내가 보유한 옷을 우선 추천합니다</strong><span>일상 코디는 디지털 옷장에 등록된 의류를 중심으로 만들고, 미보유 상품은 선택형 가상 피팅으로 구분합니다.</span></li><li><strong>04. 오류가 발생하면 안전하게 되돌아갑니다</strong><span>태깅 실패는 사용자 확인으로, 추천 API 지연은 코디 캐시로, 피팅 결과 품질 저하는 상품 정보 안내로 전환합니다.</span></li></ul></div>
+      <div class="goals-col"><span class="tag-editorial"><span class="dot"></span>Development Targets</span>
+        <h2 class="headline-lg" style="margin-top:1rem">MVP 엔지니어링 목표</h2>
+        <div class="card-muse" style="margin-top:2rem;overflow:hidden"><table class="muse-table"><thead><tr><th scope="col">항목</th><th scope="col">개발 목표</th></tr></thead><tbody><tr><td>MediaPipe 포즈 추적</td><td class="num"><strong>15 FPS 이상 목표</strong></td></tr><tr><td>추천 요청 → 코디 Top 3 표시</td><td class="num"><strong>2.0초 이내 목표</strong></td></tr><tr><td>촬영 매트 기반 옷장 등록</td><td class="num"><strong>5.0초 이내 목표</strong></td></tr><tr><td>동의 기반 가상 피팅 이미지 생성</td><td class="num"><strong>15.0초 이내 목표</strong></td></tr><tr><td>직접 운영 AI 모델 / 파트너 API</td><td class="num"><strong>2개 모델 / 2개 API</strong></td></tr><tr><td>MVP 단계 모델 추가 학습·미세조정</td><td class="num"><strong>0건 계획</strong></td></tr></tbody></table></div>
+        <p class="body-sm" style="margin-top:1rem;color:var(--ink-muted)">※ 수치는 실측 성과가 아닌 MVP 개발 목표입니다. 모델·API 구성, 지연 시간과 정확도는 실제 기기 및 파트너 API로 검증 후 조정합니다.</p></div>
+    </div></section>
 </main>
 
 <!-- 푸터 -->
@@ -1306,7 +1083,7 @@ footer .brand-wordmark { font-size: 22px; }
       <span class="brand-wordmark">MUSE</span>
       <span class="body-sm" style="color:var(--ink-muted)">Your Personal AI Stylist · Atelier Ambient Intelligence</span>
     </div>
-    <span class="body-sm" style="color:var(--ink-muted)">© 2025 MUSE Atelier Inc. All rights reserved.</span>
+    <span class="body-sm" style="color:var(--ink-muted)">© 2026 MUSE · AI Smart Mirror MVP Concept.</span>
   </div>
   <!-- AI Research sibling-page link -->
   <div class="wrap" style="padding-top:0;padding-bottom:1.5rem;display:flex;gap:1.5rem;flex-wrap:wrap;">
@@ -1328,20 +1105,58 @@ footer .brand-wordmark { font-size: 22px; }
   });
   updateSlider(slider.value);
 
+  // 모바일 내비게이션 토글
+  var navToggle = document.getElementById('dp-nav-toggle');
+  var nav = document.getElementById('dp-nav');
+  function setNav(open) {
+    nav.classList.toggle('is-open', open);
+    navToggle.setAttribute('aria-expanded', String(open));
+    navToggle.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+    navToggle.textContent = open ? '✕' : '☰';
+  }
+  navToggle.addEventListener('click', function() {
+    setNav(!nav.classList.contains('is-open'));
+  });
+  nav.querySelectorAll('a').forEach(function(link) {
+    link.addEventListener('click', function() { setNav(false); });
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+      setNav(false);
+      navToggle.focus();
+    }
+  });
+
   // 전처리 파이프라인 탭 전환
   var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
-  tabButtons.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      tabButtons.forEach(function(b) {
-        b.setAttribute('aria-selected', 'false');
-        var panelId = b.getAttribute('aria-controls');
-        var panel = document.getElementById(panelId);
-        if (panel) panel.hidden = true;
-      });
-      btn.setAttribute('aria-selected', 'true');
-      var targetId = btn.getAttribute('aria-controls');
-      var targetPanel = document.getElementById(targetId);
-      if (targetPanel) targetPanel.hidden = false;
+  function selectTab(btn) {
+    tabButtons.forEach(function(b) {
+      b.setAttribute('aria-selected', 'false');
+      b.tabIndex = -1;
+      var panelId = b.getAttribute('aria-controls');
+      var panel = document.getElementById(panelId);
+      if (panel) panel.hidden = true;
+    });
+    btn.setAttribute('aria-selected', 'true');
+    btn.tabIndex = 0;
+    var targetId = btn.getAttribute('aria-controls');
+    var targetPanel = document.getElementById(targetId);
+    if (targetPanel) targetPanel.hidden = false;
+  }
+  tabButtons.forEach(function(btn, i) {
+    btn.tabIndex = btn.getAttribute('aria-selected') === 'true' ? 0 : -1;
+    btn.addEventListener('click', function() { selectTab(btn); });
+    btn.addEventListener('keydown', function(e) {
+      var next = null;
+      if (e.key === 'ArrowRight') next = tabButtons[(i + 1) % tabButtons.length];
+      else if (e.key === 'ArrowLeft') next = tabButtons[(i - 1 + tabButtons.length) % tabButtons.length];
+      else if (e.key === 'Home') next = tabButtons[0];
+      else if (e.key === 'End') next = tabButtons[tabButtons.length - 1];
+      if (next) {
+        e.preventDefault();
+        selectTab(next);
+        next.focus();
+      }
     });
   });
 })();

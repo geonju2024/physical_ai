@@ -3,13 +3,12 @@
 <html class="scroll-smooth" lang="ko"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>MUSE — Your Personal AI Stylist</title>
+<title>MUSE — Your Personal AI Stylist | MVP</title>
 <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <!-- Material Symbols Outlined -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <!-- Tailwind CSS v3 -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -147,6 +146,8 @@
     .material-symbols-outlined.fill-icon {
       font-variation-settings: 'FILL' 1, 'wght' 400;
     }
+    [id] { scroll-margin-top: 96px; }
+    body { word-break: keep-all; overflow-wrap: break-word; }
   </style>
 </head>
 <body class="bg-surface text-on-surface antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed">
@@ -156,45 +157,24 @@
 <header class="docked full-width top-0 sticky z-50 bg-surface/80 dark:bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant/30 dark:border-outline/20 transition-all duration-300 ease-out">
 <div class="flex justify-between items-center w-full max-w-7xl mx-auto px-6 md:px-10 py-5">
 <!-- Brand Logo -->
-<a class="font-display-hero text-headline-md tracking-tight font-normal text-primary dark:text-on-surface flex items-center gap-2" href="#">
+<a class="font-display-hero text-headline-md tracking-tight font-normal text-primary dark:text-on-surface flex items-center gap-2" href="./index.html">
 <span>MUSE</span>
 <span class="w-1.5 h-1.5 rounded-full bg-secondary inline-block"></span>
 </a>
 <!-- Desktop Navigation Links -->
-<nav class="hidden lg:flex items-center gap-5 font-label-uppercase text-label-uppercase">
-<a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#about">About</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#how-it-works">How it works</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#features">Features</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="./data-pipeline.html">Data Pipeline</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="./ai-research.html">AI Research</a>
-<a class="text-primary dark:text-on-surface font-semibold border-b border-primary dark:border-inverse-primary pb-1" href="#virtual-try-on">Virtual Try-On</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary transition-colors pb-1" href="#my-style">My Style</a>
-</nav>
+<nav class="hidden xl:flex items-center gap-5 font-label-uppercase text-label-uppercase"><a class="text-on-surface-variant hover:text-secondary transition-colors pb-1" href="#about">About</a><a class="text-on-surface-variant hover:text-secondary transition-colors pb-1" href="#features">Features</a><a class="text-on-surface-variant hover:text-secondary transition-colors pb-1" href="#virtual-try-on">Virtual Try-On</a><a class="text-on-surface-variant hover:text-secondary transition-colors pb-1" href="#my-style">Learn Me</a><a class="text-on-surface-variant hover:text-secondary transition-colors pb-1" href="#mvp-specs">MVP Specs</a><a class="text-on-surface-variant hover:text-secondary transition-colors pb-1" href="./ai-research.html">AI Research</a><a class="text-on-surface-variant hover:text-secondary transition-colors pb-1" href="./data-pipeline.html">Data Pipeline</a></nav>
 <!-- Trailing Action -->
 <div class="flex items-center gap-3">
 <button class="hidden sm:inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary-container px-6 py-2.5 rounded-xl font-label-uppercase text-label-uppercase tracking-wider transition-all duration-200 hover:shadow-[0_4px_20px_rgba(96,80,175,0.25)]" onclick="document.getElementById('cta-section').scrollIntoView({behavior: 'smooth'})">
 <span>Meet MUSE</span>
 <span class="material-symbols-outlined text-secondary-fixed text-base" data-icon="auto_awesome">auto_awesome</span>
 </button>
-<a href="./data-pipeline.html" aria-label="Data Pipeline" class="lg:hidden p-2 rounded-lg text-primary hover:bg-surface-container">
-<span class="material-symbols-outlined">account_tree</span>
-</a>
-<button id="muse-site-menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="muse-site-mobile-menu" class="lg:hidden p-2 rounded-lg text-primary hover:bg-surface-container">
+<button aria-controls="muse-mobile-nav" aria-expanded="false" aria-label="메뉴 열기" class="xl:hidden p-2 rounded-lg text-primary hover:bg-surface-container" id="muse-mobile-toggle" type="button">
 <span class="material-symbols-outlined">menu</span>
 </button>
 </div>
 </div>
-
-<!-- MUSE AI Research: mobile site navigation -->
-<nav id="muse-site-mobile-menu" aria-label="모바일 사이트 메뉴" class="hidden lg:hidden border-t border-outline-variant/30 bg-surface px-6 py-5">
-  <div class="max-w-7xl mx-auto grid grid-cols-2 gap-4 font-label-uppercase text-sm text-on-surface-variant">
-    <a href="./index.html">Home</a><a href="./data-pipeline.html">Data Pipeline</a>
-    <a href="./ai-research.html">AI Research</a><a href="#about">About</a>
-    <a href="#how-it-works">How it works</a><a href="#features">Features</a>
-    <a href="#virtual-try-on">Virtual Try-On</a><a href="#my-style">My Style</a>
-  </div>
-</nav>
-</header>
+<nav aria-label="모바일 사이트 메뉴" class="hidden xl:hidden border-t border-outline-variant/30 bg-surface/95 backdrop-blur-md px-6 py-5" id="muse-mobile-nav"><div class="max-w-7xl mx-auto grid grid-cols-2 gap-4 text-sm font-semibold text-on-surface-variant"><a class="text-on-surface-variant hover:text-secondary transition-colors" href="./index.html">Home</a><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#about">About</a><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#features">Features</a><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#virtual-try-on">Virtual Try-On</a><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#my-style">Learn Me</a><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#mvp-specs">MVP Specs</a><a class="text-on-surface-variant hover:text-secondary transition-colors" href="./ai-research.html">AI Research</a><a class="text-on-surface-variant hover:text-secondary transition-colors" href="./data-pipeline.html">Data Pipeline</a></div></nav></header>
 <!-- ========================================================================= -->
 <!-- 2. HERO SECTION                                                           -->
 <!-- ========================================================================= -->
@@ -210,7 +190,7 @@
             AI PICK
           </span>
 <span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-uppercase text-label-uppercase">
-            92% MATCH
+            MATCH PREVIEW
           </span>
 <span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-uppercase text-label-uppercase">
             OOTD CURATION
@@ -241,12 +221,8 @@
 </div>
 <!-- Micro Social Proof / Subtle Footnote -->
 <div class="pt-4 flex items-center gap-4 text-outline font-body-sm text-body-sm border-t border-outline-variant/30 w-full">
-<div class="flex -space-x-2 overflow-hidden">
-<span class="inline-block h-7 w-7 rounded-full ring-2 ring-surface bg-surface-container-high text-[10px] font-bold flex items-center justify-center text-primary">29</span>
-<span class="inline-block h-7 w-7 rounded-full ring-2 ring-surface bg-primary text-[10px] font-bold flex items-center justify-center text-white">ZR</span>
-<span class="inline-block h-7 w-7 rounded-full ring-2 ring-surface bg-secondary-fixed text-[10px] font-bold flex items-center justify-center text-on-secondary-fixed">VG</span>
-</div>
-<span>Curated with modern Seoul &amp; Tokyo contemporary fashion labels</span>
+<span class="material-symbols-outlined text-secondary text-lg">science</span>
+<span>MVP 개발·검증 단계 · 화면의 코디와 수치는 콘셉트 예시입니다.</span>
 </div>
 </div>
 <!-- Right Smart Mirror Presentation with High-Res Image & Interactive Glass Widgets -->
@@ -283,13 +259,13 @@
 <div class="text-left">
 <div class="flex items-center gap-2">
 <span class="font-label-tag text-xs font-semibold text-primary">Look 01 / Look 02</span>
-<span class="px-1.5 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold">92% Match</span>
+<span class="px-1.5 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed text-[10px] font-bold">Style Preview</span>
 </div>
 <span class="font-body-sm text-[11px] text-on-surface-variant block">Soft Crop Jacket + Silver Bag</span>
 </div>
-<button class="ml-1 px-3 py-1.5 bg-primary text-white rounded-lg font-label-uppercase text-[10px] tracking-wider hover:bg-secondary transition-colors">
+<a class="ml-1 px-3 py-1.5 bg-primary text-white rounded-lg font-label-uppercase text-[10px] tracking-wider hover:bg-secondary transition-colors" href="#virtual-try-on">
                 Try it on
-              </button>
+              </a>
 </div>
 </div>
 </div>
@@ -338,7 +314,7 @@
 <span class="material-symbols-outlined text-outline text-xl mt-0.5">checkroom</span>
 <div>
 <p class="font-title-editorial text-title-editorial text-primary">“옷은 많은데 정작 입을 게 없어.”</p>
-<p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">가득 찬 옷장 앞에서 매일 아침 15분 이상 서성이며 겪는 아침 루틴의 소모적 피로감.</p>
+<p class="mt-2 font-body-sm text-body-sm text-on-surface-variant">가득 찬 옷장 앞에서 매일 아침 반복되는 고민과 소모적인 피로감.</p>
 </div>
 </div>
 </div>
@@ -386,22 +362,24 @@
 </div>
 <!-- Central Intelligence Hub Diagram -->
 <div class="relative">
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
-<!-- Pillar 1: Body -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10"><!-- Pillar 1: Body -->
 <div class="bg-surface-container-lowest p-7 rounded-2xl editorial-border flex flex-col justify-between hover:shadow-lg transition-all duration-300">
 <div>
 <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary mb-6">
 <span class="material-symbols-outlined text-2xl">accessibility_new</span>
 </div>
-<span class="font-label-uppercase text-label-uppercase text-secondary block mb-1">01 / SILHOUETTE</span>
-<h3 class="font-title-editorial text-title-editorial text-primary mb-2">BODY (체형과 신체 비율)</h3>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-label-uppercase text-label-uppercase text-secondary block">01 / SILHOUETTE</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed text-[10px] font-semibold font-label-tag">15 FPS 이상 목표</span>
+</div>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-2">BODY — 나의 체형을 이해하다</h3>
 <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              키, 어깨 라인, 골반 비율과 다리 길이를 입체적으로 분석하여 가장 돋보이는 핏과 기장감을 도출합니다.
-            </p>
+      MediaPipe로 자세와 신체 비율을 분석하고, ToF 깊이 센서를 활용해 체형 정보를 추정합니다. 분석 결과는 개인화 코디 추천에 활용됩니다.
+    </p>
 </div>
 <div class="mt-6 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline font-label-tag text-xs">
-<span>실루엣 밸런스</span>
-<span class="font-semibold text-primary">Golden Ratio</span>
+<span>센싱 기술</span>
+<span class="font-semibold text-primary">MediaPipe + ToF Depth</span>
 </div>
 </div>
 <!-- Pillar 2: Style -->
@@ -413,29 +391,48 @@
 <span class="font-label-uppercase text-label-uppercase text-secondary block mb-1">02 / PREFERENCE</span>
 <h3 class="font-title-editorial text-title-editorial text-primary mb-2">STYLE (나의 취향)</h3>
 <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              좋아하는 모노톤 팔레트, 선호하는 오버사이즈 핏, 미니멀하거나 아방가르드한 감성 선호도를 점진적으로 학습합니다.
-            </p>
+      FashionSigLIP으로 만든 의류 특징 벡터 위에 Wear/Pass 피드백을 쌓아 사용자 취향 벡터를 갱신합니다. 모델 자체는 재학습하지 않습니다.
+    </p>
 </div>
 <div class="mt-6 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline font-label-tag text-xs">
-<span>취향 데이터셋</span>
-<span class="font-semibold text-primary">Adaptive Memory</span>
+<span>임베딩 모델</span>
+<span class="font-semibold text-primary">FashionSigLIP + 취향 벡터</span>
 </div>
 </div>
-<!-- Pillar 3: Closet -->
+<!-- Pillar 3: Wardrobe (Updated from Closet) -->
 <div class="bg-surface-container-lowest p-7 rounded-2xl editorial-border flex flex-col justify-between hover:shadow-lg transition-all duration-300">
 <div>
 <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary mb-6">
 <span class="material-symbols-outlined text-2xl">dry_cleaning</span>
 </div>
-<span class="font-label-uppercase text-label-uppercase text-secondary block mb-1">03 / INVENTORY</span>
-<h3 class="font-title-editorial text-title-editorial text-primary mb-2">CLOSET (나의 옷장)</h3>
-<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              스마트 미러 촬영 한 번으로 보유 중인 상·하의, 슈즈, 가방을 디지털 아카이빙하여 100% 실현 가능한 코디를 제안합니다.
-            </p>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-label-uppercase text-label-uppercase text-secondary block">03 / INVENTORY</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed text-[10px] font-semibold font-label-tag">5초 이내 목표</span>
+</div>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-2">MY WARDROBE — 내 옷장을 디지털로</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-3">
+      촬영 매트에서 의류 사진을 촬영하고, 자동 배경 제거와 AI 속성 분석을 거쳐 나만의 디지털 옷장을 구성합니다.
+    </p>
+<p class="font-body-sm text-xs text-outline leading-normal mb-4">
+      옷의 종류, 색상, 패턴, 계절 정보를 분석해 코디 추천에 활용합니다. (등록 목표: 5초 이내)
+    </p>
+<!-- Wardrobe Micro Pipeline Graphic -->
+<div class="p-2.5 rounded-xl bg-surface-container border border-outline-variant/30 text-[11px] font-label-tag text-on-surface-variant space-y-1.5">
+<div class="text-[10px] uppercase font-bold text-secondary tracking-wider">Registration Flow</div>
+<div class="flex items-center justify-between text-[11px] text-primary">
+<span>촬영 매트</span>
+<span class="text-outline">→</span>
+<span>배경 제거</span>
+<span class="text-outline">→</span>
+<span>AI 태깅</span>
+<span class="text-outline">→</span>
+<span class="font-semibold text-secondary">옷장 등록</span>
+</div>
+</div>
 </div>
 <div class="mt-6 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline font-label-tag text-xs">
-<span>디지털 아카이브</span>
-<span class="font-semibold text-primary">Virtual Wardrobe</span>
+<span>속성 추출 엔진</span>
+<span class="font-semibold text-primary">Vision LLM API</span>
 </div>
 </div>
 <!-- Pillar 4: Context -->
@@ -447,30 +444,30 @@
 <span class="font-label-uppercase text-label-uppercase text-secondary block mb-1">04 / ENVIRONMENT</span>
 <h3 class="font-title-editorial text-title-editorial text-primary mb-2">CONTEXT (오늘의 상황)</h3>
 <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              실시간 날씨와 온습도, 캘린더 미팅의 성격(PT, 캐주얼 런치, 디너 파티), 방문 장소의 TPO를 복합 연산합니다.
-            </p>
+      외출 시점의 날씨와 사용자가 동의한 일정의 격식을 고려해 스타일링 규칙을 적용합니다.
+    </p>
 </div>
 <div class="mt-6 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-outline font-label-tag text-xs">
 <span>환경 맥락</span>
-<span class="font-semibold text-primary">TPO Sync Engine</span>
+<span class="font-semibold text-primary">TPO Context Sync</span>
 </div>
-</div>
-</div>
+</div></div>
 <!-- Center Core Visual Connection Bar -->
-<div class="mt-10 p-6 rounded-2xl bg-surface-container-high/60 border border-outline-variant/40 flex flex-col md:flex-row items-center justify-between gap-6">
-<div class="flex items-center gap-4">
+<div class="mt-10 p-6 rounded-2xl bg-surface-container-high/60 border border-outline-variant/40 flex flex-col md:flex-row items-center justify-between gap-6"><div class="flex items-center gap-4">
 <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center">
 <span class="material-symbols-outlined text-lg fill-icon" data-icon="auto_awesome">auto_awesome</span>
 </div>
 <div>
-<span class="font-label-uppercase text-label-uppercase text-secondary">CORE ENGINE</span>
-<h4 class="font-title-editorial text-title-editorial text-primary">MUSE Core Intelligence Layer</h4>
+<span class="font-label-uppercase text-label-uppercase text-secondary">CORE ENGINE ARCHITECTURE</span>
+<h4 class="font-title-editorial text-title-editorial text-primary">MUSE Styling Rule Engine</h4>
 </div>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xl text-left md:text-right">
-          신체 비율 × 취향 벡터 × 실제 보유 의류 × 오늘의 TPO가 실시간으로 교차 연산되어 0.2초 내에 최적의 3가지 착장을 렌더링합니다.
-        </p>
-</div>
+<div class="flex flex-col md:items-end text-left md:text-right gap-1">
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xl">
+    MUSE 서버에서 FashionSigLIP 특징 벡터와 사용자 취향 벡터, 날씨·일정 필터, 스타일링 규칙을 결합해 Top 3 코디를 고릅니다.
+  </p>
+<span class="font-label-tag text-xs text-secondary font-semibold">Top 3 추천 응답 목표: 2초 이내 (실측 전)</span>
+</div></div>
 </div>
 </section>
 <!-- ========================================================================= -->
@@ -484,28 +481,33 @@
           One Mirror. Your Entire Style.
         </h2>
 <p class="mt-3 font-body-lg text-body-lg text-on-surface-variant">
-          거울 앞에 서는 것만으로 시작되는 지능형 스타일링의 5가지 시그니처 경험.
+          거울과 옷장 데이터를 연결해 완성할 다섯 가지 MVP 스타일링 경험입니다.
         </p>
 </div>
 <!-- Bento Grid for Features -->
 <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
 <!-- Feature 1: AI Outfit Recommendation (Large Bento 7 cols) -->
-<div class="md:col-span-7 bg-surface-container-lowest p-8 rounded-3xl editorial-border flex flex-col justify-between">
-<div>
+<div class="md:col-span-7 bg-surface-container-lowest p-8 rounded-3xl editorial-border flex flex-col justify-between"><div>
 <div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-2">
 <span class="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-uppercase text-[11px] font-semibold">FEATURE 01</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-secondary text-[11px] font-bold font-label-tag">추천 응답 목표: 2초 이내</span>
+</div>
 <span class="font-body-sm text-xs text-outline">Smart Mirror Synchronized</span>
 </div>
 <h3 class="font-headline-sm text-headline-sm text-primary mb-3">AI Outfit Recommendation</h3>
-<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-lg mb-6">
-              당신의 신체 비율과 당일 무드에 기반하여 완전한 착장 레이어링을 제시합니다.
-            </p>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-lg mb-2">
+    체형, 취향, 보유 의류, 날씨와 일정을 함께 고려해 오늘의 코디 Top 3를 추천합니다.
+  </p>
+<p class="font-body-sm text-xs text-outline mb-6">
+    FashionSigLIP 특징 벡터·취향 벡터와 스타일링 규칙 엔진을 결합해 후보를 정렬하며, 최근 7일 반복 코디는 줄입니다.
+  </p>
 </div>
 <!-- Interactive Outfit Card Simulation -->
 <div class="bg-surface-container p-5 rounded-2xl border border-outline-variant/40">
 <div class="flex items-center justify-between pb-3 border-b border-outline-variant/30 mb-4">
 <span class="font-label-uppercase text-label-uppercase text-primary font-bold">TODAY'S LOOK : SOFT MINIMAL</span>
-<span class="font-label-tag text-xs bg-surface-container-lowest px-2 py-0.5 rounded text-secondary font-semibold">92% Match</span>
+<span class="font-label-tag text-xs bg-surface-container-lowest px-2 py-0.5 rounded text-secondary font-semibold">Top 1 (Style Preview)</span>
 </div>
 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
 <div class="bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/20">
@@ -529,8 +531,7 @@
 <span class="font-body-sm text-xs font-medium text-primary">Silver Bag</span>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 <!-- Feature 2: Context-Aware Styling (5 cols) -->
 <div class="md:col-span-5 bg-surface-container-lowest p-8 rounded-3xl editorial-border flex flex-col justify-between">
 <div>
@@ -540,7 +541,7 @@
 </div>
 <h3 class="font-headline-sm text-headline-sm text-primary mb-3">Context-Aware Styling</h3>
 <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-              날씨와 캘린더를 연동해 TPO에 오차 없는 스타일링 어드바이스를 전달합니다.
+              날씨와 사용자가 동의한 일정 정보를 바탕으로 상황에 맞는 스타일링 제안을 전달합니다.
             </p>
 </div>
 <div class="mt-6 p-4 rounded-2xl bg-secondary-fixed/30 border border-secondary/20">
@@ -554,41 +555,42 @@
 </div>
 </div>
 <!-- Feature 3: Virtual Try-On (5 cols) -->
-<div class="md:col-span-5 bg-surface-container-lowest p-8 rounded-3xl editorial-border flex flex-col justify-between">
-<div>
+<div class="md:col-span-5 bg-surface-container-lowest p-8 rounded-3xl editorial-border flex flex-col justify-between"><div>
 <div class="flex items-center justify-between mb-6">
 <span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-uppercase text-[11px] font-semibold">FEATURE 03</span>
-<span class="material-symbols-outlined text-secondary">view_in_ar</span>
+<span class="material-symbols-outlined text-secondary">photo_library</span>
 </div>
 <h3 class="font-headline-sm text-headline-sm text-primary mb-3">Virtual Try-On</h3>
 <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-4">
-              아직 구매하지 않은 29CM, ZARA 위시리스트 아이템을 거울 속 내 모습 위에 왜곡 없이 실시간 피팅합니다.
-            </p>
+    아직 보유하지 않은 옷도 AI 가상 피팅으로 미리 확인할 수 있습니다. 사용자의 동의를 받은 이미지를 활용해 예상 착용 모습을 생성합니다. 실시간 3D AR 드레이핑이 아닌 2D 이미지 생성 방식입니다.
+  </p>
 </div>
 <div class="p-4 bg-surface-container rounded-2xl flex items-center justify-between">
 <div class="flex items-center gap-3">
-<span class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center text-xs font-semibold">AR</span>
+<span class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center text-xs font-semibold">AI</span>
 <div>
-<span class="font-title-editorial text-xs font-semibold text-primary block">Instant Silhouette Warping</span>
-<span class="font-body-sm text-[11px] text-on-surface-variant">0.05초 고정밀 3D 드레이핑</span>
+<span class="font-title-editorial text-xs font-semibold text-primary block">외부 VTON API 활용 예정</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">피팅 이미지 생성 목표: 15초 이내</span>
 </div>
 </div>
-<span class="px-2 py-1 bg-surface-container-lowest text-xs rounded border border-outline-variant/40 font-mono">Active</span>
-</div>
-</div>
+<span class="px-2 py-1 bg-surface-container-lowest text-xs rounded border border-outline-variant/40 font-mono">MVP Target</span>
+</div></div>
 <!-- Feature 4: Smart Closet (7 cols) -->
-<div class="md:col-span-7 bg-surface-container-lowest p-8 rounded-3xl editorial-border flex flex-col justify-between">
-<div>
+<div class="md:col-span-7 bg-surface-container-lowest p-8 rounded-3xl editorial-border flex flex-col justify-between"><div>
 <div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-2">
 <span class="px-3 py-1 rounded-full bg-surface-container text-on-surface font-label-uppercase text-[11px] font-semibold">FEATURE 04</span>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed text-[11px] font-bold font-label-tag">등록 목표: 5초 이내</span>
+</div>
 <span class="material-symbols-outlined text-outline">category</span>
 </div>
-<h3 class="font-headline-sm text-headline-sm text-primary mb-3">Smart Digital Closet</h3>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-3">My Digital Wardrobe</h3>
 <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-lg mb-6">
-              내가 가진 옷들의 카테고리, 컬러군, 착용 빈도를 자동으로 분류하고 잊혀진 아이템의 새로운 매칭을 제안합니다.
-            </p>
+    촬영 매트 사진 한 장으로 옷의 종류, 색상, 패턴, 계절 정보를 자동 추출하여 나만의 디지털 옷장을 구축하고 실현 가능한 코디를 제안합니다.
+  </p>
 </div>
 <!-- Closet Category Rails -->
+<p class="font-label-uppercase text-[10px] text-outline tracking-wider mb-2">예시 옷장 데이터</p>
 <div class="flex flex-wrap gap-2">
 <span class="px-3 py-1.5 rounded-lg bg-surface-container font-label-tag text-xs text-primary font-medium flex items-center gap-1.5">
 <span>Tops</span> <span class="text-outline text-[11px]">34</span>
@@ -608,8 +610,7 @@
 <span class="px-3 py-1.5 rounded-lg bg-surface-container font-label-tag text-xs text-primary font-medium flex items-center gap-1.5">
 <span>Accessories</span> <span class="text-outline text-[11px]">15</span>
 </span>
-</div>
-</div>
+</div></div>
 <!-- Feature 5: Personal Style Memory (Span full 12 cols) -->
 <div class="md:col-span-12 bg-surface-container-lowest p-8 md:p-10 rounded-3xl editorial-border">
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -630,13 +631,13 @@
 </div>
 <div class="p-5 rounded-2xl bg-surface-container border border-outline-variant/30 relative">
 <span class="font-label-uppercase text-xs font-bold text-secondary">DAY 30</span>
-<p class="font-title-editorial text-body-lg text-primary mt-2">“블랙 아우터 + 와이드핏 조합 선호도 84%”</p>
-<p class="font-body-sm text-xs text-on-surface-variant mt-2">반복 착용 패턴과 계절별 실루엣 조합의 데이터 모델 완성</p>
+<p class="font-title-editorial text-body-lg text-primary mt-2">“블랙 아우터 + 와이드핏 취향 예시”</p>
+<p class="font-body-sm text-xs text-on-surface-variant mt-2">반복 착용 패턴과 계절별 실루엣 선호가 취향 벡터에 반영되는 단계 (예시)</p>
 </div>
 <div class="p-5 rounded-2xl bg-surface-container-high border border-secondary/30 relative">
 <span class="font-label-uppercase text-xs font-bold text-primary">DAY 100+</span>
-<p class="font-title-editorial text-body-lg text-primary mt-2">“MUSE knows your style completely”</p>
-<p class="font-body-sm text-xs text-on-surface-variant mt-2">선택 전 이미 준비된 가장 완벽한 3가지 맞춤 스타일 제안</p>
+<p class="font-title-editorial text-body-lg text-primary mt-2">“Closer to your style”</p>
+<p class="font-body-sm text-xs text-on-surface-variant mt-2">보유 의류와 선호를 고려한 3가지 코디 후보 (디자인 예시)</p>
 </div>
 </div>
 </div>
@@ -653,7 +654,7 @@
         Your Morning with MUSE
       </h2>
 <p class="mt-4 font-body-lg text-body-lg text-on-surface-variant">
-        외출 전 옷장 앞에서 낭비하던 20분을 단 5분의 명쾌하고 설레는 스타일링 경험으로 바꿉니다.
+        외출 전 반복되는 코디 고민을 줄이고, 보다 가벼운 아침 스타일링 경험을 지향합니다.
       </p>
 </div>
 <!-- Timeline Journey -->
@@ -681,7 +682,7 @@
 <div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-surface border-4 border-secondary z-10"></div>
 <div class="md:w-1/2 order-2 md:order-2">
 <span class="font-label-uppercase text-xs font-bold text-secondary">08:00 AM</span>
-<h3 class="font-title-editorial text-title-editorial text-primary mt-1">날씨(14°C) &amp; 발표 일정 자동 브리핑</h3>
+<h3 class="font-title-editorial text-title-editorial text-primary mt-1">날씨(17°C) &amp; 발표 일정 브리핑</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">“오늘 오후 3시 디자인 스프린트 발표가 있습니다. 쌀쌀한 환절기 날씨에 맞는 블레이저를 추천합니다.”</p>
 </div>
 </div>
@@ -700,13 +701,13 @@
 <!-- Step 4 -->
 <div class="relative flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-12 pl-14 md:pl-0">
 <div class="md:w-1/2 md:text-right order-1 md:order-1">
-<span class="inline-block px-3 py-1 rounded bg-surface-container font-label-tag text-xs text-outline">Voice / Touch Feedback</span>
+<span class="inline-block px-3 py-1 rounded bg-surface-container font-label-tag text-xs text-outline">Gesture / Touch Feedback</span>
 </div>
 <div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-surface border-4 border-outline z-10"></div>
 <div class="md:w-1/2 order-2 md:order-2">
 <span class="font-label-uppercase text-xs font-bold text-secondary">08:04 AM</span>
-<h3 class="font-title-editorial text-title-editorial text-primary mt-1">빠른 사용자 피드백 반영</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">“두 번째 룩에 실버 백 매치해줘” — 즉각적인 음성 요청을 받아 가방 및 주얼리 옵션을 교체 피팅합니다.</p>
+<h3 class="font-title-editorial text-title-editorial text-primary mt-1">손짓으로 다른 후보 보기</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">MediaPipe Hands 손짓 또는 터치로 Look 01~03을 넘겨 보고, 마음에 들지 않는 후보는 Pass로 표시합니다.</p>
 </div>
 </div>
 <!-- Step 5 -->
@@ -714,7 +715,7 @@
 <div class="md:w-1/2 md:text-right">
 <span class="font-label-uppercase text-xs font-bold text-secondary">08:05 AM</span>
 <h3 class="font-title-editorial text-title-editorial text-primary mt-1">“Wear this look” 원클릭 결정</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">선택 완료 즉시 착용 히스토리가 기록되고 외출 준비가 끝납니다.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Wear 선택은 착용 이력과 취향 벡터에 반영되고, 최근 7일 반복 방지 규칙에 사용됩니다.</p>
 </div>
 <div class="absolute left-6 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-secondary border-4 border-surface z-10"></div>
 <div class="md:w-1/2">
@@ -726,32 +727,38 @@
 <!-- Big highlight typography -->
 <div class="mt-20 text-center">
 <p class="font-display-hero-mobile md:font-headline-lg text-headline-sm md:text-headline-lg text-primary font-medium tracking-tight">
-        “5분 만에 오늘의 완벽한 스타일 완성.”
+        “오늘의 코디를 더 가볍게.”
       </p>
 </div>
 </section>
 <!-- ========================================================================= -->
 <!-- 7. VIRTUAL TRY-ON SHOWCASE ('Don’t imagine it. Try it.')                  -->
 <!-- ========================================================================= -->
-<section class="py-24 md:py-32 bg-surface-container-low border-t border-outline-variant/30" id="virtual-try-on">
-<div class="max-w-7xl mx-auto px-6 md:px-10">
+<section class="py-24 md:py-32 bg-surface-container-low border-t border-outline-variant/30" id="virtual-try-on"><div class="max-w-7xl mx-auto px-6 md:px-10">
 <div class="max-w-3xl mx-auto text-center mb-16">
-<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">AR MIRROR FITTING</span>
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">AI MIRROR FITTING</span>
 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-medium">
-          Don’t imagine it. Try it.
-        </h2>
+      Virtual Try-On
+    </h2>
 <p class="mt-4 font-body-lg text-body-lg text-on-surface-variant">
-          상상으로 옷을 사지 마세요. 실제 내 체형 위로 떨어지는 실루엣과 드레이프를 거울 속에서 먼저 경험합니다.
-        </p>
+      아직 보유하지 않은 옷도 AI 가상 피팅으로 미리 확인할 수 있습니다.<br class="hidden sm:inline"/>사용자의 동의를 받은 이미지를 활용해 예상 착용 모습을 생성합니다.
+    </p>
+<div class="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed font-label-tag text-xs">
+<span class="material-symbols-outlined text-sm">timer</span>
+<span>AI 가상 피팅 이미지 생성 목표: 15초 이내 | VTON API 파트너 연동</span>
+</div>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
 <!-- Side-by-Side Before/Virtual Try-on Image Card -->
 <div class="lg:col-span-7">
 <div class="bg-surface-container-lowest p-3 sm:p-5 rounded-3xl editorial-border shadow-md">
 <img alt="Before Base White Tee and Jeans vs Virtual Try-On Black Blazer Suit Look with Silver Bag" class="w-full h-auto rounded-2xl object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFsK2GRsCiISJmWhZT-U4dnYfXOOyLS101oA5axHuSMpm1m7KZCmOV454SOuAMjepyOmQ4rr17hWMr9-SobWovwcVnmV3-XWj-MPNS4943erb4ToFxJlbGd9mUcMB-rBhl7XCCxblcBUCw8oLhB8nsAEsoqoJkMaq_nOM3-pWm7LgwjqHd1HYa4rs5P7AUafkwD28R9QhNP_OQoMs9gMDGetIyQ0PBH7C-H0i816U"/>
-<div class="flex items-center justify-between mt-4 px-2 font-label-tag text-xs text-outline">
-<span class="font-semibold text-primary">COLLABORATION ARCHIVE</span>
-<span>ZARA · 29CM Curated Selection</span>
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4 px-2 font-label-tag text-xs text-outline gap-2">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-primary">CONCEPT PREVIEW</span>
+<span>Illustrative Fashion Edit · Concept Preview</span>
+</div>
+<span class="text-[11px] text-secondary font-medium">※ 기능 예시 이미지입니다 (동의 기반 2D AI 가상 피팅)</span>
 </div>
 </div>
 </div>
@@ -760,27 +767,24 @@
 <div class="bg-surface-container-lowest p-8 rounded-3xl editorial-border">
 <div class="flex items-center justify-between pb-4 border-b border-outline-variant/30 mb-6">
 <span class="font-label-uppercase text-label-uppercase text-secondary">TRY-ON SELECTION</span>
-<span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-tag text-xs font-bold">92% Match</span>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-tag text-xs font-bold">생성 대기 15초 목표</span>
 </div>
 <div class="space-y-4">
 <h3 class="font-headline-sm text-headline-sm text-primary">Black Cropped Jacket</h3>
 <p class="font-body-md text-body-md text-on-surface-variant">
-                크롭된 기장감과 정제된 숄더 라인으로 다리를 길어 보이게 연출하는 테일러드 실루엣. 화이트 티셔츠 위로 가상 레이어링되었습니다.
-              </p>
+            크롭된 기장감과 정제된 숄더 라인의 테일러드 실루엣. 사용자가 별도 동의한 사진과 상품 이미지를 외부 VTON API로 보내 2D 착용 이미지를 생성합니다.
+          </p>
 <div class="flex items-baseline gap-3 pt-2">
-<span class="font-headline-sm text-headline-sm text-primary font-bold">₩89,000</span>
-<span class="font-body-sm text-xs text-outline line-through">₩119,000</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-tag text-xs">예시 상품 · 가격·구매 정보 미연동</span>
 </div>
 </div>
 <!-- Try-on Toggle Actions -->
 <div class="mt-8 pt-6 border-t border-outline-variant/30 flex flex-col gap-3">
-<button class="w-full py-3.5 px-6 rounded-xl bg-primary text-white font-label-uppercase text-label-uppercase tracking-wider hover:bg-secondary transition-colors flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-sm">view_in_ar</span>
-<span>거울에서 입어보기 (Try on)</span>
+<button aria-describedby="muse-demo-notice" class="w-full py-3.5 px-6 rounded-xl bg-primary text-white font-label-uppercase text-label-uppercase tracking-wider hover:bg-secondary transition-colors flex items-center justify-center gap-2" data-muse-demo="try-on" type="button">
+<span class="material-symbols-outlined text-sm">photo_library</span>
+<span>거울에서 가상 피팅 요청하기</span>
 </button>
-<button class="w-full py-3 px-6 rounded-xl bg-transparent editorial-border text-primary font-label-uppercase text-label-uppercase tracking-wider hover:bg-surface-container transition-colors">
-                29CM에서 상품 상세 보기
-              </button>
+<button class="w-full py-3 px-6 rounded-xl bg-transparent editorial-border text-primary font-label-uppercase text-label-uppercase tracking-wider hover:bg-surface-container transition-colors" data-muse-demo="product" type="button">상품 상세 연결 준비 중</button>
 </div>
 </div>
 <!-- Styling Note Box -->
@@ -790,27 +794,90 @@
 <span>MUSE Stylist Curation Note</span>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-              기존에 착용 중인 데님을 그대로 유지해도 좋지만, 슬림한 블랙 와이드 슬랙스와 실버 미니 백을 함께 매칭할 경우 포멀함과 모던함의 밸런스가 극대화됩니다.
-            </p>
+          소장 중인 하의와의 조화를 먼저 검토한 후 구매를 결정하세요. 가상 피팅은 별도 동의한 경우에만 요청되며, 생성 결과가 품질 기준에 못 미치면 이미지 대신 상품 정보를 안내하도록 설계합니다.
+        </p>
 </div>
 </div>
 </div>
-</div>
-</section>
+<p aria-live="polite" class="hidden mt-6 rounded-lg border border-secondary/25 bg-secondary-fixed/50 p-3 text-sm text-on-surface-variant" id="muse-demo-notice" role="status"></p></div></section>
 <!-- ========================================================================= -->
 <!-- 8. PERSONALIZATION SECTION ('MY STYLE DNA')                               -->
 <!-- ========================================================================= -->
-<section class="py-24 md:py-32 max-w-7xl mx-auto px-6 md:px-10" id="my-style">
+<section class="py-24 md:py-32" id="my-style"><div class="max-w-7xl mx-auto px-6 md:px-10">
 <div class="text-center max-w-3xl mx-auto mb-16">
-<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">ALGORITHMIC IDENTITY</span>
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">LEARN ME PRINCIPLE</span>
 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-medium">
-        The more you use MUSE, <br class="sm:hidden"/>the more it becomes yours.
-      </h2>
+      Learn Me. Know Me Better.
+    </h2>
 <p class="mt-4 font-body-lg text-body-lg text-on-surface-variant">
-        어제의 선택과 오늘의 무드를 기록하여 나만의 고유한 스타일 DNA를 시각화합니다.
-      </p>
+      매일의 선택이 쌓일수록, MUSE는 나의 스타일에 조금씩 더 가까워집니다.
+    </p>
 </div>
-<!-- Style DNA Dashboard -->
+<!-- 3-Step Process Flow: CHOOSE -> REMEMBER -> REFINE -->
+<div class="max-w-5xl mx-auto mb-16">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+<!-- Step 1: Choose -->
+<div class="bg-surface-container-lowest p-7 rounded-2xl editorial-border relative transition-transform hover:-translate-y-1 duration-200">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed font-bold text-xs flex items-center justify-center mb-4">
+          01
+        </div>
+<span class="font-label-uppercase text-xs font-bold text-secondary block mb-1">STEP 1 : FEEDBACK</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-2">CHOOSE</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+<strong>Wear</strong> 또는 <strong>Pass</strong>로 오늘의 코디에 대한 선호를 거울 앞에서 원터치로 표현합니다.
+        </p>
+<div class="mt-5 pt-3 border-t border-outline-variant/30 flex items-center gap-2 text-xs font-label-tag text-outline">
+<span class="material-symbols-outlined text-sm text-secondary">touch_app</span>
+<span>Wear / Pass 인터랙션</span>
+</div>
+</div>
+<!-- Step 2: Remember -->
+<div class="bg-surface-container-lowest p-7 rounded-2xl editorial-border relative transition-transform hover:-translate-y-1 duration-200">
+<div class="w-10 h-10 rounded-full bg-secondary text-white font-bold text-xs flex items-center justify-center mb-4">
+          02
+        </div>
+<span class="font-label-uppercase text-xs font-bold text-secondary block mb-1">STEP 2 : VECTOR UPDATE</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-2">REMEMBER</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          선택한 옷의 패션 특징(실루엣, 색상, 소재감)을 사용자 <strong>취향 벡터</strong>에 반영합니다.
+        </p>
+<div class="mt-5 pt-3 border-t border-outline-variant/30 flex items-center gap-2 text-xs font-label-tag text-outline">
+<span class="material-symbols-outlined text-sm text-secondary">dataset</span>
+<span>FashionSigLIP 특징 임베딩</span>
+</div>
+</div>
+<!-- Step 3: Refine -->
+<div class="bg-surface-container-lowest p-7 rounded-2xl editorial-border relative transition-transform hover:-translate-y-1 duration-200">
+<div class="w-10 h-10 rounded-full bg-primary text-white font-bold text-xs flex items-center justify-center mb-4">
+          03
+        </div>
+<span class="font-label-uppercase text-xs font-bold text-secondary block mb-1">STEP 3 : RANKING</span>
+<h3 class="font-title-editorial text-title-editorial text-primary mb-2">REFINE</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+          업데이트된 취향 정보를 활용해 다음 날 코디의 <strong>추천 순위(Top 3 Ranking)</strong>를 정교하게 조정합니다.
+        </p>
+<div class="mt-5 pt-3 border-t border-outline-variant/30 flex items-center gap-2 text-xs font-label-tag text-outline">
+<span class="material-symbols-outlined text-sm text-secondary">auto_awesome</span>
+<span>Personalized Ranking</span>
+</div>
+</div>
+</div>
+<!-- Pipeline Flow Visual Badge & Lightweight Explainer -->
+<div class="mt-6 p-4 rounded-xl bg-surface-container border border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-2 font-label-tag text-xs text-primary">
+<span class="font-semibold text-secondary">파이프라인 흐름:</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest border border-outline-variant/30">Wear / Pass</span>
+<span class="text-outline">→</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest border border-outline-variant/30">Preference Vector</span>
+<span class="text-outline">→</span>
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-bold">Personalized Ranking</span>
+</div>
+<span class="text-outline font-body-sm text-[11px]">
+        ※ 무거운 모델 재학습 없이 선호 점수 및 벡터를 경량 업데이트합니다.
+      </span>
+</div>
+</div>
+<!-- Style DNA Dashboard Preview -->
 <div class="bg-surface-container-lowest rounded-3xl editorial-border p-8 md:p-12 shadow-sm max-w-5xl mx-auto">
 <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-8 border-b border-outline-variant/30 gap-4">
 <div>
@@ -819,18 +886,17 @@
 </div>
 <div class="flex items-center gap-2">
 <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
-<span class="font-label-tag text-xs font-semibold text-primary">Active Profile: Jiwon K.</span>
+<span class="font-label-tag text-xs font-semibold text-primary">예시 프로필 · Concept Preview</span>
 </div>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10">
-<!-- Aesthetic Percentage Bars -->
 <div>
 <h4 class="font-label-uppercase text-label-uppercase text-outline tracking-wider mb-6">AESTHETIC AFFINITY</h4>
 <div class="space-y-5">
 <div>
 <div class="flex justify-between font-label-tag text-xs mb-1.5 font-semibold">
 <span class="text-primary">Minimal</span>
-<span class="text-secondary">87%</span>
+<span class="text-secondary">예시</span>
 </div>
 <div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
 <div class="bg-primary h-2 rounded-full" style="width: 87%"></div>
@@ -839,7 +905,7 @@
 <div>
 <div class="flex justify-between font-label-tag text-xs mb-1.5 font-semibold">
 <span class="text-primary">Casual</span>
-<span class="text-secondary">79%</span>
+<span class="text-secondary">예시</span>
 </div>
 <div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
 <div class="bg-primary/80 h-2 rounded-full" style="width: 79%"></div>
@@ -848,24 +914,14 @@
 <div>
 <div class="flex justify-between font-label-tag text-xs mb-1.5 font-semibold">
 <span class="text-primary">Street Contemporary</span>
-<span class="text-secondary">72%</span>
+<span class="text-secondary">예시</span>
 </div>
 <div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
 <div class="bg-primary/60 h-2 rounded-full" style="width: 72%"></div>
 </div>
 </div>
-<div>
-<div class="flex justify-between font-label-tag text-xs mb-1.5 font-semibold">
-<span class="text-primary">Feminine Accent</span>
-<span class="text-secondary">41%</span>
-</div>
-<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
-<div class="bg-primary/40 h-2 rounded-full" style="width: 41%"></div>
 </div>
 </div>
-</div>
-</div>
-<!-- Palettes & Fits -->
 <div class="flex flex-col justify-between space-y-6">
 <div>
 <h4 class="font-label-uppercase text-label-uppercase text-outline tracking-wider mb-3">FAVORITE SILHOUETTES</h4>
@@ -875,140 +931,153 @@
 <span class="px-3 py-1.5 bg-surface-container rounded-lg font-body-sm text-xs text-primary font-medium">Boxy Crewneck Knits</span>
 </div>
 </div>
-<div>
-<h4 class="font-label-uppercase text-label-uppercase text-outline tracking-wider mb-3">DOMINANT COLOR PALETTE</h4>
-<div class="flex items-center gap-3">
-<div class="flex items-center gap-2">
-<span class="w-6 h-6 rounded-full bg-black border border-outline-variant/40" title="Pure Black"></span>
-<span class="font-label-tag text-xs text-primary">Black</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="w-6 h-6 rounded-full bg-stone-400 border border-outline-variant/40" title="Heather Gray"></span>
-<span class="font-label-tag text-xs text-primary">Heather Gray</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="w-6 h-6 rounded-full bg-slate-200 border border-outline-variant/40" title="Chrome Silver"></span>
-<span class="font-label-tag text-xs text-primary">Silver</span>
-</div>
-<div class="flex items-center gap-2">
-<span class="w-6 h-6 rounded-full bg-sky-100 border border-outline-variant/40" title="Soft Fog Blue"></span>
-<span class="font-label-tag text-xs text-primary">Fog Blue</span>
-</div>
-</div>
-</div>
 <div class="p-4 rounded-xl bg-surface-container border border-outline-variant/30">
 <span class="font-label-uppercase text-[10px] text-secondary font-bold uppercase tracking-wider block mb-1">Frequently Selected Items</span>
 <span class="font-body-sm text-xs font-semibold text-primary">Cropped Jacket, Wide Trousers, Silver Metallic Accessories</span>
 </div>
 </div>
 </div>
-<!-- Core philosophy banner -->
 <div class="mt-10 pt-8 border-t border-outline-variant/30 text-center">
 <p class="font-headline-sm text-title-editorial md:text-headline-sm text-primary font-medium italic">
-          “MUSE는 유행을 쫓지 않고, 오직 당신의 고유한 취향을 배웁니다.”
-        </p>
+        “MUSE는 유행을 쫓지 않고, 오직 당신의 고유한 취향을 배웁니다.”
+      </p>
 </div>
 </div>
-</section>
+</div></section>
 <!-- ========================================================================= -->
 <!-- 9. SYSTEM ARCHITECTURE & FUTURE VISION                                    -->
 <!-- ========================================================================= -->
-<section class="py-24 bg-surface-container-low border-t border-outline-variant/30">
-<div class="max-w-7xl mx-auto px-6 md:px-10">
+<section class="py-24 bg-surface-container-low border-t border-outline-variant/30"><div class="max-w-7xl mx-auto px-6 md:px-10" id="mvp-specs">
 <!-- System loop flow -->
-<div class="mb-20 text-center max-w-4xl mx-auto">
-<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">SYSTEM LOOP</span>
+<div class="mb-16 text-center max-w-4xl mx-auto">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-2">SERVICE ARCHITECTURE</span>
 <h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight font-medium mb-10">
-          Understand Me → Style Me → Learn Me
-        </h2>
+      Understand Me → Style Me → Learn Me
+    </h2>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
 <div class="p-6 bg-surface-container-lowest rounded-2xl editorial-border">
 <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center font-bold text-xs text-primary mb-4">1</div>
 <h3 class="font-title-editorial text-title-editorial text-primary mb-1">Understand Me</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">체형, 취향, 옷장, 오늘의 날씨 및 캘린더 일정을 실시간으로 파악합니다.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          체형 정보(MediaPipe+ToF)와 옷장 데이터, 날씨·일정 등 추천에 필요한 정보를 분석합니다.
+        </p>
+<span class="mt-3 inline-block font-label-tag text-[11px] text-secondary font-medium">Pose Tracking 15 FPS+ | Vision LLM</span>
 </div>
 <div class="p-6 bg-surface-container-lowest rounded-2xl editorial-border">
 <div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold text-xs mb-4">2</div>
 <h3 class="font-title-editorial text-title-editorial text-primary mb-1">Style Me</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">최적의 3가지 착장을 큐레이션하고 거울 위 실시간 버추얼 피팅으로 확인합니다.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          개인화된 코디 Top 3를 제안하고, 원하는 상품은 AI 가상 피팅(VTON API)으로 확인할 수 있습니다.
+        </p>
+<span class="mt-3 inline-block font-label-tag text-[11px] text-secondary font-medium">추천 2초 이내 | 피팅 이미지 15초 이내</span>
 </div>
 <div class="p-6 bg-surface-container-lowest rounded-2xl editorial-border">
 <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs mb-4">3</div>
 <h3 class="font-title-editorial text-title-editorial text-primary mb-1">Learn Me</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">선택된 착장과 사용자의 피드백을 축적하여 다음 날의 추천 정확도를 높입니다.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Wear/Pass 피드백을 반영해 사용자 취향 벡터를 경량 업데이트하고 다음 추천의 순위를 조정합니다.
+        </p>
+<span class="mt-3 inline-block font-label-tag text-[11px] text-secondary font-medium">Lightweight Vector Ranking</span>
 </div>
 </div>
-<div class="mt-8 p-6 md:p-7 bg-surface-container-lowest rounded-2xl editorial-border flex flex-col md:flex-row md:items-center justify-between gap-5 text-left">
-  <div>
-    <span class="font-label-uppercase text-[10px] text-secondary font-bold tracking-widest">BEHIND THE RECOMMENDATION</span>
-    <h3 class="font-title-editorial text-title-editorial text-primary mt-1">MUSE는 데이터를 어떻게 정돈하고 검증할까?</h3>
-    <p class="font-body-sm text-body-sm text-on-surface-variant mt-2">센서 입력부터 전처리, AI 추론, 후처리 검증까지 MUSE의 데이터 처리 파이프라인을 확인해보세요.</p>
-  </div>
-  <a href="./data-pipeline.html" class="shrink-0 inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-label-uppercase text-label-uppercase tracking-wider hover:bg-secondary transition-colors">
-    <span>Explore Data Pipeline</span>
-    <span class="material-symbols-outlined text-sm">arrow_forward</span>
-  </a>
+</div>
+<!-- MVP Performance Fact-Check Specification Grid -->
+<div class="bg-surface-container-lowest rounded-3xl editorial-border p-8 md:p-10 mb-16 shadow-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-outline-variant/30 gap-3 mb-8">
+<div>
+<span class="font-label-uppercase text-xs font-bold text-secondary">TRANSPARENT ENGINEERING</span>
+<h3 class="font-headline-sm text-headline-sm text-primary mt-1">MUSE MVP Target Specifications</h3>
+</div>
+<span class="px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-tag text-xs font-bold">개발 목표 · 실측 전</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Metric 1 -->
+<div class="p-5 rounded-2xl bg-surface-container border border-outline-variant/30">
+<span class="font-label-uppercase text-[11px] text-outline font-semibold block mb-1">01. POSE TRACKING</span>
+<div class="font-headline-sm text-headline-sm text-primary font-bold mb-1">15 FPS 이상 목표</div>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+          MediaPipe 스켈레톤 트래킹과 ToF 깊이 센서를 통한 안정적 신체 비율 추정
+        </p>
+</div>
+<!-- Metric 2 -->
+<div class="p-5 rounded-2xl bg-surface-container border border-outline-variant/30">
+<span class="font-label-uppercase text-[11px] text-outline font-semibold block mb-1">02. OUTFIT RECOMMENDATION</span>
+<div class="font-headline-sm text-headline-sm text-primary font-bold mb-1">2초 이내 목표</div>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+          FashionSigLIP 특징 벡터와 규칙 엔진 기반의 TPO 맞춤 Top 3 코디 도출
+        </p>
+</div>
+<!-- Metric 3 -->
+<div class="p-5 rounded-2xl bg-surface-container border border-outline-variant/30">
+<span class="font-label-uppercase text-[11px] text-outline font-semibold block mb-1">03. WARDROBE REGISTRATION</span>
+<div class="font-headline-sm text-headline-sm text-primary font-bold mb-1">5초 이내 목표</div>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+          촬영 매트 크로마키 배경 제거 및 Vision LLM 기반 카테고리/색상/패턴 태깅
+        </p>
+</div>
+<!-- Metric 4 -->
+<div class="p-5 rounded-2xl bg-surface-container border border-outline-variant/30">
+<span class="font-label-uppercase text-[11px] text-outline font-semibold block mb-1">04. VIRTUAL TRY-ON</span>
+<div class="font-headline-sm text-headline-sm text-primary font-bold mb-1">15초 이내 목표</div>
+<p class="font-body-sm text-xs text-on-surface-variant leading-relaxed">
+          동의 기반 사용자 이미지로 외부 VTON API가 2D 가상 피팅 이미지 생성
+        </p>
+</div>
 </div>
 </div>
 <!-- Future Vision Cards -->
-<div class="mt-16">
+<div>
 <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
 <div>
 <span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-1">NEXT-GEN ROADMAP</span>
 <h3 class="font-headline-md text-headline-md text-primary font-medium">From Smart Mirror to Personal Style OS</h3>
 </div>
-<span class="font-label-tag text-xs text-outline">Upcoming Modules</span>
+<span class="font-label-tag text-xs text-outline">MVP 이후 검토 항목</span>
 </div>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-<!-- Card 1 -->
 <div class="p-5 rounded-2xl bg-surface-container-lowest editorial-border flex flex-col justify-between">
 <div>
 <span class="material-symbols-outlined text-secondary text-2xl mb-3">color_lens</span>
 <h4 class="font-title-editorial text-sm font-semibold text-primary">Personal Color Analysis</h4>
-<p class="font-body-sm text-[11px] text-on-surface-variant mt-1">피부 톤과 조명 환경에 따른 사계절 퍼스널 컬러 자동 진단</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant mt-1">피부 톤과 조명 환경에 따른 사계절 퍼스널 컬러 진단</p>
 </div>
-<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">COMING NEXT</span>
+<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">FUTURE</span>
 </div>
-<!-- Card 2 -->
 <div class="p-5 rounded-2xl bg-surface-container-lowest editorial-border flex flex-col justify-between">
 <div>
 <span class="material-symbols-outlined text-secondary text-2xl mb-3">face</span>
 <h4 class="font-title-editorial text-sm font-semibold text-primary">AI Hair Style Simulation</h4>
 <p class="font-body-sm text-[11px] text-on-surface-variant mt-1">착장 실루엣과 얼굴형에 최적화된 헤어 스타일링 가이드</p>
 </div>
-<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">COMING NEXT</span>
+<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">FUTURE</span>
 </div>
-<!-- Card 3 -->
 <div class="p-5 rounded-2xl bg-surface-container-lowest editorial-border flex flex-col justify-between">
 <div>
 <span class="material-symbols-outlined text-secondary text-2xl mb-3">shopping_cart_checkout</span>
 <h4 class="font-title-editorial text-sm font-semibold text-primary">Smart Shopping Concierge</h4>
 <p class="font-body-sm text-[11px] text-on-surface-variant mt-1">내 옷장과의 호환성을 검증해 주는 스마트 위시리스트</p>
 </div>
-<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">COMING NEXT</span>
+<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">FUTURE</span>
 </div>
-<!-- Card 4 -->
 <div class="p-5 rounded-2xl bg-surface-container-lowest editorial-border flex flex-col justify-between">
 <div>
 <span class="material-symbols-outlined text-secondary text-2xl mb-3">insights</span>
 <h4 class="font-title-editorial text-sm font-semibold text-primary">Digital Wardrobe Analytics</h4>
 <p class="font-body-sm text-[11px] text-on-surface-variant mt-1">의류 착용 주기 분석 및 친환경 리세일 타이밍 제안</p>
 </div>
-<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">COMING NEXT</span>
+<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">FUTURE</span>
 </div>
-<!-- Card 5 -->
 <div class="p-5 rounded-2xl bg-surface-container-lowest editorial-border flex flex-col justify-between">
 <div>
 <span class="material-symbols-outlined text-secondary text-2xl mb-3">graphic_eq</span>
 <h4 class="font-title-editorial text-sm font-semibold text-primary">Voice Stylist AI</h4>
 <p class="font-body-sm text-[11px] text-on-surface-variant mt-1">자연스러운 대화로 스타일링을 수정하는 보이스 컨시어지</p>
 </div>
-<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">COMING NEXT</span>
+<span class="mt-4 inline-block font-label-uppercase text-[10px] text-secondary font-bold">FUTURE</span>
 </div>
 </div>
 </div>
-</div>
-</section>
+</div></section>
 <!-- ========================================================================= -->
 <!-- 10. FINAL CTA BANNER & FOOTER (Shared Component JSON Blueprint)           -->
 <!-- ========================================================================= -->
@@ -1026,15 +1095,11 @@
         내일 아침, 옷장보다 먼저 MUSE에게 물어보세요.
       </p>
 <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-<button class="w-full sm:w-auto px-10 py-4 bg-primary text-white rounded-xl font-label-uppercase text-label-uppercase tracking-widest hover:bg-primary-container hover:shadow-[0_10px_35px_rgba(96,80,175,0.35)] transition-all duration-300">
-          Meet MUSE
-        </button>
-<button class="w-full sm:w-auto px-8 py-4 bg-transparent editorial-border text-primary rounded-xl font-label-uppercase text-label-uppercase tracking-widest hover:bg-surface-container transition-colors">
-          REQUEST LOOKBOOK
-        </button>
+<a class="w-full sm:w-auto px-10 py-4 bg-primary text-white rounded-xl font-label-uppercase text-label-uppercase tracking-widest hover:bg-primary-container hover:shadow-[0_10px_35px_rgba(96,80,175,0.35)] transition-all duration-300" href="#how-it-works" role="link">MUSE 작동 방식 보기</a>
+<a class="w-full sm:w-auto px-8 py-4 bg-transparent editorial-border text-primary rounded-xl font-label-uppercase text-label-uppercase tracking-widest hover:bg-surface-container transition-colors" href="#features" role="link">MUSE 핵심 기능 보기</a>
 </div>
 <p class="mt-8 font-body-sm text-xs text-outline">
-        Private Beta Invitation available for Seoul &amp; Tokyo Residents · Limited 500 Atelier Units
+        MUSE MVP 개발·검증 중 · 서비스 이용 및 가상 피팅 API는 아직 연결되지 않았습니다.
       </p>
 </div>
 </section>
@@ -1048,7 +1113,7 @@
 <span class="text-xs font-title-editorial text-on-surface-variant font-normal">· Your Personal AI Stylist</span>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant dark:text-outline leading-relaxed">
-          © 2025 MUSE Atelier Inc. All rights reserved. Sculpted by ambient intelligence.
+          © 2026 MUSE · AI Smart Mirror MVP Concept.
         </p>
 <p class="font-label-uppercase text-[10px] text-outline tracking-wider uppercase">
           Crafted for discerning wardrobes in Seoul &amp; Tokyo.
@@ -1056,30 +1121,55 @@
 </div>
 <!-- Navigation Links from JSON -->
 <div class="flex flex-wrap gap-x-8 gap-y-3 font-body-sm text-body-sm">
-<a class="text-primary dark:text-on-surface font-medium hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Philosophy</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Lookbook</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Virtual Atelier</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Journal</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Privacy &amp; Legal</a>
-<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#">Contact Concierge</a>
+<a class="text-primary dark:text-on-surface font-medium hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#about">Philosophy</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#features">Features</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#virtual-try-on">Virtual Try-On</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="#my-style">Learn Me</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="./ai-research.html#privacy">Privacy &amp; AI Research</a>
+<a class="text-on-surface-variant dark:text-outline hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200" href="./data-pipeline.html">Data Pipeline</a>
 </div>
 </div>
 </footer>
 
-<!-- muse-ai-research-mobile-nav-v1 -->
-<script>
-(() => {
-  const button = document.getElementById('muse-site-menu-toggle');
-  const menu = document.getElementById('muse-site-mobile-menu');
-  if (!button || !menu) return;
-  const setOpen = open => {
-    menu.classList.toggle('hidden', !open);
-    button.setAttribute('aria-expanded', String(open));
-    button.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
-  };
-  button.addEventListener('click', () => setOpen(menu.classList.contains('hidden')));
-  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+<script id="muse-navigation-script">
+(function(){
+  var toggle=document.getElementById('muse-mobile-toggle');
+  var menu=document.getElementById('muse-mobile-nav');
+  if(toggle && menu){
+    toggle.addEventListener('click',function(){
+      var isOpen=!menu.classList.contains('hidden');
+      menu.classList.toggle('hidden',isOpen);
+      toggle.setAttribute('aria-expanded',String(!isOpen));
+      var icon=toggle.querySelector('.material-symbols-outlined');
+      if(icon) icon.textContent=isOpen?'menu':'close';
+    });
+    menu.querySelectorAll('a').forEach(function(link){
+      link.addEventListener('click',function(){
+        menu.classList.add('hidden');
+        toggle.setAttribute('aria-expanded','false');
+        var icon=toggle.querySelector('.material-symbols-outlined');
+        if(icon) icon.textContent='menu';
+      });
+    });
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape' && !menu.classList.contains('hidden')){
+        menu.classList.add('hidden');toggle.setAttribute('aria-expanded','false');
+        var icon=toggle.querySelector('.material-symbols-outlined');if(icon) icon.textContent='menu';toggle.focus();
+      }
+    });
+  }
+  document.querySelectorAll('[data-muse-demo]').forEach(function(control){
+    control.addEventListener('click',function(){
+      var region=document.getElementById('muse-demo-notice');
+      if(!region) return;
+      var msg=control.getAttribute('data-muse-demo')==='product'
+        ? '상품 상세 링크는 현재 연결되지 않았습니다. 이미지는 홈페이지 콘셉트 시안입니다.'
+        : '가상 피팅은 MVP 검증 단계입니다. 이 페이지에서는 실제 이미지가 생성되거나 전송되지 않습니다.';
+      region.textContent=msg;
+      region.classList.remove('hidden');
+      region.scrollIntoView({behavior:'smooth',block:'nearest'});
+    });
+  });
 })();
 </script>
 </body></html>
