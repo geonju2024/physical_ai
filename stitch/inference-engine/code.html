@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MUSE AI Mirror — AI Inference Engine Spec</title>
+<!-- Fonts: Playfair Display, Plus Jakarta Sans, Space Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "accent-warm-ivory": "#FDFBF7",
+            "surface-variant": "#e3e2e0",
+            "background": "#faf9f6",
+            "tech-onnx-blue": "#005CED",
+            "on-tertiary-fixed": "#1d163a",
+            "primary-fixed": "#e6deff",
+            "primary-container": "#6050af",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "surface-card": "#FFFFFF",
+            "surface-container": "#efeeeb",
+            "secondary-fixed": "#e6deff",
+            "inverse-primary": "#c9beff",
+            "border-soft": "#E5E1F0",
+            "on-tertiary-container": "#ddd3ff",
+            "error": "#ba1a1a",
+            "on-error-container": "#93000a",
+            "on-primary-fixed-variant": "#483795",
+            "inverse-surface": "#2f312f",
+            "on-surface-variant": "#484552",
+            "primary-fixed-dim": "#c9beff",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed": "#e6deff",
+            "surface-tint": "#6050af",
+            "outline-variant": "#c9c4d3",
+            "primary": "#483795",
+            "secondary-fixed-dim": "#cac2e2",
+            "surface-container-high": "#e9e8e5",
+            "surface-dim": "#dbdad7",
+            "on-secondary": "#ffffff",
+            "text-muted": "#756F86",
+            "accent-lavender": "#D6C7FF",
+            "surface-container-low": "#f4f3f1",
+            "on-background": "#1a1c1a",
+            "surface-container-highest": "#e3e2e0",
+            "on-primary-container": "#dcd3ff",
+            "on-secondary-container": "#66617d",
+            "surface-bright": "#faf9f6",
+            "surface-container-lowest": "#ffffff",
+            "on-secondary-fixed-variant": "#48435e",
+            "outline": "#797583",
+            "secondary-container": "#e6deff",
+            "text-primary": "#1A162B",
+            "surface-subtle": "#EFEEEB",
+            "on-secondary-fixed": "#1c1830",
+            "on-surface": "#1a1c1a",
+            "on-primary-fixed": "#1b0062",
+            "tertiary-container": "#615982",
+            "inverse-on-surface": "#f2f1ee",
+            "tech-jetson-green": "#76B900",
+            "surface": "#faf9f6",
+            "tertiary-fixed-dim": "#cac0ef",
+            "on-tertiary-fixed-variant": "#494168",
+            "tertiary": "#494268",
+            "secondary": "#605b76",
+            "on-primary": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1.25rem",
+            "3xl": "1.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-3xl": "6rem",
+            "gutter": "1.5rem",
+            "margin-mobile": "1.25rem",
+            "space-2xl": "4rem",
+            "space-xl": "2.5rem",
+            "margin": "2rem",
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "gutter-sm": "1rem"
+          },
+          "fontFamily": {
+            "label-tech": ["Space Mono", "monospace"],
+            "display-hero-mobile": ["Playfair Display", "serif"],
+            "body-md": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+            "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-lg": ["Playfair Display", "serif"],
+            "display-hero": ["Playfair Display", "serif"],
+            "headline-lg-mobile": ["Playfair Display", "serif"],
+            "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "label-caps": ["Plus Jakarta Sans", "sans-serif"],
+            "metric-kpi": ["Plus Jakarta Sans", "sans-serif"]
+          },
+          "fontSize": {
+            "label-tech": ["12px", { "lineHeight": "16px", "letterSpacing": "-0.02em", "fontWeight": "500" }],
+            "display-hero-mobile": ["36px", { "lineHeight": "46px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "body-md": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "body-sm": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "headline-lg": ["38px", { "lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-hero": ["56px", { "lineHeight": "68px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "body-lg": ["17px", { "lineHeight": "28px", "fontWeight": "400" }],
+            "label-caps": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "700" }],
+            "metric-kpi": ["32px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px -10px rgba(96, 80, 175, 0.06);
+    }
+    .soft-glow-lavender {
+      box-shadow: 0 12px 32px rgba(96, 80, 175, 0.08);
+    }
+    .grid-dot-pattern {
+      background-image: radial-gradient(#E5E1F0 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+  </style>
+</head>
+<body class="bg-background text-text-primary antialiased selection:bg-accent-lavender selection:text-primary">
+<!-- ==================== 1. TOP NAVIGATION BAR ==================== -->
+<header class="bg-surface/90 dark:bg-inverse-surface/90 backdrop-blur-md border-b border-border-soft dark:border-outline-variant/30 shadow-sm docked full-width top-0 sticky z-50">
+<div class="max-w-7xl mx-auto px-gutter flex justify-between items-center h-20 w-full">
+<!-- Brand Logo -->
+<a class="flex items-center gap-3 group" href="index.html">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm group-hover:scale-105 transition-transform duration-200">
+<span class="material-symbols-outlined text-[22px]">smart_screen</span>
+</div>
+<div class="flex flex-col">
+<span class="font-display-hero text-headline-md tracking-tight font-bold text-text-primary dark:text-inverse-on-surface">MUSE AI Mirror</span>
+<span class="font-label-tech text-[10px] text-text-muted tracking-widest uppercase">Edge Intelligence OS</span>
+</div>
+</a>
+<!-- Desktop Nav Links -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-text-muted dark:text-outline-variant hover:text-text-primary dark:hover:text-surface-card transition-colors duration-200 font-body-md text-body-md" href="index.html">Home</a>
+<a class="text-text-muted dark:text-outline-variant hover:text-text-primary dark:hover:text-surface-card transition-colors duration-200 font-body-md text-body-md" href="hardware.html">Hardware</a>
+<a class="text-text-muted dark:text-outline-variant hover:text-text-primary dark:hover:text-surface-card transition-colors duration-200 font-body-md text-body-md" href="data-pipeline.html">Data Pipeline</a>
+<a class="text-text-muted dark:text-outline-variant hover:text-text-primary dark:hover:text-surface-card transition-colors duration-200 font-body-md text-body-md" href="ai-research.html">AI Research</a>
+<!-- Active Link -->
+<a class="text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1 font-semibold flex items-center gap-1.5 font-body-md text-body-md" href="inference-engine.html">
+<span>Inference Engine</span>
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+</a>
+</nav>
+<!-- Trailing Action Cluster -->
+<div class="flex items-center gap-3">
+<button class="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full border border-border-soft bg-surface-card text-text-primary font-label-tech text-label-tech hover:bg-surface-container transition-colors duration-150">
+<span class="w-2 h-2 rounded-full bg-tech-jetson-green"></span>
+<span>Orin NX 20W</span>
+</button>
+<a class="px-5 py-2.5 rounded-full bg-primary text-on-primary font-headline-sm text-body-sm font-semibold shadow-sm hover:shadow-md hover:bg-opacity-95 active:scale-95 transition-all duration-150 flex items-center gap-2" href="#live-metrics">
+<span class="material-symbols-outlined text-[18px]">monitoring</span>
+<span>Live Metrics</span>
+</a>
+</div>
+</div>
+</header>
+<main class="space-y-space-3xl py-space-xl">
+<!-- ==================== 2. HERO SECTION ==================== -->
+<section class="max-w-7xl mx-auto px-gutter">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+<!-- Left Column: Copy & Tech Details -->
+<div class="lg:col-span-7 space-y-6">
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-fixed text-primary font-label-caps text-label-caps border border-accent-lavender">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+<span>SELECTED ENGINE — ONNX Runtime + TensorRT EP</span>
+</div>
+<div class="space-y-3">
+<h1 class="font-display-hero text-display-hero text-text-primary tracking-tight">
+              AI가 빠르게 <br/><span class="italic font-normal text-primary">반응하는 이유</span>
+</h1>
+<p class="font-headline-sm text-headline-sm text-text-muted font-normal">
+              MUSE AI Inference Engine Architecture
+            </p>
+</div>
+<p class="font-body-lg text-body-lg text-text-muted max-w-2xl leading-relaxed">
+            MUSE 스마트 미러는 고해상도 가상 피팅 및 실시간 인체 포즈 분석을 엣지 디바이스에서 직접 수행합니다. 4개 엔진 벤치마크 평가를 거쳐 선택된 <strong>ONNX Runtime + TensorRT EP</strong> 파이프라인은 NVIDIA Jetson Orin NX 하드웨어의 1024 CUDA 코어와 Tensor Core를 오버헤드 없이 온전히 구동하여 거울 앞 사용자에게 끊김 없는 실시간 경험을 제공합니다.
+          </p>
+<!-- Stylish Tech Chips -->
+<div class="flex flex-wrap gap-2.5 pt-2">
+<span class="px-3.5 py-1.5 rounded-full bg-surface-card border border-border-soft font-label-tech text-label-tech text-text-primary flex items-center gap-1.5 shadow-xs">
+<span class="w-2 h-2 rounded-full bg-tech-jetson-green"></span>
+              NVIDIA Jetson Orin NX
+            </span>
+<span class="px-3.5 py-1.5 rounded-full bg-surface-card border border-border-soft font-label-tech text-label-tech text-text-primary flex items-center gap-1.5 shadow-xs">
+<span class="w-2 h-2 rounded-full bg-tech-onnx-blue"></span>
+              ONNX Runtime 1.17+
+            </span>
+<span class="px-3.5 py-1.5 rounded-full bg-surface-card border border-border-soft font-label-tech text-label-tech text-text-primary flex items-center gap-1.5 shadow-xs">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+              TensorRT EP
+            </span>
+<span class="px-3.5 py-1.5 rounded-full bg-surface-card border border-border-soft font-label-tech text-label-tech text-text-primary flex items-center gap-1.5 shadow-xs">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              Edge AI Inference
+            </span>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-wrap items-center gap-4 pt-4">
+<a class="px-7 py-3.5 rounded-full bg-text-primary text-surface-card font-body-md text-body-md font-semibold hover:bg-primary transition-all duration-200 shadow-sm hover:shadow-lg flex items-center gap-2 active:scale-95" href="#architecture-diagram">
+<span>추론 구조 다이어그램 보기</span>
+<span class="material-symbols-outlined text-[18px]">arrow_downward</span>
+</a>
+<a class="px-7 py-3.5 rounded-full bg-secondary-container text-primary font-body-md text-body-md font-semibold hover:bg-accent-lavender transition-all duration-200 border border-accent-lavender active:scale-95" href="#engine-comparison">
+<span>4개 엔진 비교 보기</span>
+</a>
+</div>
+</div>
+<!-- Right Column: Interactive Jetson Orin NX Neural Compute Graphic -->
+<div class="lg:col-span-5">
+<div class="relative bg-surface-card rounded-3xl border border-border-soft p-6 soft-glow-lavender grid-dot-pattern">
+<!-- Hardware Card Top Bar -->
+<div class="flex items-center justify-between pb-4 border-b border-border-soft">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-tech-jetson-green animate-ping opacity-75"></span>
+<span class="w-3 h-3 rounded-full bg-tech-jetson-green -ml-5"></span>
+<span class="font-label-tech text-label-tech text-text-primary font-bold">JETSON ORIN NX 16GB</span>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-surface-container font-label-tech text-[11px] text-text-muted">Edge Board Active</span>
+</div>
+<!-- Central Neural Processor Diagram -->
+<div class="py-6 space-y-4">
+<div class="bg-gradient-to-br from-surface-subtle to-surface-card border border-border-soft rounded-2xl p-4 relative overflow-hidden">
+<div class="absolute -right-6 -bottom-6 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-caps text-label-caps text-primary uppercase">Compute Silicon Subsystem</span>
+<span class="font-label-tech text-[11px] text-text-muted">Ampere Architecture</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="p-3 bg-surface-card rounded-xl border border-border-soft/80">
+<div class="font-metric-kpi text-headline-sm text-text-primary font-bold">1024</div>
+<div class="font-label-tech text-[11px] text-text-muted">CUDA Cores</div>
+</div>
+<div class="p-3 bg-surface-card rounded-xl border border-border-soft/80">
+<div class="font-metric-kpi text-headline-sm text-primary font-bold">32</div>
+<div class="font-label-tech text-[11px] text-text-muted">Tensor Cores</div>
+</div>
+<div class="p-3 bg-surface-card rounded-xl border border-border-soft/80">
+<div class="font-metric-kpi text-headline-sm text-text-primary font-bold">100 TOPS</div>
+<div class="font-label-tech text-[11px] text-text-muted">INT8 Dense Compute</div>
+</div>
+<div class="p-3 bg-surface-card rounded-xl border border-border-soft/80">
+<div class="font-metric-kpi text-headline-sm text-tech-jetson-green font-bold">20W</div>
+<div class="font-label-tech text-[11px] text-text-muted">Max Power Envelope</div>
+</div>
+</div>
+</div>
+<!-- Animated Data Path Pipeline -->
+<div class="bg-accent-warm-ivory rounded-2xl p-4 border border-border-soft space-y-3">
+<div class="flex items-center justify-between text-xs font-label-tech">
+<span class="text-text-muted">Acceleration Pipeline</span>
+<span class="text-primary font-bold">Zero-Copy Memory Bus</span>
+</div>
+<div class="relative flex items-center justify-between px-3 py-2 bg-surface-card rounded-xl border border-border-soft">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">psychology</span>
+<span class="font-body-sm text-body-sm font-semibold text-text-primary">PyTorch Graphs</span>
+</div>
+<span class="material-symbols-outlined text-text-muted text-[16px]">arrow_forward</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tech-onnx-blue text-[20px]">view_in_ar</span>
+<span class="font-body-sm text-body-sm font-semibold text-tech-onnx-blue">ONNX Runtime</span>
+</div>
+<span class="material-symbols-outlined text-text-muted text-[16px]">arrow_forward</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tech-jetson-green text-[20px]">bolt</span>
+<span class="font-body-sm text-body-sm font-semibold text-text-primary">TensorRT</span>
+</div>
+</div>
+<div class="flex justify-between items-center pt-1 font-label-tech text-[11px] text-text-muted">
+<span>FP16 Kernel Precision</span>
+<span class="text-tech-jetson-green flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                    SLA Target &lt; 2s Guaranteed
+                  </span>
+</div>
+</div>
+</div>
+<!-- Bottom Live Telemetry Pill -->
+<div class="flex items-center justify-between pt-3 border-t border-border-soft font-label-tech text-[11px]">
+<span class="text-text-muted">Orin NX System Memory</span>
+<span class="text-text-primary font-bold">16GB 128-bit LPDDR5 (102.4 GB/s)</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== 3. SECTION 02: WHY IT MATTERS ==================== -->
+<section class="max-w-7xl mx-auto px-gutter">
+<div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-primary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[14px]">filter_vintage</span>
+<span>CRITICAL ARCHITECTURAL FACTORS</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-text-primary font-bold tracking-tight">
+          좋은 AI 모델만으로는 충분하지 않으니까.
+        </h2>
+<p class="font-body-md text-body-md text-text-muted">
+          모델 성능뿐만 아니라 실제 거울 하드웨어에서 빠르고 안정적으로 구동되는 최적화가 필수적입니다.
+        </p>
+</div>
+<!-- 4 Horizontal Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-card rounded-2xl p-6 border border-border-soft hover:border-primary/40 hover:-translate-y-1 transition-all duration-200 custom-glass-card group flex flex-col justify-between">
+<div class="space-y-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container text-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+<span class="material-symbols-outlined text-[26px]">memory</span>
+</div>
+<div>
+<span class="font-label-tech text-[11px] text-primary tracking-wide block uppercase">Factor 01</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary mt-1">Hardware Acceleration</h3>
+</div>
+<p class="font-body-md text-body-md text-text-muted leading-relaxed">
+              Jetson Orin NX의 NVIDIA GPU 및 Tensor Core 하드웨어를 소프트웨어 단에서 손실 없이 극대화하는가?
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-border-soft font-label-tech text-label-tech text-primary font-semibold flex items-center justify-between">
+<span>TensorRT Direct Sync</span>
+<span class="material-symbols-outlined text-[16px]">verified</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-card rounded-2xl p-6 border border-border-soft hover:border-primary/40 hover:-translate-y-1 transition-all duration-200 custom-glass-card group flex flex-col justify-between">
+<div class="space-y-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container text-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+<span class="material-symbols-outlined text-[26px]">conversion_path</span>
+</div>
+<div>
+<span class="font-label-tech text-[11px] text-primary tracking-wide block uppercase">Factor 02</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary mt-1">Model Compatibility</h3>
+</div>
+<p class="font-body-md text-body-md text-text-muted leading-relaxed">
+              PyTorch 기반의 최신 컴퓨터 비전 및 생성 모델들을 추가 그래프 변형 오차 없이 온전히 배포할 수 있는가?
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-border-soft font-label-tech text-label-tech text-primary font-semibold flex items-center justify-between">
+<span>torch.onnx Zero Loss</span>
+<span class="material-symbols-outlined text-[16px]">verified</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-card rounded-2xl p-6 border border-border-soft hover:border-primary/40 hover:-translate-y-1 transition-all duration-200 custom-glass-card group flex flex-col justify-between">
+<div class="space-y-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container text-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+<span class="material-symbols-outlined text-[26px]">layers</span>
+</div>
+<div>
+<span class="font-label-tech text-[11px] text-primary tracking-wide block uppercase">Factor 03</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary mt-1">Operator Support</h3>
+</div>
+<p class="font-body-md text-body-md text-text-muted leading-relaxed">
+              인체 세그멘테이션, 33-Keypoint 포즈 추정, 가상 피팅의 복잡한 커스텀 수학 연산을 중단 없이 지원하는가?
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-border-soft font-label-tech text-label-tech text-primary font-semibold flex items-center justify-between">
+<span>Custom Ops + Fallbacks</span>
+<span class="material-symbols-outlined text-[16px]">verified</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-card rounded-2xl p-6 border border-border-soft hover:border-primary/40 hover:-translate-y-1 transition-all duration-200 custom-glass-card group flex flex-col justify-between">
+<div class="space-y-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary-container text-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+<span class="material-symbols-outlined text-[26px]">terminal</span>
+</div>
+<div>
+<span class="font-label-tech text-[11px] text-primary tracking-wide block uppercase">Factor 04</span>
+<h3 class="font-headline-sm text-headline-sm text-text-primary mt-1">Maintainability</h3>
+</div>
+<p class="font-body-md text-body-md text-text-muted leading-relaxed">
+              단일 일관된 런타임 레이어를 통해 복수 모델(포즈, 의류 변형, VTON)의 배포·운영 수명주기를 표준화하는가?
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-border-soft font-label-tech text-label-tech text-primary font-semibold flex items-center justify-between">
+<span>Unified Runtime Stack</span>
+<span class="material-symbols-outlined text-[16px]">verified</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== 4. SECTION 03: ENGINE COMPARISON MATRIX ==================== -->
+<section class="max-w-7xl mx-auto px-gutter scroll-mt-24" id="engine-comparison">
+<div class="space-y-3 mb-8">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-fixed text-primary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[14px]">table_chart</span>
+<span>COMPUTATION ENGINE BENCHMARK MATRIX</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-text-primary font-bold tracking-tight">
+          4개의 엔진, 1개의 선택.
+        </h2>
+<p class="font-body-md text-body-md text-text-muted">
+          MUSE 하드웨어 및 모델 구성을 기준으로 한 설계 적합성 비교 분석 (실측 벤치마크 전 설계 평가 기준).
+        </p>
+</div>
+<!-- Full Wide Matrix Table -->
+<div class="bg-surface-card rounded-3xl border border-border-soft overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[800px]">
+<thead>
+<tr class="border-b border-border-soft bg-surface-container-low">
+<th class="p-5 font-headline-sm text-body-md text-text-primary w-1/5">평가 지표 (Metrics)</th>
+<!-- Highlighted Selected Column -->
+<th class="p-5 w-1/4 bg-primary-fixed/40 border-l border-r border-accent-lavender relative">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary text-on-primary font-label-caps text-[10px] uppercase mb-1">
+<span class="material-symbols-outlined text-[12px]">verified</span>
+                    BEST FIT FOR MUSE
+                  </div>
+<div class="font-headline-sm text-headline-sm text-primary font-bold">ONNX Runtime</div>
+<div class="font-label-tech text-[11px] text-text-muted">Microsoft • v1.17+</div>
+</th>
+<th class="p-5 w-1/5 border-r border-border-soft">
+<div class="font-headline-sm text-headline-sm text-text-primary font-semibold">NCNN</div>
+<div class="font-label-tech text-[11px] text-text-muted">Tencent Open Source</div>
+</th>
+<th class="p-5 w-1/5 border-r border-border-soft">
+<div class="font-headline-sm text-headline-sm text-text-primary font-semibold">OpenVINO</div>
+<div class="font-label-tech text-[11px] text-text-muted">Intel Corporation</div>
+</th>
+<th class="p-5 w-1/5">
+<div class="font-headline-sm text-headline-sm text-text-primary font-semibold">TFLite</div>
+<div class="font-label-tech text-[11px] text-text-muted">LiteRT • Google</div>
+</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-soft font-body-sm text-body-sm">
+<!-- Row 1: 주 활용 환경 -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-5 font-semibold text-text-primary bg-surface-container-low/30">주 활용 환경</td>
+<td class="p-5 bg-primary-fixed/20 border-l border-r border-accent-lavender text-text-primary font-medium">
+<span class="inline-flex items-center gap-1 text-primary font-bold">범용·서버·엣지</span>
+<p class="text-[12px] text-text-muted mt-0.5">클라우드부터 Jetson 임베디드까지 포괄 지원</p>
+</td>
+<td class="p-5 text-text-muted border-r border-border-soft">모바일·임베디드 CPU 중심 경량화</td>
+<td class="p-5 text-text-muted border-r border-border-soft">Intel x86 CPU 및 ARC GPU 최적화</td>
+<td class="p-5 text-text-muted">Android 모바일 및 저전력 에지 디바이스</td>
+</tr>
+<!-- Row 2: Jetson GPU 가속 -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-5 font-semibold text-text-primary bg-surface-container-low/30">Jetson GPU 가속</td>
+<td class="p-5 bg-primary-fixed/20 border-l border-r border-accent-lavender text-text-primary font-medium">
+<span class="inline-flex items-center gap-1 text-primary font-bold">
+<span class="material-symbols-outlined text-[16px] text-tech-jetson-green">check_circle</span>
+                    TensorRT / CUDA EP 직접 연동
+                  </span>
+<p class="text-[12px] text-text-muted mt-0.5">NVIDIA 네이티브 가속 레이어 제로 오버헤드 활용</p>
+</td>
+<td class="p-5 text-text-muted border-r border-border-soft">
+<span class="text-amber-700">Vulkan 경로 검토 필요</span>
+<p class="text-[11px] mt-0.5">Jetson GPU 성능 최대화 한계</p>
+</td>
+<td class="p-5 text-text-muted border-r border-border-soft">
+<span class="text-error font-semibold">NVIDIA GPU 경로 부적합</span>
+<p class="text-[11px] mt-0.5">Intel 하드웨어 외 가속 미지원</p>
+</td>
+<td class="p-5 text-text-muted">
+<span class="text-amber-700">GPU Delegate 제약</span>
+<p class="text-[11px] mt-0.5">OpenCL/Vulkan 우회로 인한 복잡성</p>
+</td>
+</tr>
+<!-- Row 3: Jetson DLA -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-5 font-semibold text-text-primary bg-surface-container-low/30">Jetson DLA 가속</td>
+<td class="p-5 bg-primary-fixed/20 border-l border-r border-accent-lavender text-text-primary font-medium">
+<span class="inline-flex items-center gap-1 text-primary font-semibold">조건부 지원 가능</span>
+<p class="text-[12px] text-text-muted mt-0.5">TensorRT EP 통하여 호환 레이어 오프로딩 가능</p>
+</td>
+<td class="p-5 text-text-muted border-r border-border-soft">직접 지원 부재</td>
+<td class="p-5 text-text-muted border-r border-border-soft">직접 지원 부재</td>
+<td class="p-5 text-text-muted">직접 지원 부재</td>
+</tr>
+<!-- Row 4: PyTorch 배포 -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-5 font-semibold text-text-primary bg-surface-container-low/30">PyTorch 배포 파이프라인</td>
+<td class="p-5 bg-primary-fixed/20 border-l border-r border-accent-lavender text-text-primary font-medium">
+<span class="inline-flex items-center gap-1 text-primary font-bold">ONNX 표준 직접 내보내기</span>
+<p class="text-[12px] text-text-muted mt-0.5">torch.onnx.export 통한 손실 없는 변환 파이프라인</p>
+</td>
+<td class="p-5 text-text-muted border-r border-border-soft">
+<span>추가 포맷 변환 (onnx2ncnn)</span>
+<p class="text-[11px] mt-0.5">연산자 누락 위험 상존</p>
+</td>
+<td class="p-5 text-text-muted border-r border-border-soft">변환 및 IR 호환성 검토 필요</td>
+<td class="p-5 text-text-muted">TFLite 변환 및 양자화 검토 복잡</td>
+</tr>
+<!-- Row 5: 복잡한 연산 대응 -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-5 font-semibold text-text-primary bg-surface-container-low/30">복잡한 비전 연산 대응</td>
+<td class="p-5 bg-primary-fixed/20 border-l border-r border-accent-lavender text-text-primary font-medium">
+<span class="inline-flex items-center gap-1 text-primary font-bold">다중 EP 활용 유연</span>
+<p class="text-[12px] text-text-muted mt-0.5">미지원 연산은 CUDA 및 CPU로 부드러운 자동 폴백</p>
+</td>
+<td class="p-5 text-text-muted border-r border-border-soft">연산별 수동 구현 호환성 검토 필요</td>
+<td class="p-5 text-text-muted border-r border-border-soft">비-인텔 환경 장치·연산 제약</td>
+<td class="p-5 text-text-muted">Select TF Ops 변환 크기 팽창 제약</td>
+</tr>
+<!-- Row 6: 종합 평가 -->
+<tr class="font-headline-sm">
+<td class="p-5 font-bold text-text-primary bg-surface-container-low/60">MUSE 적합성 종합 평가</td>
+<td class="p-5 bg-primary-fixed/40 border-l border-r border-accent-lavender text-primary font-bold">
+<div class="flex items-center gap-2">
+<span class="px-3 py-1 rounded-full bg-primary text-on-primary text-xs tracking-wider uppercase font-label-caps">높음 (BEST FIT)</span>
+</div>
+</td>
+<td class="p-5 text-text-muted border-r border-border-soft font-semibold">낮음</td>
+<td class="p-5 text-error border-r border-border-soft font-semibold">매우 낮음</td>
+<td class="p-5 text-text-muted font-semibold">낮음</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-surface-container-lowest border-t border-border-soft flex items-center justify-between font-label-tech text-[11px] text-text-muted">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">info</span>
+<span>본 평가는 NVIDIA Jetson Orin NX 엣지 하드웨어 사양 및 MUSE 멀티태스크 딥러닝 비전 모델 구성을 충족하기 위한 아키텍처 적합성 분석 결과입니다.</span>
+</div>
+<span class="hidden md:inline text-primary font-semibold">Architectural Specification v2.4</span>
+</div>
+</div>
+</section>
+<!-- ==================== 5. SECTION 04: INFERENCE ARCHITECTURE DIAGRAM ==================== -->
+<section class="max-w-7xl mx-auto px-gutter scroll-mt-24" id="architecture-diagram">
+<div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-primary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[14px]">account_tree</span>
+<span>END-TO-END DATA &amp; INFERENCE PIPELINE</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-text-primary font-bold tracking-tight">
+          학습한 AI가 거울 속에서 실행되기까지.
+        </h2>
+<p class="font-body-md text-body-md text-text-muted">
+          PyTorch 연구 환경에서 Jetson Orin NX 하드웨어 가속기 및 스마트 미러 글래스 UI로 매끄럽게 흐르는 6계층 추론 아키텍처입니다.
+        </p>
+</div>
+<!-- Connected Visual Diagram Container -->
+<div class="bg-surface-card rounded-3xl border border-border-soft p-8 relative overflow-hidden soft-glow-lavender">
+<div class="space-y-8">
+<!-- Top Row: Step 01 -> Step 02 -> Step 03 -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+<!-- Step 01 -->
+<div class="p-5 rounded-2xl bg-surface-subtle border border-border-soft relative group">
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-tech text-label-tech text-primary font-bold">STEP 01</span>
+<span class="material-symbols-outlined text-text-muted text-[20px]">science</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary mb-1">AI Model Development</h4>
+<p class="font-label-tech text-[11px] text-text-muted mb-3">PyTorch Training Environment</p>
+<div class="space-y-1.5 font-body-sm text-body-sm text-text-muted">
+<div class="p-2 bg-surface-card rounded-lg border border-border-soft/60 flex items-center justify-between">
+<span>Human Segmentation</span>
+<span class="font-label-tech text-[10px] text-primary">BiSeNet V2</span>
+</div>
+<div class="p-2 bg-surface-card rounded-lg border border-border-soft/60 flex items-center justify-between">
+<span>Pose Estimation</span>
+<span class="font-label-tech text-[10px] text-primary">HRNet-W32</span>
+</div>
+<div class="p-2 bg-surface-card rounded-lg border border-border-soft/60 flex items-center justify-between">
+<span>Body Analysis</span>
+<span class="font-label-tech text-[10px] text-primary">Custom Regr</span>
+</div>
+<div class="p-2 bg-surface-card rounded-lg border border-border-soft/60 flex items-center justify-between">
+<span>Virtual Try-On</span>
+<span class="font-label-tech text-[10px] text-tech-onnx-blue">VTON Flow</span>
+</div>
+</div>
+</div>
+<!-- Step 02 -->
+<div class="p-5 rounded-2xl bg-surface-subtle border border-border-soft relative group">
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-tech text-label-tech text-primary font-bold">STEP 02</span>
+<span class="material-symbols-outlined text-text-muted text-[20px]">swap_horiz</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary mb-1">Model Export</h4>
+<p class="font-label-tech text-[11px] text-text-muted mb-3">Zero-Copy Graph Extraction</p>
+<div class="space-y-2.5 font-body-sm text-body-sm">
+<div class="p-3 bg-surface-card rounded-xl border border-border-soft">
+<div class="font-label-tech text-label-tech text-primary font-bold">torch.onnx.export()</div>
+<div class="text-[12px] text-text-muted mt-1">동적 배치(Dynamic Axes) 및 Opset 17 타깃 표준 그래프화</div>
+</div>
+<div class="p-3 bg-surface-card rounded-xl border border-border-soft">
+<div class="font-label-tech text-label-tech text-text-primary font-bold">Graph Validation</div>
+<div class="text-[12px] text-text-muted mt-1">ONNX Checker를 통한 연산 무결성 및 출력 텐서 수치 오차 검증</div>
+</div>
+</div>
+</div>
+<!-- Step 03: Core Engine -->
+<div class="p-5 rounded-2xl bg-secondary-container/60 border border-accent-lavender relative shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-caps text-label-caps text-primary uppercase font-bold">STEP 03 • CORE RUNTIME</span>
+<span class="material-symbols-outlined text-primary text-[22px]">view_in_ar</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary font-bold mb-1">ONNX Runtime</h4>
+<p class="font-label-tech text-[11px] text-primary mb-3">Unified Execution Orchestrator</p>
+<div class="bg-surface-card p-3.5 rounded-xl border border-accent-lavender space-y-2">
+<div class="text-xs text-text-muted">지능형 그래프 파티셔닝(Graph Partitioning)으로 연산자별 최적 하드웨어 디스패치</div>
+<div class="flex items-center justify-between font-label-tech text-[11px] text-primary pt-1 border-t border-border-soft">
+<span>Multi-EP Manager</span>
+<span class="font-bold">Active Binding</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Connecting Divider with Flow Indicator -->
+<div class="relative py-2 flex items-center justify-center">
+<div class="w-full border-t border-dashed border-border-soft"></div>
+<div class="absolute px-4 py-1 rounded-full bg-accent-lavender text-primary font-label-tech text-label-tech uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">alt_route</span>
+<span>EP Branching Priority Dispatch (우선순위 기반 분기)</span>
+</div>
+</div>
+<!-- Middle Row: Step 04 - 3 Branching Execution Providers -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Path A: Primary -->
+<div class="p-5 rounded-2xl bg-primary-fixed/30 border-2 border-primary relative shadow-xs">
+<div class="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full bg-primary text-on-primary font-label-caps text-[10px] uppercase font-bold">
+                PATH A • PRIMARY
+              </div>
+<div class="flex items-center gap-2 mb-2">
+<span class="w-3 h-3 rounded-full bg-tech-jetson-green"></span>
+<h5 class="font-headline-sm text-headline-sm text-primary font-bold">TensorRT EP</h5>
+</div>
+<div class="font-label-tech text-[11px] text-text-muted mb-3">우선 GPU 가속 경로</div>
+<p class="font-body-sm text-body-sm text-text-primary leading-relaxed">
+                NVIDIA Ampere GPU 코어 및 32개 Tensor Core를 직접 구동. FP16 혼합 정밀도 커널 융합(Kernel Fusion)으로 최대 연산 효율 달성.
+              </p>
+<div class="mt-4 p-2 bg-surface-card rounded-lg font-label-tech text-[11px] text-tech-jetson-green font-semibold flex items-center justify-between">
+<span>Latency Optimization</span>
+<span>&lt; 1.8s Target</span>
+</div>
+</div>
+<!-- Path B: Fallback 1 -->
+<div class="p-5 rounded-2xl bg-surface-card border border-border-soft relative">
+<div class="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full bg-surface-container-high text-text-muted font-label-caps text-[10px] uppercase font-semibold">
+                PATH B • FALLBACK 1
+              </div>
+<div class="flex items-center gap-2 mb-2">
+<span class="w-3 h-3 rounded-full bg-tech-onnx-blue"></span>
+<h5 class="font-headline-sm text-headline-sm text-text-primary font-bold">CUDA EP</h5>
+</div>
+<div class="font-label-tech text-[11px] text-text-muted mb-3">유연한 GPU 보조 경로</div>
+<p class="font-body-sm text-body-sm text-text-muted leading-relaxed">
+                TensorRT 파서에서 직접 지원되지 않는 특수 수학 레이어나 커스텀 레이어를 GPU 메모리 상에서 끊김 없이 보조 실행.
+              </p>
+<div class="mt-4 p-2 bg-surface-subtle rounded-lg font-label-tech text-[11px] text-text-muted flex items-center justify-between">
+<span>Memory Zero-Copy</span>
+<span>Seamless Switch</span>
+</div>
+</div>
+<!-- Path C: Fallback 2 -->
+<div class="p-5 rounded-2xl bg-surface-card border border-border-soft relative">
+<div class="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full bg-surface-container-high text-text-muted font-label-caps text-[10px] uppercase font-semibold">
+                PATH C • FALLBACK 2
+              </div>
+<div class="flex items-center gap-2 mb-2">
+<span class="w-3 h-3 rounded-full bg-outline"></span>
+<h5 class="font-headline-sm text-headline-sm text-text-primary font-bold">CPU EP</h5>
+</div>
+<div class="font-label-tech text-[11px] text-text-muted mb-3">안정적 기본 연산 경로</div>
+<p class="font-body-sm text-body-sm text-text-muted leading-relaxed">
+                기타 비전 전처리 및 후처리 좌표 변환(Coordinate Mapping) 등 가벼운 제어 로직을 ARM Cortex-A78AE CPU 코어로 안전하게 위임.
+              </p>
+<div class="mt-4 p-2 bg-surface-subtle rounded-lg font-label-tech text-[11px] text-text-muted flex items-center justify-between">
+<span>System Stability</span>
+<span>Zero Crash Policy</span>
+</div>
+</div>
+</div>
+<!-- Bottom Row: Step 05 & Step 06 -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+<!-- Step 05 -->
+<div class="p-6 rounded-2xl bg-surface-subtle border border-border-soft flex items-start gap-4">
+<div class="w-12 h-12 rounded-xl bg-tech-jetson-green/10 text-tech-jetson-green flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[28px]">developer_board</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-label-tech text-label-tech text-primary font-bold">STEP 05 • EDGE HARDWARE</span>
+<span class="px-2 py-0.5 rounded-full bg-tech-jetson-green/20 text-text-primary font-label-tech text-[10px]">Active</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">NVIDIA Jetson Orin NX System</h4>
+<p class="font-body-sm text-body-sm text-text-muted">
+                  Ampere Architecture GPU + 32 Tensor Cores + 조건부 DLA(Deep Learning Accelerator) 연산 오프로딩 검토. 고밀도 발열 제어 하우징에서 20W TDP로 실시간 구동.
+                </p>
+</div>
+</div>
+<!-- Step 06 -->
+<div class="p-6 rounded-2xl bg-primary-fixed/20 border border-accent-lavender flex items-start gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[28px]">hevc</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-label-tech text-label-tech text-primary font-bold">STEP 06 • USER EXPERIENCE</span>
+<span class="px-2 py-0.5 rounded-full bg-primary text-on-primary font-label-tech text-[10px]">Live UX</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">MUSE Smart Mirror UI Surface</h4>
+<p class="font-body-sm text-body-sm text-text-muted">
+                  15 FPS+ 부드러운 체형 트래킹 실시간 반영, 인터랙티브 가상 피팅 렌더링, 제스처 인식 HUD 표출을 통해 지연 없는 패션 라이프스타일 경험 완성.
+                </p>
+</div>
+</div>
+</div>
+<!-- Architecture Footnote / Engineering Note -->
+<div class="p-4 rounded-xl bg-accent-warm-ivory border border-border-soft flex items-start gap-3 text-xs text-text-muted">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">info</span>
+<div class="space-y-1">
+<span class="font-bold text-text-primary">하드웨어 엔지니어링 조건부 검토 안내:</span>
+<p>Jetson Orin NX의 하드웨어 DLA 엔진은 모든 딥러닝 연산자를 일괄 지원하지 않으며, JetPack 버전 및 TensorRT 컴파일 지원 여부에 따라 일부 레이어에 한해 선택적으로 적용됩니다. 또한 고해상도 생성형 가상 피팅(VTON)의 온디바이스 완전 실행은 실측 메모리 풋프린트 및 추가 최적화에 대한 단계별 실증이 병행됩니다.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== 6. SECTION 05: WHY ONNX RUNTIME? (2x2 GRID) ==================== -->
+<section class="max-w-7xl mx-auto px-gutter">
+<div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-primary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+<span>KEY DIFFERENTIATORS</span>
+</div>
+<h2 class="font-display-hero text-headline-lg text-text-primary font-bold tracking-tight">
+          Why ONNX Runtime?
+        </h2>
+<p class="font-body-md text-body-md text-text-muted">
+          선택의 이유는 분명합니다. 엔지니어링 안정성과 하드웨어 한계 극대화의 균형점입니다.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Feature 1 -->
+<div class="bg-surface-card rounded-2xl p-7 border border-border-soft custom-glass-card hover:border-primary/50 transition-all duration-200 space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-primary text-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">speed</span>
+</div>
+<span class="font-label-tech text-label-tech text-tech-jetson-green font-bold">GPU OPTIMIZED</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-bold">1. NVIDIA GPU Acceleration</h3>
+<p class="font-body-md text-body-md text-text-muted leading-relaxed">
+            TensorRT Execution Provider와의 긴밀한 연동을 통해 커널 자동 융합, FP16 부동소수점 정밀도 변환, 메모리 재사용 최적화를 수행합니다. Jetson Orin NX의 Ampere GPU 성능을 소프트웨어 병목 없이 최고조로 끌어올립니다.
+          </p>
+<div class="p-3 bg-surface-subtle rounded-xl font-label-tech text-[12px] text-text-primary flex items-center justify-between">
+<span>Precision Mode: FP16 Enabled</span>
+<span class="text-primary font-bold">Peak TOPS Utilized</span>
+</div>
+</div>
+<!-- Feature 2 -->
+<div class="bg-surface-card rounded-2xl p-7 border border-border-soft custom-glass-card hover:border-primary/50 transition-all duration-200 space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-secondary-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">call_split</span>
+</div>
+<span class="font-label-tech text-label-tech text-primary font-bold">HIGH AVAILABILITY</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-bold">2. Flexible Execution Fallback</h3>
+<p class="font-body-md text-body-md text-text-muted leading-relaxed">
+            특정 가속기 전용 엔진은 미지원 연산자를 마주치면 즉각 런타임 오류로 중단됩니다. ONNX Runtime은 TensorRT에서 미지원되는 연산자를 감지하면 CUDA EP 및 CPU EP로 자동 분기 처리하여 미러 서비스의 무중단 연속성을 보장합니다.
+          </p>
+<div class="p-3 bg-surface-subtle rounded-xl font-label-tech text-[12px] text-text-primary flex items-center justify-between">
+<span>Runtime Crash Prevention</span>
+<span class="text-primary font-bold">Zero-Downtime Pipeline</span>
+</div>
+</div>
+<!-- Feature 3 -->
+<div class="bg-surface-card rounded-2xl p-7 border border-border-soft custom-glass-card hover:border-primary/50 transition-all duration-200 space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-secondary-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">deployed_code</span>
+</div>
+<span class="font-label-tech text-label-tech text-primary font-bold">SEAMLESS CI/CD</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-bold">3. Simple Unified Deployment</h3>
+<p class="font-body-md text-body-md text-text-muted leading-relaxed">
+            학습 서버(x86_64 리눅스 클러스터)에서 내보낸 단일 <code class="text-primary font-bold">.onnx</code> 모델 그래프 파일을 추가적인 비표준 바이너리 재컴파일 없이 Jetson 엣지 보드로 직접 전송하고 동일 인터페이스로 구동하여 개발 검증 주기를 대폭 단축합니다.
+          </p>
+<div class="p-3 bg-surface-subtle rounded-xl font-label-tech text-[12px] text-text-primary flex items-center justify-between">
+<span>Model Interoperability</span>
+<span class="text-primary font-bold">Standardized .onnx Format</span>
+</div>
+</div>
+<!-- Feature 4 -->
+<div class="bg-surface-card rounded-2xl p-7 border border-border-soft custom-glass-card hover:border-primary/50 transition-all duration-200 space-y-4">
+<div class="flex items-center justify-between">
+<div class="w-12 h-12 rounded-xl bg-secondary-container text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">hub</span>
+</div>
+<span class="font-label-tech text-label-tech text-primary font-bold">FUTURE-READY</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-primary font-bold">4. Scalable Multi-EP Architecture</h3>
+<p class="font-body-md text-body-md text-text-muted leading-relaxed">
+            향후 MUSE 미러의 하드웨어 리비전(Jetson Orin AGX 도입 또는 차세대 NPU 칩셋 탑재)이 진행되더라도 추론 인터페이스 코드를 전면 재작성할 필요 없이 Execution Provider 바인딩 구성 변경만으로 유연하게 하드웨어 확장이 가능합니다.
+          </p>
+<div class="p-3 bg-surface-subtle rounded-xl font-label-tech text-[12px] text-text-primary flex items-center justify-between">
+<span>Hardware Modular Isolation</span>
+<span class="text-primary font-bold">Extensible Architecture</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== 7. SECTION 06: DEPLOYMENT ROADMAP ==================== -->
+<section class="max-w-7xl mx-auto px-gutter">
+<div class="space-y-3 mb-10">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-fixed text-primary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[14px]">timeline</span>
+<span>ENGINEERING MILESTONES</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-text-primary font-bold tracking-tight">
+          선정에서 실제 구동까지.
+        </h2>
+<p class="font-body-md text-body-md text-text-muted">
+          체계적인 단계를 거쳐 스마트 미러 기기에 런타임을 배포하고 안정화하는 5단계 엔지니어링 로드맵입니다.
+        </p>
+</div>
+<!-- Horizontal 5-Step Process Timeline -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
+<!-- Phase 01 -->
+<div class="bg-surface-card rounded-2xl p-5 border border-border-soft flex flex-col justify-between group hover:border-primary/50 transition-all duration-150">
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="font-label-tech text-[11px] text-primary font-bold">PHASE 01</span>
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">Export</h4>
+<p class="font-body-sm text-body-sm text-text-muted leading-relaxed">
+              PyTorch 학습 모델의 고정 가중치와 연산 그래프를 공식 ONNX 규격 포맷으로 변환.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-border-soft font-label-tech text-[11px] text-text-muted">
+<span class="text-text-primary font-semibold">Graph Conversion</span>
+</div>
+</div>
+<!-- Phase 02 -->
+<div class="bg-surface-card rounded-2xl p-5 border border-border-soft flex flex-col justify-between group hover:border-primary/50 transition-all duration-150">
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="font-label-tech text-[11px] text-primary font-bold">PHASE 02</span>
+<span class="w-2.5 h-2.5 rounded-full bg-accent-lavender"></span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">Validate</h4>
+<p class="font-body-sm text-body-sm text-text-muted leading-relaxed">
+              원본 PyTorch 출력값과 ONNX Runtime 텐서 간의 코사인 유사도 및 수치 오차 정밀 검증.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-border-soft font-label-tech text-[11px] text-text-muted">
+<span class="text-text-primary font-semibold">Precision Alignment</span>
+</div>
+</div>
+<!-- Phase 03 -->
+<div class="bg-surface-card rounded-2xl p-5 border border-border-soft flex flex-col justify-between group hover:border-primary/50 transition-all duration-150">
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="font-label-tech text-[11px] text-primary font-bold">PHASE 03</span>
+<span class="w-2.5 h-2.5 rounded-full bg-accent-lavender"></span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">Deploy</h4>
+<p class="font-body-sm text-body-sm text-text-muted leading-relaxed">
+              JetPack 5.1/6.0 OS 호환 라이브러리 검증 후 Jetson Orin NX 시스템에 런타임 탑재.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-border-soft font-label-tech text-[11px] text-text-muted">
+<span class="text-text-primary font-semibold">Edge OS Provision</span>
+</div>
+</div>
+<!-- Phase 04 -->
+<div class="bg-surface-card rounded-2xl p-5 border border-border-soft flex flex-col justify-between group hover:border-primary/50 transition-all duration-150">
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="font-label-tech text-[11px] text-primary font-bold">PHASE 04</span>
+<span class="w-2.5 h-2.5 rounded-full bg-accent-lavender"></span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">Optimize</h4>
+<p class="font-body-sm text-body-sm text-text-muted leading-relaxed">
+              TensorRT / CUDA EP 바인딩, FP16 연산 활성화, 사전 빌드 엔진 캐시(Engine Cache) 적용.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-border-soft font-label-tech text-[11px] text-text-muted">
+<span class="text-text-primary font-semibold">EP Tuning &amp; Caching</span>
+</div>
+</div>
+<!-- Phase 05 -->
+<div class="bg-surface-card rounded-2xl p-5 border border-border-soft flex flex-col justify-between group hover:border-primary/50 transition-all duration-150">
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="font-label-tech text-[11px] text-primary font-bold">PHASE 05</span>
+<span class="w-2.5 h-2.5 rounded-full bg-tech-jetson-green"></span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">Benchmark</h4>
+<p class="font-body-sm text-body-sm text-text-muted leading-relaxed">
+              실제 하드웨어에서 종단간 지연시간(Latency), VRAM 점유, 발열, INT8/DLA 가능성 측정.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-border-soft font-label-tech text-[11px] text-text-muted">
+<span class="text-text-primary font-semibold">Hardware Verification</span>
+</div>
+</div>
+</div>
+<div class="mt-4 p-4 rounded-xl bg-surface-container-lowest border border-border-soft flex items-center justify-between font-label-tech text-[11px] text-text-muted">
+<span class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span>현재 단계: Phase 01~03 설계 완료 및 Phase 04~05 엣지 환경 최적화/실증 계측 진행 중</span>
+</span>
+<span class="text-primary font-bold">Engineering Status: In Verification</span>
+</div>
+</section>
+<!-- ==================== 8. SECTION 07: RISKS & TECHNICAL SOLUTIONS ==================== -->
+<section class="max-w-7xl mx-auto px-gutter">
+<div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary-container text-primary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[14px]">shield</span>
+<span>RELIABILITY &amp; RESILIENCE</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-text-primary font-bold tracking-tight">
+          빠른 추론만큼 중요한 안정성.
+        </h2>
+<p class="font-body-md text-body-md text-text-muted">
+          실제 스마트 미러 상용화 환경에서 마주할 수 있는 리스크 요인과 하드웨어 엔지니어링 관점의 해결책입니다.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Risk & Solution 01 -->
+<div class="bg-surface-card rounded-2xl p-6 border border-border-soft custom-glass-card flex flex-col justify-between space-y-6">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="px-3 py-1 rounded-full bg-error-container text-error font-label-tech text-[11px] font-bold">
+                RISK 01
+              </span>
+<span class="material-symbols-outlined text-error text-[22px]">timer_off</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">초기 실행 시 엔진 빌드 지연</h4>
+<p class="font-body-sm text-body-sm text-text-muted mt-2 leading-relaxed">
+                TensorRT EP가 첫 로드 시 Jetson GPU 하드웨어에 최적화된 엔진 바이너리를 빌드하는 과정에서 수십 초 이상의 초기 기동 지연이 발생할 수 있습니다.
+              </p>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-subtle border border-border-soft space-y-2">
+<div class="flex items-center gap-1.5 text-tech-jetson-green font-label-tech text-label-tech font-bold">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>ENGINEERING SOLUTION</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-primary font-medium">
+              사전 엔진 캐시(Engine Cache) 직렬화 및 사전 빌드
+            </p>
+<p class="text-[12px] text-text-muted">
+              공정 배포 단계에서 Jetson 타깃 엔진 플랜을 미리 빌드하여 저장소에 캐싱, 런타임 시 0.5초 이내 즉각 인스턴스화.
+            </p>
+</div>
+</div>
+<!-- Risk & Solution 02 -->
+<div class="bg-surface-card rounded-2xl p-6 border border-border-soft custom-glass-card flex flex-col justify-between space-y-6">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="px-3 py-1 rounded-full bg-error-container text-error font-label-tech text-[11px] font-bold">
+                RISK 02
+              </span>
+<span class="material-symbols-outlined text-error text-[22px]">extension_off</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">JetPack 라이브러리 간 버전 호환성</h4>
+<p class="font-body-sm text-body-sm text-text-muted mt-2 leading-relaxed">
+                NVIDIA JetPack, CUDA, cuDNN, TensorRT 버전 조합에 따라 ONNX Runtime C++ 빌드 의존성이 깨지거나 EP 바인딩 실패가 발생할 수 있습니다.
+              </p>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-subtle border border-border-soft space-y-2">
+<div class="flex items-center gap-1.5 text-tech-jetson-green font-label-tech text-label-tech font-bold">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>ENGINEERING SOLUTION</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-primary font-medium">
+              도커 컨테이너화 및 고정 LTS 베이스라인 유지
+            </p>
+<p class="text-[12px] text-text-muted">
+              NVIDIA Container Runtime 기반의 표준 이미지로 패키징하여 호스트 OS 업데이트로부터 런타임 격리 및 무결성 확보.
+            </p>
+</div>
+</div>
+<!-- Risk & Solution 03 -->
+<div class="bg-surface-card rounded-2xl p-6 border border-border-soft custom-glass-card flex flex-col justify-between space-y-6">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="px-3 py-1 rounded-full bg-error-container text-error font-label-tech text-[11px] font-bold">
+                RISK 03
+              </span>
+<span class="material-symbols-outlined text-error text-[22px]">blur_off</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary">양자화에 따른 모델 품질 저하</h4>
+<p class="font-body-sm text-body-sm text-text-muted mt-2 leading-relaxed">
+                추론 가속을 위해 무리하게 INT8 전역 양자화를 적용할 경우 가상 피팅(VTON) 이미지 생성 품질에서 옷감 주름 및 텍스처 왜곡이 발생합니다.
+              </p>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-subtle border border-border-soft space-y-2">
+<div class="flex items-center gap-1.5 text-tech-jetson-green font-label-tech text-label-tech font-bold">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+<span>ENGINEERING SOLUTION</span>
+</div>
+<p class="font-body-sm text-body-sm text-text-primary font-medium">
+              태스크별 맞춤 정밀도(Mixed-Precision Policy)
+            </p>
+<p class="text-[12px] text-text-muted">
+              시각적 품질이 핵심인 VTON은 FP16을 우선 유지하고, 경량 포즈 추정 및 인체 분할 모델에 선택적 양자화 검토.
+            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== 9. SECTION 08: FINAL DECISION & TECHNICAL LINK HUB ==================== -->
+<section class="max-w-7xl mx-auto px-gutter">
+<div class="bg-gradient-to-br from-primary-fixed/40 via-surface-card to-secondary-container/40 rounded-3xl border border-accent-lavender p-8 md:p-12 relative overflow-hidden soft-glow-lavender">
+<div class="max-w-3xl space-y-4 mb-10">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary text-on-primary font-label-caps text-label-caps">
+<span class="material-symbols-outlined text-[14px]">terminal</span>
+<span>SYSTEM SUMMARY &amp; NAVIGATION</span>
+</div>
+<h2 class="font-display-hero text-headline-lg text-text-primary font-bold tracking-tight">
+            Built for MUSE. Powered by ONNX Runtime.
+          </h2>
+<p class="font-body-lg text-body-lg text-text-muted leading-relaxed">
+            MUSE의 엣지 인텔리전스는 단순한 벤치마크 점수 경쟁이 아닌, 거울 앞에서 고객이 경험하는 찰나의 지연을 지우기 위한 하드웨어-소프트웨어 통합 최적화의 결과입니다.
+          </p>
+</div>
+<!-- 3 Connected Navigation Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Hub Link 1: AI Research -->
+<a class="group bg-surface-card rounded-2xl p-6 border border-border-soft hover:border-primary transition-all duration-200 hover:-translate-y-1 block" href="ai-research.html">
+<div class="flex items-center justify-between mb-4">
+<div class="w-10 h-10 rounded-xl bg-secondary-container text-primary flex items-center justify-center group-hover:scale-105 transition-transform duration-150">
+<span class="material-symbols-outlined text-[22px]">psychology</span>
+</div>
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors text-[20px]">arrow_forward</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary group-hover:text-primary transition-colors">AI Research</h4>
+<p class="font-body-sm text-body-sm text-text-muted mt-2">
+              가상 착용(VTON) 및 인체 랜드마크 분석에 활용되는 심층 신경망 모델 아키텍처 탐색.
+            </p>
+<div class="mt-4 pt-3 border-t border-border-soft font-label-tech text-[11px] text-primary font-semibold flex items-center gap-1">
+<span>View Research Specs</span>
+<span class="material-symbols-outlined text-[14px]">north_east</span>
+</div>
+</a>
+<!-- Hub Link 2: Data Pipeline -->
+<a class="group bg-surface-card rounded-2xl p-6 border border-border-soft hover:border-primary transition-all duration-200 hover:-translate-y-1 block" href="data-pipeline.html">
+<div class="flex items-center justify-between mb-4">
+<div class="w-10 h-10 rounded-xl bg-secondary-container text-primary flex items-center justify-center group-hover:scale-105 transition-transform duration-150">
+<span class="material-symbols-outlined text-[22px]">dataset</span>
+</div>
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors text-[20px]">arrow_forward</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary group-hover:text-primary transition-colors">Data Pipeline</h4>
+<p class="font-body-sm text-body-sm text-text-muted mt-2">
+              실시간 카메라 영상 입력부터 전처리, 텐서 정규화, 마스킹으로 이어지는 실시간 데이터 흐름.
+            </p>
+<div class="mt-4 pt-3 border-t border-border-soft font-label-tech text-[11px] text-primary font-semibold flex items-center gap-1">
+<span>Explore Pipeline</span>
+<span class="material-symbols-outlined text-[14px]">north_east</span>
+</div>
+</a>
+<!-- Hub Link 3: Hardware -->
+<a class="group bg-surface-card rounded-2xl p-6 border border-border-soft hover:border-primary transition-all duration-200 hover:-translate-y-1 block" href="hardware.html">
+<div class="flex items-center justify-between mb-4">
+<div class="w-10 h-10 rounded-xl bg-secondary-container text-primary flex items-center justify-center group-hover:scale-105 transition-transform duration-150">
+<span class="material-symbols-outlined text-[22px]">developer_board</span>
+</div>
+<span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors text-[20px]">arrow_forward</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-text-primary group-hover:text-primary transition-colors">Hardware Specs</h4>
+<p class="font-body-sm text-body-sm text-text-muted mt-2">
+              NVIDIA Jetson Orin NX 캐리어 보드 구성, 카메라 모듈, 발열 제어 기구 설계 명세서.
+            </p>
+<div class="mt-4 pt-3 border-t border-border-soft font-label-tech text-[11px] text-primary font-semibold flex items-center gap-1">
+<span>Inspect Hardware</span>
+<span class="material-symbols-outlined text-[14px]">north_east</span>
+</div>
+</a>
+</div>
+</div>
+</section>
+</main>
+<!-- ==================== 10. TECHNICAL FOOTER ==================== -->
+<footer class="bg-surface-container-lowest dark:bg-inverse-surface border-t border-border-soft dark:border-outline-variant/30 docked full-width bottom mt-space-3xl">
+<div class="max-w-7xl mx-auto px-gutter py-space-xl flex flex-col md:flex-row justify-between items-center gap-space-md w-full">
+<!-- Left Copyright & Engine Endorsement -->
+<div class="flex flex-col gap-1 text-center md:text-left">
+<span class="font-display-hero text-headline-sm font-bold text-text-primary dark:text-inverse-on-surface">MUSE AI Mirror</span>
+<p class="font-body-sm text-body-sm text-text-muted dark:text-outline-variant">
+          © 2025 MUSE AI Mirror System. Accelerated by NVIDIA Jetson Orin NX &amp; ONNX Runtime.
+        </p>
+</div>
+<!-- Footer Navigation Links -->
+<div class="flex flex-wrap items-center justify-center gap-6 font-label-tech text-label-tech">
+<a class="text-text-muted dark:text-outline-variant hover:text-text-primary dark:hover:text-inverse-on-surface hover:underline transition-all duration-150" href="architecture-spec.html">Architecture Spec</a>
+<a class="text-text-muted dark:text-outline-variant hover:text-text-primary dark:hover:text-inverse-on-surface hover:underline transition-all duration-150" href="onnx-models.html">ONNX Models</a>
+<a class="text-text-muted dark:text-outline-variant hover:text-text-primary dark:hover:text-inverse-on-surface hover:underline transition-all duration-150" href="hardware-sla.html">Hardware SLA</a>
+<a class="text-text-muted dark:text-outline-variant hover:text-text-primary dark:hover:text-inverse-on-surface hover:underline transition-all duration-150" href="latency-benchmarks.html">Latency Benchmarks</a>
+<a class="text-text-muted dark:text-outline-variant hover:text-text-primary dark:hover:text-inverse-on-surface hover:underline transition-all duration-150" href="privacy-policy.html">Privacy Policy</a>
+</div>
+</div>
+</footer>
+</body></html>
