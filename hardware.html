@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MUSE — Smart Mirror Hardware Architecture &amp; Design</title>
+<!-- Typography: Playfair Display & Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration Verbatim from Design System -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "secondary": "#6050af",
+            "on-primary-container": "#858383",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed-variant": "#474747",
+            "surface-dim": "#dbdad7",
+            "surface-container-high": "#e9e8e5",
+            "surface-container": "#efeeeb",
+            "secondary-container": "#ab9bff",
+            "primary-fixed-dim": "#c6c6c6",
+            "on-secondary-fixed-variant": "#483795",
+            "error": "#ba1a1a",
+            "on-surface-variant": "#444748",
+            "primary-container": "#1c1b1b",
+            "tertiary-fixed-dim": "#c6c6c6",
+            "on-error": "#ffffff",
+            "outline-variant": "#c4c7c7",
+            "tertiary-container": "#1b1b1b",
+            "surface": "#faf9f6",
+            "on-tertiary-fixed": "#1b1b1b",
+            "on-primary-fixed-variant": "#474646",
+            "surface-bright": "#faf9f6",
+            "tertiary-fixed": "#e2e2e2",
+            "on-secondary-container": "#3e2c8b",
+            "inverse-surface": "#2f312f",
+            "secondary-fixed": "#e6deff",
+            "on-surface": "#1a1c1a",
+            "surface-tint": "#5e5e5e",
+            "on-error-container": "#93000a",
+            "primary-fixed": "#e5e2e1",
+            "surface-container-lowest": "#ffffff",
+            "background": "#faf9f6",
+            "surface-container-low": "#f4f3f1",
+            "surface-container-highest": "#e3e2e0",
+            "inverse-primary": "#c8c6c5",
+            "on-secondary-fixed": "#1b0062",
+            "on-secondary": "#ffffff",
+            "primary": "#000000",
+            "on-background": "#1a1c1a",
+            "outline": "#747878",
+            "inverse-on-surface": "#f2f1ee",
+            "secondary-fixed-dim": "#c9beff",
+            "surface-variant": "#e3e2e0",
+            "on-primary": "#ffffff",
+            "on-tertiary-container": "#848484",
+            "tertiary": "#000000",
+            "on-primary-fixed": "#1b1b1b",
+            "on-tertiary": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "2rem",
+            "margin": "2.5rem",
+            "gutter-mobile": "1rem",
+            "space-sm": "0.75rem",
+            "space-md": "1.25rem",
+            "gutter": "1.5rem",
+            "space-xs": "0.375rem",
+            "space-xl": "3.5rem",
+            "margin-mobile": "1.25rem"
+          },
+          "fontFamily": {
+            "headline-lg-mobile": ["Playfair Display"],
+            "body-md": ["Plus Jakarta Sans"],
+            "headline-sm": ["Playfair Display"],
+            "label-tag": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "title-editorial": ["Plus Jakarta Sans"],
+            "display-hero-mobile": ["Playfair Display"],
+            "headline-lg": ["Playfair Display"],
+            "label-uppercase": ["Plus Jakarta Sans"],
+            "display-hero": ["Playfair Display"],
+            "headline-md": ["Playfair Display"]
+          },
+          "fontSize": {
+            "headline-lg-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "22px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "headline-sm": ["22px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "500" }],
+            "label-tag": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "title-editorial": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-hero-mobile": ["38px", { "lineHeight": "46px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "headline-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.015em", "fontWeight": "400" }],
+            "label-uppercase": ["11px", { "lineHeight": "14px", "letterSpacing": "0.14em", "fontWeight": "600" }],
+            "display-hero": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "headline-md": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      height: 4px;
+      width: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #c4c7c7;
+      border-radius: 9999px;
+    }
+    .mirror-shimmer {
+      background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.3) 100%);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- ========================================================================= -->
+<!-- 1. TOP NAV BAR (Shared Component Exact Match)                             -->
+<!-- ========================================================================= -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline docked full-width top-0 sticky z-50 transition-all duration-200">
+<div class="w-full max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between h-20">
+<!-- Brand Logo -->
+<a class="font-headline-sm text-headline-sm tracking-tight text-primary dark:text-inverse-primary uppercase hover:opacity-90 transition-opacity flex items-center gap-2" href="./index.html" aria-label="MUSE 홈으로 이동">
+<span>MUSE</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</a>
+<!-- Desktop Nav Links -->
+<nav class="hidden lg:flex items-center space-x-5" aria-label="데스크톱 사이트 메뉴">
+<a class="text-on-surface-variant dark:text-surface-variant font-label-uppercase text-label-uppercase tracking-wider transition-colors hover:text-secondary dark:hover:text-secondary-fixed" href="./index.html#about">Philosophy</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-uppercase text-label-uppercase tracking-wider transition-colors hover:text-secondary dark:hover:text-secondary-fixed" href="./index.html#features">Product</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-uppercase text-label-uppercase tracking-wider transition-colors hover:text-secondary dark:hover:text-secondary-fixed" href="./ai-research.html">AI Research</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-uppercase text-label-uppercase tracking-wider transition-colors hover:text-secondary dark:hover:text-secondary-fixed" href="./data-pipeline.html">Data Pipeline</a>
+<!-- Active Nav Item -->
+<a class="border-b-2 border-secondary text-primary dark:text-inverse-primary pb-1 font-title-editorial text-title-editorial" href="./hardware.html" aria-current="page">Hardware</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-uppercase text-label-uppercase tracking-wider transition-colors hover:text-secondary dark:hover:text-secondary-fixed" href="./inference-engine.html">Inference Engine</a>
+</nav>
+<!-- Trailing Action -->
+<div class="flex items-center space-x-3">
+<button type="button" id="muse-hardware-toggle" aria-controls="muse-hardware-mobile-nav" aria-expanded="false" aria-label="모바일 메뉴 열기" class="lg:hidden inline-flex items-center justify-center rounded-lg border border-outline-variant p-2 text-primary hover:bg-surface-container"><span class="material-symbols-outlined">menu</span></button>
+<a class="bg-primary text-on-primary hover:bg-primary-container px-5 py-2.5 rounded-lg text-body-sm font-body-sm transition-all duration-150 flex items-center gap-2" href="./index.html#virtual-try-on"><span>Virtual Try-On</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<nav id="muse-hardware-mobile-nav" aria-label="모바일 사이트 메뉴" class="hidden lg:hidden border-t border-outline-variant/40 bg-surface px-6 py-5">
+<div class="mx-auto grid max-w-7xl grid-cols-2 gap-4 text-sm font-semibold text-on-surface-variant">
+<a href="./index.html">Home</a><a href="./index.html#about">Philosophy</a>
+<a href="./index.html#features">Product</a><a href="./ai-research.html">AI Research</a>
+<a href="./data-pipeline.html">Data Pipeline</a><a href="./hardware.html" aria-current="page" class="text-secondary">Hardware</a>
+<a href="./inference-engine.html">Inference Engine</a>
+</div>
+</nav>
+</header>
+<main class="w-full overflow-hidden">
+<!-- ========================================================================= -->
+<!-- SECTION 01 — HARDWARE HERO                                                -->
+<!-- ========================================================================= -->
+<section class="w-full max-w-7xl mx-auto px-6 lg:px-10 pt-12 pb-20 border-b border-outline-variant" id="hardware">
+<!-- Meta Badge & Section Indicator -->
+<div class="flex items-center justify-between mb-8 pb-4 border-b border-surface-container-high">
+<div class="flex items-center gap-3">
+<span class="px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-tag text-label-tag tracking-wider">MUSE HW REPORT v2.0</span>
+<span class="text-outline text-body-sm">|</span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant tracking-wider">HARDWARE SPECIFICATION ARCHITECTURE</span>
+</div>
+<div class="hidden sm:flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>Status: Hardware Design (Prototype Planned)</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<!-- Left: Hero Headline & Narrative -->
+<div class="lg:col-span-7 space-y-6">
+<div class="space-y-3">
+<p class="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase">Embedded AI &amp; Edge Optical System</p>
+<h1 class="font-display-hero text-display-hero text-primary tracking-tight">
+              Designed to Think.<br/><span class="italic font-normal">Made to Reflect.</span>
+</h1>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface-variant font-normal">
+            당신의 스타일을 이해하는 AI 스마트미러, MUSE의 하드웨어를 소개합니다.
+          </p>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed max-w-xl">
+            실시간 AI 분석부터 정밀한 센서 제어까지. MUSE는 엣지 AI와 임베디드 시스템을 결합해 개인화된 스타일링 경험을 구현합니다. 원본 신체 프라이버시 보호를 위한 로컬 AI 추론과 반사광 제어를 위한 정밀 광학 하드웨어가 하나의 우아한 브로드시트 프레임 안에 응축되어 있습니다.
+          </p>
+<!-- Quick Jump Links -->
+<div class="pt-2 flex flex-wrap items-center gap-2">
+<span class="font-label-uppercase text-label-uppercase text-outline mr-2">QUICK JUMP:</span>
+<a class="px-3 py-1 rounded-full border border-outline-variant hover:border-primary text-body-sm font-body-sm transition-colors bg-surface-container-lowest" href="#architecture">아키텍처 블록도</a>
+<a class="px-3 py-1 rounded-full border border-outline-variant hover:border-primary text-body-sm font-body-sm transition-colors bg-surface-container-lowest" href="#components">15대 부품 스펙</a>
+<a class="px-3 py-1 rounded-full border border-outline-variant hover:border-primary text-body-sm font-body-sm transition-colors bg-surface-container-lowest" href="#casestudies">핵심 기술선택 5선</a>
+<a class="px-3 py-1 rounded-full border border-outline-variant hover:border-primary text-body-sm font-body-sm transition-colors bg-surface-container-lowest" href="#power">24V 전원망</a>
+<a class="px-3 py-1 rounded-full border border-outline-variant hover:border-primary text-body-sm font-body-sm transition-colors bg-surface-container-lowest" href="#workflow">동작 시나리오</a>
+</div>
+<!-- 5 Stat Pill Badges -->
+<div class="pt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/60">
+<span class="font-label-uppercase text-label-uppercase text-secondary block">EDGE COMPUTE</span>
+<span class="font-title-editorial text-title-editorial text-primary block mt-0.5">100 TOPS</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Jetson Orin NX 16GB</span>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/60">
+<span class="font-label-uppercase text-label-uppercase text-secondary block">DISPLAY BRIGHTNESS</span>
+<span class="font-title-editorial text-title-editorial text-primary block mt-0.5">1000 nits</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">30% Half-Mirror 보완</span>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/60">
+<span class="font-label-uppercase text-label-uppercase text-secondary block">COLOR ACCURACY</span>
+<span class="font-title-editorial text-title-editorial text-primary block mt-0.5">CRI 95+</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">5000K 고연색 COB LED</span>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/60">
+<span class="font-label-uppercase text-label-uppercase text-secondary block">STANDBY POWER</span>
+<span class="font-title-editorial text-title-editorial text-primary block mt-0.5">65 µA</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">HC-SR501 PIR 절전 감시</span>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg border border-outline-variant/60 col-span-2 sm:col-span-1">
+<span class="font-label-uppercase text-label-uppercase text-secondary block">POWER BUS</span>
+<span class="font-title-editorial text-title-editorial text-primary block mt-0.5">24V / 350W</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">UHP-350 팬리스 저소음</span>
+</div>
+</div>
+</div>
+<!-- Right: 32" Smart Mirror Concept Preview Frame -->
+<div class="lg:col-span-5 relative flex justify-center">
+<!-- Outer Structural Mirror Housing -->
+<div class="relative w-full max-w-[380px] aspect-[9/16] bg-primary rounded-2xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-2 border-surface-container-high">
+<!-- Dual Camera Bezel Cutout (Top) -->
+<div class="absolute top-2 left-1/2 -translate-x-1/2 flex items-center gap-3 px-4 py-1 bg-surface-container-lowest/10 backdrop-blur-md rounded-full border border-white/20 z-20">
+<span class="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-700 relative">
+<span class="absolute inset-0.5 rounded-full bg-secondary animate-ping opacity-60"></span>
+</span>
+<span class="text-[9px] font-label-uppercase text-white tracking-wider">RGB-D + IMX477</span>
+<span class="w-2 h-2 rounded-full bg-slate-800"></span>
+</div>
+<!-- LED Strips Simulation (Left & Right Bezel Glare) -->
+<div class="absolute left-1 top-12 bottom-12 w-1 bg-gradient-to-b from-white/90 via-amber-100/70 to-white/90 rounded-full shadow-[0_0_15px_#fff]"></div>
+<div class="absolute right-1 top-12 bottom-12 w-1 bg-gradient-to-b from-white/90 via-amber-100/70 to-white/90 rounded-full shadow-[0_0_15px_#fff]"></div>
+<!-- Half-Mirror Display Canvas Inside Frame -->
+<div class="w-full h-full bg-gradient-to-b from-slate-900 via-neutral-900 to-black rounded-xl overflow-hidden relative border border-white/10 flex flex-col justify-between p-5 text-white">
+<!-- Ambient Mirror Subtle Shimmer -->
+<div class="absolute inset-0 mirror-shimmer pointer-events-none opacity-40"></div>
+<!-- Top Status: Ambient Time & Weather -->
+<div class="relative z-10 flex items-start justify-between">
+<div>
+<span class="font-headline-sm text-2xl tracking-normal font-light">09:42</span>
+<span class="block text-[10px] font-label-uppercase text-slate-400">SEOUL, KR · 21°C MILD</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[10px]">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span class="tracking-widest">READY</span>
+</div>
+</div>
+<!-- Center: Virtual Fitting Guidance Silhouette & Pose Overlay -->
+<div class="relative z-10 my-auto text-center space-y-3">
+<div class="w-36 h-56 mx-auto border border-dashed border-secondary/60 rounded-2xl relative flex items-center justify-center bg-secondary/5 backdrop-blur-[2px]">
+<!-- Wireframe Keypoint Indicator Lines -->
+<div class="absolute top-6 w-12 h-12 rounded-full border border-secondary/40 flex items-center justify-center">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</div>
+<div class="absolute top-20 w-24 h-0.5 bg-secondary/30"></div>
+<div class="absolute top-28 w-20 h-0.5 bg-secondary/30"></div>
+<div class="absolute bottom-6 w-16 h-0.5 bg-secondary/30"></div>
+<span class="text-[11px] font-label-tag text-secondary-fixed bg-primary/80 px-2 py-0.5 rounded border border-secondary/30">
+                    2.1m 거리 확인됨
+                  </span>
+</div>
+<p class="font-headline-sm text-sm text-white/90 italic">
+                  "Today's Curated Look: Minimalist Wool Blazer &amp; Silk Trousers"
+                </p>
+<div class="flex justify-center gap-1.5">
+<span class="px-2 py-0.5 bg-white/10 rounded text-[9px] text-slate-300">Tone: 5000K Neutral</span>
+<span class="px-2 py-0.5 bg-white/10 rounded text-[9px] text-slate-300">FPS: 30 Edge Calc</span>
+</div>
+</div>
+<!-- Bottom: Touch Prompt & Sensor Status -->
+<div class="relative z-10 flex items-center justify-between pt-3 border-t border-white/10 text-[10px]">
+<div class="flex items-center gap-2 text-slate-300">
+<span class="material-symbols-outlined text-[14px] text-secondary-fixed">touch_app</span>
+<span>화면을 터치하여 촬영</span>
+</div>
+<span class="text-slate-400 font-label-uppercase">MUSE OS v1.2</span>
+</div>
+</div>
+<!-- Surrounding Pointer Callouts -->
+<div class="hidden sm:block absolute -top-4 -right-16 bg-surface-container-lowest px-3 py-1.5 rounded-lg border border-outline-variant text-[11px] font-body-sm shadow-sm whitespace-nowrap">
+<span class="font-semibold text-secondary">Dual Camera</span> (D455 + IMX477)
+            </div>
+<div class="hidden sm:block absolute top-1/3 -left-20 bg-surface-container-lowest px-3 py-1.5 rounded-lg border border-outline-variant text-[11px] font-body-sm shadow-sm whitespace-nowrap">
+<span class="font-semibold text-secondary">고연색 LED</span> (양측 1.5m 5000K)
+            </div>
+<div class="hidden sm:block absolute bottom-1/4 -right-20 bg-surface-container-lowest px-3 py-1.5 rounded-lg border border-outline-variant text-[11px] font-body-sm shadow-sm whitespace-nowrap">
+<span class="font-semibold text-secondary">32" 1000nit</span> IPS 패널
+            </div>
+<div class="hidden sm:block absolute -bottom-4 left-6 bg-surface-container-lowest px-3 py-1.5 rounded-lg border border-outline-variant text-[11px] font-body-sm shadow-sm whitespace-nowrap">
+<span class="font-semibold text-secondary">ToF &amp; PIR</span> 베젤 직접 타공
+            </div>
+</div>
+</div>
+</div>
+<!-- Bottom Highlight Spec Cards (5 items in a responsive grid) -->
+<div class="mt-16 pt-12 border-t border-outline-variant">
+<div class="mb-6 flex items-center justify-between">
+<h3 class="font-title-editorial text-title-editorial text-primary">5 Core Hardware Architectural Highlights</h3>
+<span class="text-label-uppercase font-label-uppercase text-on-surface-variant">MUSE SYSTEM REQUISITES</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+<!-- Card 1 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant/80 hover:border-secondary transition-all flex flex-col justify-between">
+<div>
+<span class="font-label-uppercase text-[10px] text-secondary tracking-widest block mb-2">01 / MAIN COMPUTE</span>
+<h4 class="font-headline-sm text-lg text-primary mb-2">NVIDIA Jetson Orin NX 16GB</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                최대 100 TOPS AI 연산. 민감한 원본 신체 이미지를 서버에 전송하지 않고 기기 내에서 즉각 로컬 파싱 및 임베딩.
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container text-[11px] text-outline font-label-uppercase">
+              12V DC · 25W T-MAX
+            </div>
+</div>
+<!-- Card 2 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant/80 hover:border-secondary transition-all flex flex-col justify-between">
+<div>
+<span class="font-label-uppercase text-[10px] text-secondary tracking-widest block mb-2">02 / AUXILIARY MCU</span>
+<h4 class="font-headline-sm text-lg text-primary mb-2">Espressif ESP32-S3</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                센서 상시 감시 전담 및 고속 25kHz LED PWM 제어. OS 부하와 무관하게 65µA 대기 상태에서 즉시 기동.
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container text-[11px] text-outline font-label-uppercase">
+              5V DC · USB-CDC 연동
+            </div>
+</div>
+<!-- Card 3 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant/80 hover:border-secondary transition-all flex flex-col justify-between">
+<div>
+<span class="font-label-uppercase text-[10px] text-secondary tracking-widest block mb-2">03 / DISPLAY ENGINE</span>
+<h4 class="font-headline-sm text-lg text-primary mb-2">32" 1000nit IPS Panel</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                하프미러 30% 투과율을 정밀 보정하는 고휘도 디스플레이. 자연스러운 반사와 선명한 가상 피팅 UI 공존.
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container text-[11px] text-outline font-label-uppercase">
+              12V DC · HDMI 2.0
+            </div>
+</div>
+<!-- Card 4 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant/80 hover:border-secondary transition-all flex flex-col justify-between">
+<div>
+<span class="font-label-uppercase text-[10px] text-secondary tracking-widest block mb-2">04 / OPTICAL SENSING</span>
+<h4 class="font-headline-sm text-lg text-primary mb-2">Dual Camera System</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                RealSense D455(깊이/신체 키포인트)와 Arducam IMX477(12.3MP 의류 질감/색상)의 정밀 분업 광학계.
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container text-[11px] text-outline font-label-uppercase">
+              USB 3.1 + CSI-2 2-Lane
+            </div>
+</div>
+<!-- Card 5 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant/80 hover:border-secondary transition-all flex flex-col justify-between">
+<div>
+<span class="font-label-uppercase text-[10px] text-secondary tracking-widest block mb-2">05 / POWER NETWORK</span>
+<h4 class="font-headline-sm text-lg text-primary mb-2">24V Bus SMPS Architecture</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                350W Mean Well 팬리스 SMPS(UHP-350-24)로 발열 및 소음 억제. LED 24V 직접 공급 및 12V/5V 안정적 강압.
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container text-[11px] text-outline font-label-uppercase">
+              47% 전력 여유 마진 확보
+            </div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- SECTION 02 — SYSTEM ARCHITECTURE                                         -->
+<!-- ========================================================================= -->
+<section class="w-full max-w-7xl mx-auto px-6 lg:px-10 py-20 border-b border-outline-variant" id="architecture">
+<div class="max-w-3xl mb-12">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase">System Hierarchy &amp; Dual-Controller Pipeline</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-1 mb-4">
+          Inside MUSE — 하나의 거울을 움직이는 기술
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          MUSE는 무거운 AI 모델을 담당하는 <strong class="text-primary font-semibold">Jetson Orin NX (메인 AI 연산기)</strong>와, 실시간성이 요구되는 <strong class="text-primary font-semibold">ESP32-S3 (보조 센서 MCU)</strong>로 역할이 철저히 분리된 2단 아키텍처를 취합니다. 24V 단일 전원 버스로부터 공급받는 견고한 신호 및 전력망을 확인하십시오.
+        </p>
+</div>
+<div class="mb-5 flex flex-wrap items-center gap-3">
+<a href="./assets/hardware/muse-hardware-diagram.svg" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-full border border-secondary/30 bg-secondary-fixed/30 px-4 py-2 text-sm font-semibold text-secondary hover:bg-secondary-fixed"><span class="material-symbols-outlined text-[18px]">open_in_new</span>원본 시스템 구성도 보기 (SVG)</a>
+<a href="./docs/hardware/muse-hardware-report.md" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-full border border-outline-variant px-4 py-2 text-sm hover:bg-surface-container"><span class="material-symbols-outlined text-[18px]">description</span>설계 보고서 원문</a>
+</div>
+<!-- Interactive Hardware Architecture Diagram Canvas -->
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant p-6 lg:p-8 shadow-sm">
+<!-- Canvas Header & Interactive Controls -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-outline-variant">
+<div>
+<h3 class="font-title-editorial text-title-editorial text-primary">MUSE 하드웨어 블록 다이어그램 (Hardware Interconnect Diagram)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">실제 시스템 전원 분배선(오렌지 실선) 및 고속 신호 통신선(보라 점선)</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant text-body-sm hover:bg-surface-container text-primary transition-colors flex items-center gap-1" onclick="zoomDiagram(1)">
+<span class="material-symbols-outlined text-[16px]">zoom_in</span>
+<span>확대</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant text-body-sm hover:bg-surface-container text-primary transition-colors flex items-center gap-1" onclick="zoomDiagram(-1)">
+<span class="material-symbols-outlined text-[16px]">zoom_out</span>
+<span>축소</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-body-sm hover:bg-surface-container-high text-primary transition-colors" onclick="resetZoom()">
+              초기화
+            </button>
+</div>
+</div>
+<!-- Legend Ribbon -->
+<div class="py-4 flex flex-wrap items-center gap-6 text-body-sm border-b border-surface-container bg-surface-container-low/50 px-4 my-4 rounded-lg">
+<span class="font-label-uppercase text-label-uppercase text-outline">DIAGRAM LEGEND:</span>
+<div class="flex items-center gap-2">
+<span class="w-6 h-0.5 bg-[#D99A2B]"></span>
+<span class="text-on-surface-variant font-medium">전원 버스 (24V / 12V / 5V DC)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-6 h-0.5 border-b-2 border-dashed border-[#9D8DF1]"></span>
+<span class="text-on-surface-variant font-medium">고속/저속 신호 통신 (USB, CSI, UART, I2C)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3.5 h-3.5 rounded bg-[#9D8DF1]/20 border border-[#9D8DF1]"></span>
+<span class="text-on-surface-variant">연산 처리 및 센서 입력부</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3.5 h-3.5 rounded bg-[#E4A9C4]/20 border border-[#E4A9C4]"></span>
+<span class="text-on-surface-variant">디스플레이/오디오/조명 출력부</span>
+</div>
+</div>
+<!-- Diagram Render Container -->
+<div class="w-full overflow-x-auto custom-scroll py-6 transition-all duration-300" id="diagram-viewport">
+<div class="min-w-[980px] mx-auto p-4 transition-transform duration-200 origin-top" id="diagram-content">
+<!-- Embedded Precision High-Fidelity SVG Block Diagram -->
+<svg class="w-full h-auto font-body-sm select-none" fill="none" viewbox="0 0 1020 620" xmlns="http://www.w3.org/2000/svg">
+<!-- Grid background -->
+<defs>
+<pattern height="20" id="archGrid" patternunits="userSpaceOnUse" width="20">
+<path d="M 20 0 L 0 0 0 20" fill="none" stroke="#efeeeb" stroke-width="1"></path>
+</pattern>
+<marker id="arrow-power" markerheight="6" markerwidth="6" orient="auto-start-reverse" refx="5" refy="5" viewbox="0 0 10 10">
+<path d="M 0 0 L 10 5 L 0 10 z" fill="#D99A2B"></path>
+</marker>
+<marker id="arrow-signal" markerheight="6" markerwidth="6" orient="auto-start-reverse" refx="5" refy="5" viewbox="0 0 10 10">
+<path d="M 0 0 L 10 5 L 0 10 z" fill="#9D8DF1"></path>
+</marker>
+</defs>
+<rect fill="url(#archGrid)" height="620" rx="12" width="1020"></rect>
+<!-- AC POWER & 24V SMPS SECTION (Top Left) -->
+<rect fill="#FAF9F6" height="110" rx="8" stroke="#D99A2B" stroke-width="2" width="210" x="30" y="30"></rect>
+<text fill="#D99A2B" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" letter-spacing="1" x="45" y="55">POWER ENTRY MODULE</text>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="700" x="45" y="78">Mean Well UHP-350-24</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" x="45" y="98">AC 100~240V ➔ 24V DC 14.6A</text>
+<text fill="#747878" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="45" y="118">350W 정격 팬리스 구조</text>
+<!-- 24V MAIN BUS BAR -->
+<path d="M 240 85 L 340 85" marker-end="url(#arrow-power)" stroke="#D99A2B" stroke-width="3"></path>
+<rect fill="#D99A2B" height="26" rx="4" width="120" x="340" y="72"></rect>
+<text fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700" text-anchor="middle" x="400" y="89">24V MAIN DC BUS</text>
+<!-- DC-DC CONVERTERS -->
+<!-- 24V to 12V-A (Display) -->
+<path d="M 400 98 L 400 135" stroke="#D99A2B" stroke-width="2.5"></path>
+<rect fill="#FFFFFF" height="50" rx="6" stroke="#D99A2B" stroke-width="1.5" width="150" x="325" y="135"></rect>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="400" y="155">SD-100B-12 (102W)</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" text-anchor="middle" x="400" y="172">12V DC-A (Display 전용)</text>
+<!-- 24V to 12V-B (Jetson) -->
+<path d="M 460 85 L 540 85 L 540 135" stroke="#D99A2B" stroke-width="2.5"></path>
+<rect fill="#FFFFFF" height="50" rx="6" stroke="#D99A2B" stroke-width="1.5" width="150" x="495" y="135"></rect>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="570" y="155">SD-100B-12 (102W)</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" text-anchor="middle" x="570" y="172">12V DC-B (Jetson 연산 전용)</text>
+<!-- 24V to 5V (ESP32 & Sensors) -->
+<path d="M 460 85 L 720 85 L 720 135" stroke="#D99A2B" stroke-width="2.5"></path>
+<rect fill="#FFFFFF" height="50" rx="6" stroke="#D99A2B" stroke-width="1.5" width="150" x="665" y="135"></rect>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="740" y="155">SD-25B-5 (25W)</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" text-anchor="middle" x="740" y="172">5V DC (MCU &amp; 센서 전용)</text>
+<!-- 24V DIRECT TO LED STRIP -->
+<path d="M 400 72 L 400 45 L 860 45 L 860 135" stroke="#D99A2B" stroke-width="2.5"></path>
+<rect fill="#FFFFFF" height="50" rx="6" stroke="#E4A9C4" stroke-width="1.5" width="155" x="830" y="135"></rect>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" text-anchor="middle" x="907" y="155">고연색 COB LED (24V)</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" text-anchor="middle" x="907" y="172">5000K CRI 95+ (최대 30W)</text>
+<!-- MAIN CONTROLLER: JETSON ORIN NX (Center-Left) -->
+<rect fill="#F4F3F1" height="230" rx="10" stroke="#9D8DF1" stroke-width="2" width="280" x="420" y="240"></rect>
+<rect fill="#9D8DF1" height="30" rx="4" width="260" x="430" y="250"></rect>
+<text fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="700" text-anchor="middle" x="560" y="270">MAIN AI: NVIDIA Jetson Orin NX 16GB</text>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600" x="440" y="305">• 100 TOPS AI 가속 엔진</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="440" y="325">• 포즈 추정 / 인체 파싱 / 의류 임베딩</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="440" y="345">• NVMe M.2 1TB SSD (PCIe Gen4 x4)</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="440" y="365">• Wi-Fi 6E AX210 (서버 VTO API 통신)</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="440" y="385">• Ubuntu 22.04 LTS + JetPack 6.x</text>
+<!-- Power input into Jetson -->
+<path d="M 570 185 L 570 240" marker-end="url(#arrow-power)" stroke="#D99A2B" stroke-width="2.5"></path>
+<text fill="#D99A2B" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="600" x="578" y="215">12V DC</text>
+<!-- AUXILIARY CONTROLLER: ESP32-S3 (Right) -->
+<rect fill="#F4F3F1" height="230" rx="10" stroke="#9D8DF1" stroke-width="2" width="250" x="740" y="240"></rect>
+<rect fill="#6050AF" height="30" rx="4" width="230" x="750" y="250"></rect>
+<text fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="700" text-anchor="middle" x="865" y="270">AUX MCU: Espressif ESP32-S3</text>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600" x="755" y="305">• 실시간 센서 상시 감시 전담</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="755" y="325">• ToF 거리 센서 (TFmini-S / UART)</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="755" y="345">• PIR 인체 모션 감지 (HC-SR501 / GPIO)</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="755" y="365">• 조도/색온도 센서 (TCS34725 / I2C)</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="755" y="385">• 25kHz 플리커프리 LED PWM 제어</text>
+<!-- Power input into ESP32 -->
+<path d="M 740 185 L 740 240" marker-end="url(#arrow-power)" stroke="#D99A2B" stroke-width="2.5"></path>
+<text fill="#D99A2B" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="600" x="748" y="215">5V DC</text>
+<!-- INTER-CONTROLLER USB-CDC LINK -->
+<path d="M 700 320 L 740 320" marker-end="url(#arrow-signal)" stroke="#9D8DF1" stroke-dasharray="4,4" stroke-width="2.5"></path>
+<path d="M 740 340 L 700 340" marker-end="url(#arrow-signal)" stroke="#9D8DF1" stroke-dasharray="4,4" stroke-width="2.5"></path>
+<text fill="#6050AF" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" text-anchor="middle" x="720" y="310">USB-CDC</text>
+<text fill="#747878" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" text-anchor="middle" x="720" y="360">115.2 kbps</text>
+<!-- LEFT SIDE DEVICES: VISION INPUT & DISPLAY OUTPUT -->
+<!-- RealSense D455 -->
+<rect fill="#FFFFFF" height="55" rx="6" stroke="#9D8DF1" stroke-width="1.5" width="220" x="30" y="210"></rect>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" x="40" y="232">Intel RealSense D455</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="40" y="250">RGB-D 깊이/거리 센서 (USB 3.1 Gen1)</text>
+<path d="M 250 237 L 420 280" marker-end="url(#arrow-signal)" stroke="#9D8DF1" stroke-dasharray="4,4" stroke-width="2"></path>
+<!-- Arducam IMX477 -->
+<rect fill="#FFFFFF" height="55" rx="6" stroke="#9D8DF1" stroke-width="1.5" width="220" x="30" y="280"></rect>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" x="40" y="302">Arducam IMX477 (12.3MP)</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="40" y="320">고해상도 패션 질감 촬영 (MIPI CSI-2)</text>
+<path d="M 250 307 L 420 315" marker-end="url(#arrow-signal)" stroke="#9D8DF1" stroke-dasharray="4,4" stroke-width="2"></path>
+<!-- 32" Display & Half Mirror -->
+<rect fill="#FFFFFF" height="65" rx="6" stroke="#E4A9C4" stroke-width="1.5" width="220" x="30" y="350"></rect>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" x="40" y="372">32" 1000nit IPS + Half Mirror</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="40" y="390">투과율 30% 보정 디스플레이 (HDMI 2.0)</text>
+<text fill="#D99A2B" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" x="40" y="405">Power: 12V-A Rail (최대 70W)</text>
+<path d="M 400 185 L 400 370 L 250 370" marker-end="url(#arrow-power)" stroke="#D99A2B" stroke-width="2"></path>
+<path d="M 420 370 L 250 385" marker-end="url(#arrow-signal)" stroke="#9D8DF1" stroke-dasharray="4,4" stroke-width="2"></path>
+<!-- 32" IR Touch Frame -->
+<rect fill="#FFFFFF" height="50" rx="6" stroke="#9D8DF1" stroke-width="1.5" width="220" x="30" y="430"></rect>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="700" x="40" y="452">32" IR Touch Frame</text>
+<text fill="#444748" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="40" y="470">사용자 촬영 트리거 (USB 2.0 HID)</text>
+<path d="M 250 455 L 420 400" marker-end="url(#arrow-signal)" stroke="#9D8DF1" stroke-dasharray="4,4" stroke-width="2"></path>
+<!-- SENSORS CONNECTED TO ESP32 (Bottom Right) -->
+<rect fill="#FFFFFF" height="95" rx="6" stroke="#9D8DF1" stroke-width="1.5" width="250" x="740" y="495"></rect>
+<text fill="#6050AF" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700" x="750" y="515">CONNECTED REAL-TIME SENSORS</text>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="750" y="535">• TFmini-S ToF (UART 115200bps, 거리 12m)</text>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="750" y="555">• HC-SR501 PIR (3.3V GPIO 인터럽트 대기)</text>
+<text fill="#1A1C1A" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" x="750" y="575">• TCS34725 RGBC (I2C 400kHz 조도·색온도)</text>
+<path d="M 865 470 L 865 495" stroke="#9D8DF1" stroke-dasharray="4,4" stroke-width="2"></path>
+<!-- LED MOSFET Controller signal -->
+<path d="M 940 240 L 940 185" marker-end="url(#arrow-signal)" stroke="#9D8DF1" stroke-dasharray="4,4" stroke-width="2"></path>
+<text fill="#6050AF" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="600" x="948" y="215">PWM 25kHz</text>
+</svg>
+</div>
+</div>
+<!-- 2 Controller Architectural Breakdown Cards -->
+<div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-outline-variant">
+<!-- Controller A -->
+<div class="p-5 bg-surface-container-low rounded-xl border border-secondary/30">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2.5 py-0.5 rounded bg-secondary text-on-secondary font-label-tag text-label-tag">MAIN COMPUTE</span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant">12V DC · HIGH-PERFORMANCE</span>
+</div>
+<h4 class="font-headline-sm text-xl text-primary mb-2">NVIDIA Jetson Orin NX 16GB</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+              고부하 신경망 연산과 대용량 멀티미디어를 전담합니다. 30W T-MAX 모드에서 100 TOPS의 강력한 INT8 연산력을 바탕으로 인체 키포인트 추출, 실시간 옷 세그멘테이션, 패션 속성 분류를 기기 내에서 처리합니다.
+            </p>
+<div class="space-y-1 text-body-sm text-on-surface-variant bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/60">
+<div class="flex justify-between"><span>주요 연결 장치:</span><span class="font-semibold text-primary">D455, IMX477, 32" Display, NVMe, Wi-Fi 6E</span></div>
+<div class="flex justify-between"><span>OS 환경:</span><span class="font-semibold text-primary">Ubuntu 22.04 LTS (JetPack 6.x)</span></div>
+<div class="flex justify-between"><span>통신 인터페이스:</span><span class="font-semibold text-primary">USB 3.2 Gen2, MIPI CSI-2, PCIe x4</span></div>
+</div>
+</div>
+<!-- Controller B -->
+<div class="p-5 bg-surface-container-low rounded-xl border border-secondary/30">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2.5 py-0.5 rounded bg-primary text-on-primary font-label-tag text-label-tag">AUXILIARY MCU</span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface-variant">5V DC · ULTRA-LOW POWER</span>
+</div>
+<h4 class="font-headline-sm text-xl text-primary mb-2">Espressif ESP32-S3-DevKitC-1</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+              대기 전력 감시 및 하드웨어 타이밍 제어를 독립적으로 수행합니다. 리눅스 OS 부하에 영향을 받지 않고 즉각적인 거리(ToF) 측정, 인체 감지 인터럽트, 카메라 롤링셔터 플리커를 없애기 위한 25kHz LED PWM 제어를 관장합니다.
+            </p>
+<div class="space-y-1 text-body-sm text-on-surface-variant bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/60">
+<div class="flex justify-between"><span>주요 연결 장치:</span><span class="font-semibold text-primary">TFmini-S ToF, HC-SR501 PIR, TCS34725, LED MOSFET</span></div>
+<div class="flex justify-between"><span>대기 전류:</span><span class="font-semibold text-primary">PIR 감시 중 약 65µA</span></div>
+<div class="flex justify-between"><span>메인 연동 방식:</span><span class="font-semibold text-primary">USB-CDC 115200bps 가상 COM 포트</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- SECTION 03 — HARDWARE COMPONENTS (ALL 15 COMPONENTS)                      -->
+<!-- ========================================================================= -->
+<section class="w-full max-w-7xl mx-auto px-6 lg:px-10 py-20 border-b border-outline-variant" id="components">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+<div>
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase">Bill of Materials &amp; Specifications</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-1">15 Components, One Intelligent Mirror.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2 max-w-2xl">
+            단일 부품의 타협 없는 선택이 완벽한 럭셔리 경험을 완성합니다. 15개 하드웨어 모듈의 전압, 전류, 피크 파워 및 인터페이스 사양을 확인하십시오.
+          </p>
+</div>
+<!-- Filter Pill Tabs -->
+<div class="flex flex-wrap gap-2">
+<button class="filter-btn active-filter px-3.5 py-1.5 rounded-full text-body-sm font-body-sm border border-primary bg-primary text-on-primary transition-all" onclick="filterComponents('all', this)">전체 (15)</button>
+<button class="filter-btn px-3.5 py-1.5 rounded-full text-body-sm font-body-sm border border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:border-primary transition-all" onclick="filterComponents('compute', this)">연산·제어 (2)</button>
+<button class="filter-btn px-3.5 py-1.5 rounded-full text-body-sm font-body-sm border border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:border-primary transition-all" onclick="filterComponents('vision', this)">비전·센서 (5)</button>
+<button class="filter-btn px-3.5 py-1.5 rounded-full text-body-sm font-body-sm border border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:border-primary transition-all" onclick="filterComponents('display', this)">디스플레이·광학 (3)</button>
+<button class="filter-btn px-3.5 py-1.5 rounded-full text-body-sm font-body-sm border border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:border-primary transition-all" onclick="filterComponents('power', this)">전원·기타 (5)</button>
+</div>
+</div>
+<!-- 15 Components Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="components-grid">
+<!-- Component 01 -->
+<div class="comp-card compute bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">01 · 연산/제어</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">NVIDIA Jetson Orin NX 16GB + 캐리어 보드</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Edge AI 메인 연산, 포즈 추정 및 온디바이스 인체 파싱 처리</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>입력 전압 / 전류:</span><span class="font-medium text-primary">12V DC (~1.7A, 피크 3A)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>피크 소비 전력:</span><span class="font-medium text-primary">약 30W (T-MAX 모드)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>인터페이스:</span><span class="font-medium text-primary">USB 3.2, CSI-2, PCIe Gen4</span></div>
+</div>
+</div>
+<!-- Component 02 -->
+<div class="comp-card compute bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">02 · 연산/제어</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">Espressif ESP32-S3-DevKitC-1</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">센서 상시 감시 및 고속 25kHz LED PWM 제어 전담</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>입력 전압 / 전류:</span><span class="font-medium text-primary">5V DC (~80mA, 피크 350mA)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>피크 소비 전력:</span><span class="font-medium text-primary">약 1.75W</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>인터페이스:</span><span class="font-medium text-primary">USB-CDC 115200bps 가상 시리얼</span></div>
+</div>
+</div>
+<!-- Component 03 -->
+<div class="comp-card display bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">03 · 디스플레이/광학</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">32인치 고휘도 IPS 패널 + HDMI AD보드</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">1000nit 고휘도로 하프미러의 30% 투과율을 극복해 선명한 UI 전달</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>입력 전압 / 전류:</span><span class="font-medium text-primary">12V DC (~3.8A, 피크 5.8A)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>피크 소비 전력:</span><span class="font-medium text-primary">약 70W (풀 화이트 백라이트)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>인터페이스:</span><span class="font-medium text-primary">HDMI 2.0 / 1920x1080 (추후 4K)</span></div>
+</div>
+</div>
+<!-- Component 04 -->
+<div class="comp-card display bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">04 · 디스플레이/광학</span>
+<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-label-tag text-[11px]">현장 검증 필요</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">하프미러 (Two-Way Mirror) 32인치</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">투과율 약 30%, 반사율 70% 광학 코팅. 디스플레이 전면 배치</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>소비 전력:</span><span class="font-medium text-primary">무전원 (광학 패시브)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>두께 및 재질:</span><span class="font-medium text-primary">4mm 강화유리 + 티타늄 스퍼터링 코팅</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>고려사항:</span><span class="font-medium text-primary">카메라 투과창 별도 가공 여부</span></div>
+</div>
+</div>
+<!-- Component 05 -->
+<div class="comp-card vision bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">05 · 비전/센서</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">Intel RealSense D455 RGB-D</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">원거리(2~2.5m) 전신 신체 깊이 맵 생성 및 키포인트 추적</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>입력 전압 / 전류:</span><span class="font-medium text-primary">5V USB (~0.5A, 피크 0.7A)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>소비 전력:</span><span class="font-medium text-primary">최대 약 3.5W</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>인터페이스:</span><span class="font-medium text-primary">USB 3.1 Gen1 Type-C (Jetson 연결)</span></div>
+</div>
+</div>
+<!-- Component 06 -->
+<div class="comp-card vision bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">06 · 비전/센서</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">Arducam IMX477 12.3MP 고해상도</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">패션 질감, 원단 텍스처, 정밀 색상 인식을 위한 고화질 스틸 캡처</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>입력 전압 / 전류:</span><span class="font-medium text-primary">3.3V (~150mA, 피크 250mA)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>소비 전력:</span><span class="font-medium text-primary">약 0.8W</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>인터페이스:</span><span class="font-medium text-primary">MIPI CSI-2 2-Lane (초고속 저지연)</span></div>
+</div>
+</div>
+<!-- Component 07 -->
+<div class="comp-card vision bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">07 · 비전/센서</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">Benewake TFmini-S ToF 거리 센서</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">적정 피팅 거리(1.9m~2.6m) 실시간 검증 및 빠른 초점 보조</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>입력 전압 / 전류:</span><span class="font-medium text-primary">5V DC (~140mA, 피크 200mA)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>소비 전력:</span><span class="font-medium text-primary">약 0.7W</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>인터페이스:</span><span class="font-medium text-primary">UART 115200bps (ESP32 직결)</span></div>
+</div>
+</div>
+<!-- Component 08 -->
+<div class="comp-card vision bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">08 · 비전/센서</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">HC-SR501 PIR 인체 모션 감지 센서</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">카메라 없이 사용자의 거울 앞 접근만 초저전력으로 24시간 감시</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>대기 전류:</span><span class="font-medium text-primary">약 65µA (초저전력 대기)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>신호 출력:</span><span class="font-medium text-primary">3.3V High/Low GPIO 인터럽트</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>배치 방식:</span><span class="font-medium text-primary">유리 투과 불가로 베젤 직접 타공 배치</span></div>
+</div>
+</div>
+<!-- Component 09 -->
+<div class="comp-card vision bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">09 · 비전/센서</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">ams TCS34725 RGBC 조도·색온도</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">주변 조명 색온도 계측 및 von Kries 백색 균형 알고리즘 보정</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>소비 전류:</span><span class="font-medium text-primary">약 235µA (3.3V)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>인터페이스:</span><span class="font-medium text-primary">I2C Fast Mode 400kHz</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>주요 기능:</span><span class="font-medium text-primary">IR 차단 필터 일체형 실시간 CCT 추정</span></div>
+</div>
+</div>
+<!-- Component 10 -->
+<div class="comp-card display bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">10 · 디스플레이/광학</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">고연색 COB LED 5000K (CRI 95+)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">양측 1.5m 매립 스트립. 촬영 순간 정확한 색상 재현을 위한 조명</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>정격 전압:</span><span class="font-medium text-primary">24V DC 메인 버스 직결</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>점등 시 소비 전력:</span><span class="font-medium text-primary">약 30W (1.25A / 평상시 0W OFF)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>제어 방식:</span><span class="font-medium text-primary">ESP32 25kHz PWM + 로직 N-MOSFET</span></div>
+</div>
+</div>
+<!-- Component 11 -->
+<div class="comp-card display bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">11 · 디스플레이/광학</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">32인치 적외선(IR) 터치 프레임</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">하프미러 표면 터치 인식 및 사용자 명시적 캡처 트리거</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>입력 전압 / 전류:</span><span class="font-medium text-primary">5V USB (~150mA, 피크 300mA)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>소비 전력:</span><span class="font-medium text-primary">약 1.5W</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>인터페이스:</span><span class="font-medium text-primary">USB 2.0 HID 무드라이버 표준</span></div>
+</div>
+</div>
+<!-- Component 12 -->
+<div class="comp-card display bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">12 · 디스플레이/광학</span>
+<span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 font-label-tag text-[11px]">Phase 2 확장</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">마이크 &amp; 스피커 (ReSpeaker + MAX98357A)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">음성 대화형 코디 추천 및 스타일 가이드 음성 피드백</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>입력 전압:</span><span class="font-medium text-primary">5V DC (USB/I2S)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>출력 사양:</span><span class="font-medium text-primary">4Ω 3W 스테레오 유닛</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>로드맵:</span><span class="font-medium text-primary">하드웨어 포트 설계 완료, 2단계 활성화</span></div>
+</div>
+</div>
+<!-- Component 13 -->
+<div class="comp-card power bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">13 · 전원/보조</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">NVMe SSD M.2 2280 1TB</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">로컬 패션 임베딩 벡터 DB 및 AI 가중치 고속 로딩 스토리지</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>인터페이스:</span><span class="font-medium text-primary">PCIe Gen4 x4 M-Key</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>피크 소비 전력:</span><span class="font-medium text-primary">약 8.25W (3.3V 2.5A)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>읽기 속도:</span><span class="font-medium text-primary">최대 5,000MB/s (모델 가중치 로딩)</span></div>
+</div>
+</div>
+<!-- Component 14 -->
+<div class="comp-card power bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">14 · 전원/보조</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">Intel Wi-Fi 6E AX210 + 외장 안테나 2EA</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">6GHz 대역 초고속 통신으로 럭셔리 VTO 서버 렌더링 결과 수신</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>인터페이스:</span><span class="font-medium text-primary">M.2 2230 E-Key</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>소비 전력:</span><span class="font-medium text-primary">약 3.3W 피크</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>배치 특징:</span><span class="font-medium text-primary">알루미늄 섀시 차폐 방지 외장 안테나</span></div>
+</div>
+</div>
+<!-- Component 15 -->
+<div class="comp-card power bg-surface-container-lowest rounded-xl border border-outline-variant p-5 hover:border-secondary transition-all">
+<div class="flex items-center justify-between mb-3">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-tag text-[11px]">15 · 전원/보조</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-label-tag text-[11px]">기본 설계</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-1">Mean Well UHP-350-24 + DC-DC 3종</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">350W 팬리스 메인 SMPS 및 절연 강압 컨버터(SD-100B-12 x2, SD-25B-5)</p>
+<div class="space-y-1.5 text-body-sm border-t border-surface-container pt-3">
+<div class="flex justify-between text-on-surface-variant"><span>입력 / 정격 출력:</span><span class="font-medium text-primary">AC 100~240V ➔ 24V 14.6A (350W)</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>변환 레일 구성:</span><span class="font-medium text-primary">24V 직결 / 12V-A / 12V-B / 5V 분리</span></div>
+<div class="flex justify-between text-on-surface-variant"><span>특징:</span><span class="font-medium text-primary">팬리스 무소음 설계, 47% 여유 마진</span></div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- SECTION 04 — WHY THESE COMPONENTS? (5 CORE CASE STUDIES)                 -->
+<!-- ========================================================================= -->
+<section class="w-full max-w-7xl mx-auto px-6 lg:px-10 py-20 border-b border-outline-variant" id="casestudies">
+<div class="max-w-3xl mb-12">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase">Rational Architecture Case Studies</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-1 mb-4">
+          Every Component Has a Purpose.
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          기술을 과시하기 위한 부품은 단 하나도 없습니다. 실제 가정 환경에서의 사용자 문제점을 명확히 정의하고, 이를 완벽하게 해결하기 위해 선택된 5가지 엔지니어링 결정 사례를 소개합니다.
+        </p>
+</div>
+<!-- 5 Structured Engineering Case Studies -->
+<div class="space-y-6">
+<!-- Case Study 01 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 lg:p-8 hover:border-secondary transition-all">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+<div class="lg:w-1/4">
+<span class="font-label-uppercase text-xs text-secondary font-bold tracking-widest">CASE STUDY 01</span>
+<h3 class="font-headline-sm text-2xl text-primary mt-1">Edge AI Processing</h3>
+<span class="inline-block mt-2 px-2.5 py-0.5 bg-secondary-fixed text-on-secondary-fixed text-label-tag rounded font-label-tag">개인정보 로컬 완결성</span>
+</div>
+<div class="lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-surface-container lg:pl-8">
+<div>
+<span class="font-label-uppercase text-[11px] text-outline block mb-1">01 / 사용자 문제 (USER CHALLENGE)</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  스마트미러는 침실과 드레스룸에 설치됩니다. 옷을 갈아입거나 가벼운 옷차림의 고화질 원본 사진이 외부 클라우드 서버로 업로드되는 것은 치명적인 프라이버시 침해 우려와 거부감을 유발합니다.
+                </p>
+</div>
+<div>
+<span class="font-label-uppercase text-[11px] text-secondary block mb-1 font-semibold">02 / 선택한 기술 (SELECTED TECH)</span>
+<p class="font-body-md text-body-md text-primary font-medium leading-relaxed">
+<strong>NVIDIA Jetson Orin NX 16GB (100 TOPS)</strong>를 기기 내에 실장하여 포즈 추정(YOLOv8-pose), 인체 세그멘테이션(SCHP), 의류 특징 임베딩 모델을 기기 내에서 로컬 연산하도록 설계했습니다.
+                </p>
+</div>
+<div>
+<span class="font-label-uppercase text-[11px] text-outline block mb-1">03 / 기대 효과 (ENGINEERED OUTCOME)</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  원본 이미지는 기기 내부 메모리에서 처리 후 즉시 소멸되며, 오직 암호화된 512차원 특징 벡터 데이터만 추천 API로 송신됩니다. 프라이버시를 100% 보장하며 응답 속도 2초 이내를 달성합니다.
+                </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Case Study 02 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 lg:p-8 hover:border-secondary transition-all">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+<div class="lg:w-1/4">
+<span class="font-label-uppercase text-xs text-secondary font-bold tracking-widest">CASE STUDY 02</span>
+<h3 class="font-headline-sm text-2xl text-primary mt-1">Accurate Distance</h3>
+<span class="inline-block mt-2 px-2.5 py-0.5 bg-secondary-fixed text-on-secondary-fixed text-label-tag rounded font-label-tag">광학 왜곡 방지 및 전신 추정</span>
+</div>
+<div class="lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-surface-container lg:pl-8">
+<div>
+<span class="font-label-uppercase text-[11px] text-outline block mb-1">01 / 사용자 문제 (USER CHALLENGE)</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  사용자가 거울에 너무 가깝거나(1.5m 이내) 멀리 있으면 발목이나 머리가 잘려 정확한 신체 비율 측정과 가상 피팅(VTO)이 불가능하며, 단안 RGB 카메라만으로는 실측 신장 계측에 오차가 큽니다.
+                </p>
+</div>
+<div>
+<span class="font-label-uppercase text-[11px] text-secondary block mb-1 font-semibold">02 / 선택한 기술 (SELECTED TECH)</span>
+<p class="font-body-md text-body-md text-primary font-medium leading-relaxed">
+<strong>Intel RealSense D455</strong>의 넓은 FoV(86°×57°)와 <strong>TFmini-S ToF 레이저 센서</strong>를 융합했습니다. ToF로 초당 100회 정밀 거리를 계측하고, D455로 2.0~2.5m 거리의 3차원 깊이 맵을 동시 추출합니다.
+                </p>
+</div>
+<div>
+<span class="font-label-uppercase text-[11px] text-outline block mb-1">03 / 기대 효과 (ENGINEERED OUTCOME)</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  거울 UI가 "한 걸음 뒤로 물러서 주세요"와 같은 직관적 피드백을 실시간 제공하며, 전신이 온전히 유효 범위(1.9~2.6m)에 들어왔을 때만 촬영을 트리거하여 피팅 오차율을 3% 이내로 제어합니다.
+                </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Case Study 03 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 lg:p-8 hover:border-secondary transition-all">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+<div class="lg:w-1/4">
+<span class="font-label-uppercase text-xs text-secondary font-bold tracking-widest">CASE STUDY 03</span>
+<h3 class="font-headline-sm text-2xl text-primary mt-1">Controlled Lighting</h3>
+<span class="inline-block mt-2 px-2.5 py-0.5 bg-secondary-fixed text-on-secondary-fixed text-label-tag rounded font-label-tag">의류 색상 &amp; 피부톤 왜곡 극복</span>
+</div>
+<div class="lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-surface-container lg:pl-8">
+<div>
+<span class="font-label-uppercase text-[11px] text-outline block mb-1">01 / 사용자 문제 (USER CHALLENGE)</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  가정 내 조명 환경은 백열등(2700K 따뜻한 주황색)부터 형광등(6500K 푸른빛)까지 천차만별입니다. 동일한 감색(Navy) 재킷이라도 조명에 따라 검은색이나 회색으로 오인식되어 잘못된 코디가 추천됩니다.
+                </p>
+</div>
+<div>
+<span class="font-label-uppercase text-[11px] text-secondary block mb-1 font-semibold">02 / 선택한 기술 (SELECTED TECH)</span>
+<p class="font-body-md text-body-md text-primary font-medium leading-relaxed">
+<strong>5000K 고연색 COB LED (CRI 95+)</strong>를 거울 양측에 1.5m 배치하고, <strong>ams TCS34725 RGBC 센서</strong>로 주변 색온도를 측정해 촬영 직전 보조광으로 플래시 점등 및 von Kries 색보정을 병행합니다.
+                </p>
+</div>
+<div>
+<span class="font-label-uppercase text-[11px] text-outline block mb-1">03 / 기대 효과 (ENGINEERED OUTCOME)</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  어떠한 실내 조명 하에서도 태양광에 준하는 기준 백색광(5000K) 환경을 일관되게 형성하여, 의류 원단의 섬세한 텍스처와 미묘한 퍼스널 컬러 톤을 스튜디오 수준으로 정확하게 재현합니다.
+                </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Case Study 04 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 lg:p-8 hover:border-secondary transition-all">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+<div class="lg:w-1/4">
+<span class="font-label-uppercase text-xs text-secondary font-bold tracking-widest">CASE STUDY 04</span>
+<h3 class="font-headline-sm text-2xl text-primary mt-1">Privacy-Aware Capture</h3>
+<span class="inline-block mt-2 px-2.5 py-0.5 bg-secondary-fixed text-on-secondary-fixed text-label-tag rounded font-label-tag">상시 촬영 불안감 원천 차단</span>
+</div>
+<div class="lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-surface-container lg:pl-8">
+<div>
+<span class="font-label-uppercase text-[11px] text-outline block mb-1">01 / 사용자 문제 (USER CHALLENGE)</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  카메라가 상시 켜져 있는 스마트 디바이스는 사생활 감시 공포를 초래합니다. 사용자는 자기도 모르는 사이에 사진이 찍히거나 저장되고 있다는 불안감을 해소할 물리적 장치를 원합니다.
+                </p>
+</div>
+<div>
+<span class="font-label-uppercase text-[11px] text-secondary block mb-1 font-semibold">02 / 선택한 기술 (SELECTED TECH)</span>
+<p class="font-body-md text-body-md text-primary font-medium leading-relaxed">
+<strong>PIR 센서</strong>는 화면을 깨우는 앰비언트 모드에만 사용하고, <strong>32인치 IR 터치 프레임</strong>의 명시적 버튼 터치 혹은 고유 제스처가 감지될 때만 0.5초 동안 카메라 전원 및 캡처 파이프라인을 기동합니다.
+                </p>
+</div>
+<div>
+<span class="font-label-uppercase text-[11px] text-outline block mb-1">03 / 기대 효과 (ENGINEERED OUTCOME)</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  카메라 센서는 99%의 시간 동안 완전한 절전 및 셧다운 상태를 유지합니다. 사용자가 거울을 직접 터치해 의사를 표현했을 때만 점등 및 캡처가 이뤄지므로 완벽한 심리적 안심을 제공합니다.
+                </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Case Study 05 -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 lg:p-8 hover:border-secondary transition-all">
+<div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+<div class="lg:w-1/4">
+<span class="font-label-uppercase text-xs text-secondary font-bold tracking-widest">CASE STUDY 05</span>
+<h3 class="font-headline-sm text-2xl text-primary mt-1">Independent Sensor MCU</h3>
+<span class="inline-block mt-2 px-2.5 py-0.5 bg-secondary-fixed text-on-secondary-fixed text-label-tag rounded font-label-tag">OS 프리징 방지 &amp; 타이밍 보장</span>
+</div>
+<div class="lg:w-3/4 grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-surface-container lg:pl-8">
+<div>
+<span class="font-label-uppercase text-[11px] text-outline block mb-1">01 / 사용자 문제 (USER CHALLENGE)</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Jetson Linux OS에서 무거운 AI 모델이 연산 중일 때 센서 폴링이 지연되면, 사람이 다가와도 화면이 켜지지 않거나 LED 조명의 PWM 주파수가 불안정해져 카메라 화면에 검은 줄(밴딩)이 나타납니다.
+                </p>
+</div>
+<div>
+<span class="font-label-uppercase text-[11px] text-secondary block mb-1 font-semibold">02 / 선택한 기술 (SELECTED TECH)</span>
+<p class="font-body-md text-body-md text-primary font-medium leading-relaxed">
+<strong>ESP32-S3 보조 MCU</strong>를 분리 실장하여 하드웨어 PWM 타이머(25kHz 고주파)와 UART/I2C 실시간 센서 감시를 전담시키고, Jetson과는 USB-CDC 가상 시리얼 프로토콜로만 깔끔하게 연동했습니다.
+                </p>
+</div>
+<div>
+<span class="font-label-uppercase text-[11px] text-outline block mb-1">03 / 기대 효과 (ENGINEERED OUTCOME)</span>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                  Jetson의 연산 부하나 일시적 병목과 관계없이 1ms 이내의 무지연 센싱 응답과 롤링셔터 플리커가 0%인 안정적인 조명 제어가 상시 완벽하게 보장됩니다.
+                </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- SECTION 05 — POWER ARCHITECTURE & BUDGET                                  -->
+<!-- ========================================================================= -->
+<section class="w-full max-w-7xl mx-auto px-6 lg:px-10 py-20 border-b border-outline-variant" id="power">
+<div class="max-w-3xl mb-12">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase">24V Bus &amp; Power Budget Infographic</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-1 mb-4">
+          Powering MUSE.
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          MUSE는 단일 24V 입력을 채택하여 내부 배선의 전류량을 줄이고 열 손실을 최소화했습니다. 350W 팬리스 SMPS로부터 3종의 전용 DC-DC 컨버터를 통해 각 하위 시스템으로 분배되는 전력망 구조를 확인하십시오.
+        </p>
+</div>
+<!-- Power Distribution Infographic Architecture Card -->
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant p-6 lg:p-8">
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-center">
+<!-- Column 1: Main Power Entry -->
+<div class="p-6 bg-surface-container-low rounded-xl border border-amber-300">
+<span class="font-label-uppercase text-[10px] text-amber-700 font-bold block mb-2">POWER SOURCE</span>
+<h4 class="font-headline-sm text-lg text-primary mb-1">AC 220V Input</h4>
+<div class="my-4 w-full h-px bg-outline-variant"></div>
+<div class="space-y-2 text-body-sm text-on-surface-variant">
+<div><strong class="text-primary font-semibold">Mean Well UHP-350-24</strong></div>
+<div>• 24V DC / 14.6A 정격</div>
+<div>• 350W 최대 정격 용량</div>
+<div>• 팬리스 무소음 설계</div>
+<div>• 전도 냉각 알루미늄 케이스</div>
+</div>
+</div>
+<!-- Column 2, 3, 4: 4 Downstream Voltage Rails -->
+<div class="lg:col-span-3 space-y-4">
+<!-- Rail 1: 24V Rail -->
+<div class="p-4 bg-surface rounded-xl border border-outline-variant flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<span class="w-12 h-10 rounded-lg bg-amber-100 text-amber-800 font-bold text-sm flex items-center justify-center">24V</span>
+<div>
+<h5 class="font-title-editorial text-title-editorial text-primary">고연색 COB LED 스트립 (양측 1.5m)</h5>
+<span class="text-body-sm text-on-surface-variant">SMPS 24V 메인 버스 직결 공급 (25kHz PWM 제어)</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-title-editorial text-title-editorial text-primary">최대 30W</span>
+<span class="block text-body-sm text-outline font-label-uppercase">평상시 0W (촬영 시만 점등)</span>
+</div>
+</div>
+<!-- Rail 2: 12V-A Rail -->
+<div class="p-4 bg-surface rounded-xl border border-outline-variant flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<span class="w-12 h-10 rounded-lg bg-blue-100 text-blue-800 font-bold text-sm flex items-center justify-center">12V-A</span>
+<div>
+<h5 class="font-title-editorial text-title-editorial text-primary">32" 고휘도 디스플레이 패널 (1000nit) + AD보드</h5>
+<span class="text-body-sm text-on-surface-variant">SD-100B-12 DC-DC 절연 컨버터 (102W 정격) 전용 레일</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-title-editorial text-title-editorial text-primary">최대 70W</span>
+<span class="block text-body-sm text-outline font-label-uppercase">평상시 약 45W 소비</span>
+</div>
+</div>
+<!-- Rail 3: 12V-B Rail -->
+<div class="p-4 bg-surface rounded-xl border border-outline-variant flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<span class="w-12 h-10 rounded-lg bg-purple-100 text-purple-800 font-bold text-sm flex items-center justify-center">12V-B</span>
+<div>
+<h5 class="font-title-editorial text-title-editorial text-primary">Jetson Orin NX + 캐리어 허브 (D455, IMX477, SSD, Wi-Fi)</h5>
+<span class="text-body-sm text-on-surface-variant">SD-100B-12 DC-DC 절연 컨버터 (102W 정격) 연산 전용 레일</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-title-editorial text-title-editorial text-primary">최대 약 55W</span>
+<span class="block text-body-sm text-outline font-label-uppercase">AI 연산 25W + 주변부 30W</span>
+</div>
+</div>
+<!-- Rail 4: 5V Rail -->
+<div class="p-4 bg-surface rounded-xl border border-outline-variant flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<span class="w-12 h-10 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-sm flex items-center justify-center">5V</span>
+<div>
+<h5 class="font-title-editorial text-title-editorial text-primary">ESP32-S3 및 센서 일체 (TFmini-S ToF, PIR, TCS34725)</h5>
+<span class="text-body-sm text-on-surface-variant">SD-25B-5 DC-DC 절연 컨버터 (25W 정격) 마이크로 센서 레일</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-title-editorial text-title-editorial text-primary">최대 약 6.5W</span>
+<span class="block text-body-sm text-outline font-label-uppercase">대기 시 0.2W 미만</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Power Budget Comparison Bar -->
+<div class="mt-10 pt-8 border-t border-outline-variant">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+<div>
+<h4 class="font-title-editorial text-title-editorial text-primary">소비 전력 버짓 분석 (Power Budget Verification)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">SMPS 정격 용량 350W 대비 실제 피크 시 요구 전력</p>
+</div>
+<span class="text-secondary font-bold text-headline-sm">47% 여유 마진 (Safe Headroom)</span>
+</div>
+<!-- Multi-tier Bar Chart -->
+<div class="space-y-3">
+<div>
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-on-surface-variant">01. 평상시 대기/앰비언트 모드</span>
+<span class="font-semibold text-primary">약 75W (설계 추정치)</span>
+</div>
+<div class="w-full bg-surface-container h-3 rounded-full overflow-hidden">
+<div class="bg-slate-400 h-full rounded-full" style="width: 21.4%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-on-surface-variant">02. 촬영 순간 부품 순수 합산 피크 (LED + 카메라 + AI + 화면)</span>
+<span class="font-semibold text-primary">약 158W</span>
+</div>
+<div class="w-full bg-surface-container h-3 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 45.1%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-on-surface-variant">03. DC-DC 변환 손실(효율 85%) 감안 SMPS 실질 피크 요구량</span>
+<span class="font-semibold text-primary">약 185W (52.8%)</span>
+</div>
+<div class="w-full bg-surface-container h-3 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 52.8%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-body-sm mb-1">
+<span class="text-on-surface-variant">04. Mean Well UHP-350-24 정격 전원 용량</span>
+<span class="font-semibold text-emerald-700">350W (100% 한계치)</span>
+</div>
+<div class="w-full bg-surface-container-high h-3 rounded-full overflow-hidden">
+<div class="bg-emerald-600 h-full rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+<!-- Clear Disclaimer Note -->
+<p class="mt-6 text-body-sm text-outline font-body-sm leading-relaxed bg-surface-container-low p-3.5 rounded-lg border border-outline-variant/60">
+            ※ 표시된 전력 수치는 부품 규격서 기준 설계 추정치이며, 실측 데이터가 아닙니다. 350W는 파워서플라이 정격 용량입니다. 향후 시제품 하드웨어 조립 후 정밀 파워 미터를 통해 각 상태별 실제 전류를 실측하여 최종 검증할 예정입니다.
+          </p>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- SECTION 06 — HOW MUSE WORKS (6-STEP WORKFLOW)                             -->
+<!-- ========================================================================= -->
+<section class="w-full max-w-7xl mx-auto px-6 lg:px-10 py-20 border-b border-outline-variant" id="workflow">
+<div class="max-w-3xl mb-12">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase">Operational Interaction Sequence</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-1 mb-4">
+          From Presence to Personalization.
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          거울 앞에 서서 맞춤 스타일링 결과를 마주하기까지, MUSE 하드웨어 내부에서 초 단위로 전개되는 정밀한 6단계 파이프라인 흐름입니다.
+        </p>
+</div>
+<!-- 6-Step Workflow Timeline -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Step 1 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-outline-variant relative flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed font-title-editorial flex items-center justify-center font-bold text-sm">1</span>
+<span class="font-label-uppercase text-[10px] text-outline">STANDBY ➔ WAKE</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">Presence Detection</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              초저전력 PIR 센서(HC-SR501)가 사용자의 접근을 감지합니다. 디스플레이 백라이트가 앰비언트 모드로 은은하게 켜지며 날씨와 시간을 표시합니다. 이 단계에서 카메라는 완벽히 비활성화 상태입니다.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container text-[11px] text-secondary font-medium">
+            동작 주체: ESP32-S3 (GPIO 감시)
+          </div>
+</div>
+<!-- Step 2 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-outline-variant relative flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed font-title-editorial flex items-center justify-center font-bold text-sm">2</span>
+<span class="font-label-uppercase text-[10px] text-outline">USER INTENT</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">User-Initiated Capture</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              사용자가 거울 표면의 32인치 IR 터치 프레임 영역을 터치합니다. "스타일링 시작"을 사용자가 물리적으로 명시적 지시한 순간에만 캡처 시퀀스가 허가됩니다.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container text-[11px] text-secondary font-medium">
+            동작 주체: IR Touch Frame ➔ Jetson USB HID
+          </div>
+</div>
+<!-- Step 3 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-outline-variant relative flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed font-title-editorial flex items-center justify-center font-bold text-sm">3</span>
+<span class="font-label-uppercase text-[10px] text-outline">CALIBRATION</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">Environment Check</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              ESP32-S3가 ToF(TFmini-S)로 사용자와의 물리적 거리(1.9~2.6m)를 확인합니다. 동시에 TCS34725 조도 센서가 주변 색온도와 실내 밝기 럭스(Lux)를 실시간 판독합니다.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container text-[11px] text-secondary font-medium">
+            동작 주체: TFmini-S (ToF) + TCS34725 (RGBC)
+          </div>
+</div>
+<!-- Step 4 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-outline-variant relative flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed font-title-editorial flex items-center justify-center font-bold text-sm">4</span>
+<span class="font-label-uppercase text-[10px] text-outline">FLASH CAPTURE</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">Lighting &amp; Dual Capture</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              5000K 고연색 LED가 25kHz PWM으로 점등되어 0.1초 동안 광학계를 안정화합니다. RealSense D455와 IMX477이 버스트 캡처를 동시 완료한 즉시 조명은 자동으로 꺼집니다.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container text-[11px] text-secondary font-medium">
+            동작 주체: 24V LED + D455 (RGB-D) + IMX477 (CSI)
+          </div>
+</div>
+<!-- Step 5 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-outline-variant relative flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed font-title-editorial flex items-center justify-center font-bold text-sm">5</span>
+<span class="font-label-uppercase text-[10px] text-outline">LOCAL COMPUTE</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">Edge AI Processing</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Jetson Orin NX가 D455 깊이 맵과 IMX477 텍스처를 기기 내에서 처리합니다. 관절 키포인트 추정, 의류 카테고리 파싱, 색상·소재 임베딩 벡터를 로컬 생성합니다.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container text-[11px] text-secondary font-medium">
+            동작 주체: Jetson Orin NX (100 TOPS INT8)
+          </div>
+</div>
+<!-- Step 6 -->
+<div class="p-6 bg-surface-container-lowest rounded-xl border border-outline-variant relative flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed font-title-editorial flex items-center justify-center font-bold text-sm">6</span>
+<span class="font-label-uppercase text-[10px] text-outline">RENDER UI</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">Styling Experience</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              32인치 1000nit 디스플레이에 럭셔리 매거진 에디토리얼 레이아웃의 스타일링 추천과 가상 피팅(VTO) 결과가 오버레이됩니다. 사용자는 터치로 의류를 교체해 봅니다.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-container text-[11px] text-secondary font-medium">
+            동작 주체: 32" Display + Cloud VTO API 연동
+          </div>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- SECTION 07 — ENGINEERING CONSIDERATIONS & CHECKLIST                      -->
+<!-- ========================================================================= -->
+<section class="w-full max-w-7xl mx-auto px-6 lg:px-10 py-20 border-b border-outline-variant" id="engineering">
+<div class="max-w-3xl mb-12">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase">Prototyping Risk Mitigation</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-1 mb-4">
+          Built with Real-world Constraints in Mind.
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          책상 위 설계와 실제 시제품 제작 사이의 간극을 메우기 위해 사전 도출된 8대 핵심 엔지니어링 과제와 기구/광학 검증 체크리스트입니다.
+        </p>
+</div>
+<!-- 8 Real-world Engineering Items Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<!-- Item 1 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">ITEM 01 · 광학 감쇄</span>
+<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-label-tag text-[10px]">시제품 검증 예정</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">하프미러 뒤 카메라 광량 손실 (~70% 감쇄) 대책</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            30% 투과율 하프미러 뒤에 카메라를 배치할 경우 수광량이 70% 손실되어 저조도 노이즈가 발생합니다. 카메라 렌즈 영역만 하프미러 코팅을 마스킹한 전용 투명창을 제작하거나, 상단 베젤에 렌즈를 직접 노출시키는 기구 가공 방식을 1차 시제품에서 비교 시험합니다.
+          </p>
+</div>
+<!-- Item 2 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">ITEM 02 · 레이저 반사</span>
+<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-label-tag text-[10px]">설계 시 고려사항</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">RealSense IR 패턴 및 ToF 레이저의 유리 반사 노이즈 방지</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            하프미러 유리에 850nm/940nm 적외선 레이저가 내부 난반사될 경우 RealSense 깊이 맵에 고스트 노이즈가 생성됩니다. ToF 센서와 D455 발광부를 하프미러 표면에 밀착 개스킷(Gasket)으로 차폐하거나 베젤에 물리적으로 분리 배치합니다.
+          </p>
+</div>
+<!-- Item 3 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">ITEM 03 · 센서 투과</span>
+<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-label-tag text-[10px]">설계 시 고려사항</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">PIR 인체 감지 센서의 유리 투과 불가 특성</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            원적외선(8~14µm) 체온을 감지하는 PIR 센서는 일반 유리나 하프미러를 투과할 수 없습니다. 따라서 센서를 거울 뒤에 숨기지 않고, 하단 베젤 프레임에 프레넬 렌즈용 12mm 원형 타공 홀을 마련해 외부로 직접 노출 배치하도록 기구 설계를 확정했습니다.
+          </p>
+</div>
+<!-- Item 4 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">ITEM 04 · 광학 간섭</span>
+<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-label-tag text-[10px]">시제품 검증 예정</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">IR 터치 프레임과 RealSense D455 프로젝터 간 간섭 시험</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            IR 터치 프레임이 방출하는 적외선 격자와 D455의 IR 프로젝터 주파수(850nm 대역)가 중첩될 가능성을 검토합니다. 캡처 시퀀스 진행 중(약 0.5초간) IR 터치 프레임의 스캔을 일시 중단하거나, 상호 간섭이 없는 파장 분리형 부품을 선정하여 테스트합니다.
+          </p>
+</div>
+<!-- Item 5 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">ITEM 05 · 플리커 제어</span>
+<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-label-tag text-[10px]">설계 시 고려사항</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">LED 25kHz PWM 고주파 제어로 롤링셔터 밴딩 원천 차단</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            카메라 셔터 속도(1/120s~1/1000s)보다 낮은 주파수로 LED 조명을 조광할 경우 화면에 줄무늬 밴딩이 나타납니다. ESP32-S3의 하드웨어 타이머를 통해 가청 주파수를 넘어서는 25kHz 초고속 PWM을 구동함으로써 플리커프리 품질을 구현했습니다.
+          </p>
+</div>
+<!-- Item 6 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">ITEM 06 · 열 환기 설계</span>
+<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-label-tag text-[10px]">시제품 검증 예정</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">Jetson, 디스플레이, SMPS 밀폐 하우징 열 환기 대책</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            풀 로드 시 내부 발열체 합산 전력은 약 150W에 달합니다. 굴뚝 효과(Chimney effect)를 유도하기 위해 섀시 최하단에 자연 흡기 슬롯을 배치하고, 상단에 저소음 유체 베어링 80mm 배기팬(ESP32 온도 연동 자동 가변 제어)을 실장합니다.
+          </p>
+</div>
+<!-- Item 7 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">ITEM 07 · RF 통신 보장</span>
+<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-label-tag text-[10px]">설계 시 고려사항</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">금속 알루미늄 하우징 차폐 방지용 외장 Wi-Fi 안테나</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            프리미엄 질감을 위해 거울 프레임을 아노다이징 알루미늄으로 제작할 경우 패러데이 케이지 현상으로 무선 신호가 차단됩니다. Wi-Fi 6E AX210의 SMA 커넥터를 프레임 외부 상단 플라스틱 인서트 영역으로 인출하여 2x2 MIMO 안테나를 배치합니다.
+          </p>
+</div>
+<!-- Item 8 -->
+<div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">ITEM 08 · 설치 및 폼팩터</span>
+<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-label-tag text-[10px]">시제품 검증 예정</span>
+</div>
+<h4 class="font-title-editorial text-title-editorial text-primary mb-2">설치 방식(벽걸이/스탠드) 및 패널 해상도(FHD vs 4K) 최종 결정</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            시제품 총중량(예상 16~19kg)을 고려하여 VESA 200x200 표준 마운트 및 전용 플로어 스탠드 겸용 구조로 브라켓을 설계합니다. 패널은 1차 시제품에서 FHD로 안정성을 검증한 후 양산 단계에서 4K(3840x2160) 패널 교체 적합성을 테스트합니다.
+          </p>
+</div>
+</div>
+</section>
+<!-- ========================================================================= -->
+<!-- SECTION 08 — ROADMAP & ARCHITECTURAL FOOTER                               -->
+<!-- ========================================================================= -->
+<section class="w-full max-w-7xl mx-auto px-6 lg:px-10 py-20" id="roadmap">
+<div class="max-w-3xl mb-12">
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase">Next Phase Implementation</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-1 mb-4">
+          From Hardware Design to a Working Prototype.
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+          MUSE 하드웨어 아키텍처는 설계 단계를 완료하고 실물 시제품 제작 및 통합 테스트 단계로 진입하고 있습니다.
+        </p>
+</div>
+<!-- 6-Phase Engineering Roadmap Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">PHASE 01</span>
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+</div>
+<h4 class="font-title-editorial text-lg text-primary mb-1">부품별 최종 사양 검토 및 발주</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">핵심 15종 부품 리드타임 파악 및 1차 프로토타입용 샘플 수급 확정</p>
+</div>
+<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">PHASE 02</span>
+<span class="w-2 h-2 rounded-full bg-slate-300"></span>
+</div>
+<h4 class="font-title-editorial text-lg text-primary mb-1">카메라·센서 하프미러 투과 테스트</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">하프미러 30% 감쇄 하에서의 D455 깊이 맵 노이즈 및 IMX477 광량 실측</p>
+</div>
+<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">PHASE 03</span>
+<span class="w-2 h-2 rounded-full bg-slate-300"></span>
+</div>
+<h4 class="font-title-editorial text-lg text-primary mb-1">전원 분배기 및 방열 하우징 기구 제작</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">24V 전원 버스 하네스 결선 및 80mm 팬 연동 통풍 섀시 가공</p>
+</div>
+<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">PHASE 04</span>
+<span class="w-2 h-2 rounded-full bg-slate-300"></span>
+</div>
+<h4 class="font-title-editorial text-lg text-primary mb-1">Jetson – ESP32-S3 시리얼 연동</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">USB-CDC 기반 센서 원시 데이터 전송 및 25kHz LED 점등 프로토콜 확립</p>
+</div>
+<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">PHASE 05</span>
+<span class="w-2 h-2 rounded-full bg-slate-300"></span>
+</div>
+<h4 class="font-title-editorial text-lg text-primary mb-1">경량화 AI 모델 임베딩 통합</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">TensorRT 양자화(INT8) 적용 포즈 추정 및 온디바이스 파싱 파이프라인 탑재</p>
+</div>
+<div class="p-5 bg-surface-container-low rounded-xl border border-outline-variant">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-uppercase text-xs text-secondary font-bold">PHASE 06</span>
+<span class="w-2 h-2 rounded-full bg-slate-300"></span>
+</div>
+<h4 class="font-title-editorial text-lg text-primary mb-1">실사용 시나리오 피팅 테스트</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">실제 침실/쇼룸 조명 환경에서 일반 사용자 대상 2초 피팅 경험 실증</p>
+</div>
+</div>
+<!-- Cross-Link Cards to Other MUSE Chapters -->
+<div class="p-8 bg-surface-container-lowest rounded-2xl border border-outline-variant flex flex-col md:flex-row items-center justify-between gap-6">
+<div>
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block mb-1">EXPLORE THE MUSE SYSTEM</span>
+<h3 class="font-headline-sm text-2xl text-primary">하드웨어와 맞물리는 지능형 소프트웨어 아키텍처</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+            Jetson Orin NX 상에서 구동되는 로컬 AI 모델 및 클라우드 가상 피팅 파이프라인의 상세 문서를 확인하십시오.
+          </p>
+</div>
+<div class="flex items-center gap-3 whitespace-nowrap">
+<a class="px-5 py-2.5 rounded-lg border border-primary text-primary hover:bg-surface-container font-body-sm text-body-sm transition-all flex items-center gap-2" href="./ai-research.html">
+<span>AI Research 열람</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+<a class="px-5 py-2.5 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-body-sm text-body-sm transition-all flex items-center gap-2" href="./data-pipeline.html">
+<span>Data Pipeline 열람</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+</main>
+<!-- ========================================================================= -->
+<!-- FOOTER (Shared Component Exact Match)                                     -->
+<!-- ========================================================================= -->
+<footer class="bg-surface-container-low dark:bg-primary-container border-t border-outline-variant dark:border-outline w-full">
+<div class="w-full max-w-7xl mx-auto px-6 lg:px-10 py-16 flex flex-col justify-between">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 pb-12 border-b border-outline-variant/60">
+<!-- Brand Info -->
+<div class="md:col-span-5 space-y-4">
+<span class="font-headline-md text-headline-md text-primary dark:text-inverse-primary tracking-tight">MUSE</span>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md leading-relaxed">
+            MUSE는 엣지 인공지능과 감각적 광학 설계를 결합해 현대인의 스타일링 경험을 재정의하는 차세대 럭셔리 스마트미러 플랫폼입니다.
+          </p>
+<div class="pt-2 text-label-uppercase font-label-uppercase text-outline">
+            DOCUMENTATION CODE: MUSE-HW-ARCH-2026-V2
+          </div>
+</div>
+<!-- Links Grid -->
+<div class="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-6">
+<div class="space-y-3">
+<span class="font-label-uppercase text-label-uppercase text-secondary block">ARCHITECTURE</span>
+<ul class="space-y-2 text-body-sm">
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#hardware">Hardware Architecture</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#casestudies">Engineering Case Studies</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#components">15 Key Components</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#power">24V Power Bus Budget</a></li>
+</ul>
+</div>
+<div class="space-y-3">
+<span class="font-label-uppercase text-label-uppercase text-secondary block">RESEARCH &amp; DATA</span>
+<ul class="space-y-2 text-body-sm">
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="./index.html#about">Philosophy</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="./index.html#features">Product</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="./ai-research.html">AI Research</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="./data-pipeline.html">Data Pipeline</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors" href="./inference-engine.html">Inference Engine</a></li>
+</ul>
+</div>
+<div class="space-y-3 col-span-2 sm:col-span-1">
+<span class="font-label-uppercase text-label-uppercase text-secondary block">LEGAL &amp; ETHICS</span>
+<ul class="space-y-2 text-body-sm">
+<li><span class="text-on-surface-variant hover:text-secondary transition-colors" >Privacy Policy (준비 중)</span></li>
+<li><span class="text-on-surface-variant hover:text-secondary transition-colors" >Terms of Service (준비 중)</span></li>
+<li><span class="text-on-surface-variant hover:text-secondary transition-colors" >Optical Safety Spec (준비 중)</span></li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Copyright Bottom -->
+<div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-body-sm font-body-sm text-on-surface-variant gap-4">
+<p>© 2026 MUSE. Prototype hardware architecture.</p>
+<p class="text-outline">Designed with Playfair &amp; Plus Jakarta Sans typography</p>
+</div>
+</div>
+</footer>
+<!-- Inline Lightweight Vanilla JS for Interactions -->
+<script>
+    // Component Filter Logic
+    function filterComponents(category, trigger) {
+      const cards = document.querySelectorAll('.comp-card');
+      const buttons = document.querySelectorAll('.filter-btn');
+
+      buttons.forEach(btn => {
+        btn.classList.remove('active-filter', 'border-primary', 'bg-primary', 'text-on-primary');
+        btn.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+      });
+      trigger.classList.add('active-filter', 'border-primary', 'bg-primary', 'text-on-primary');
+      trigger.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+
+      cards.forEach(card => {
+        if (category === 'all' || card.classList.contains(category)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    // Architecture Diagram Zoom Controls
+    let currentZoom = 1;
+    const diagramContent = document.getElementById('diagram-content');
+
+    function zoomDiagram(delta) {
+      currentZoom = Math.min(Math.max(currentZoom + (delta * 0.15), 0.75), 1.6);
+      diagramContent.style.transform = `scale(${currentZoom})`;
+    }
+
+    function resetZoom() {
+      currentZoom = 1;
+      diagramContent.style.transform = 'scale(1)';
+    }
+
+    // Accessible mobile navigation for Hardware page.
+    (function () {
+      const toggle = document.getElementById('muse-hardware-toggle');
+      const menu = document.getElementById('muse-hardware-mobile-nav');
+      if (!toggle || !menu) return;
+      function closeMenu() {
+        menu.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+        const icon = toggle.querySelector('.material-symbols-outlined');
+        if (icon) icon.textContent = 'menu';
+      }
+      toggle.addEventListener('click', function () {
+        const willOpen = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', !willOpen);
+        toggle.setAttribute('aria-expanded', String(willOpen));
+        const icon = toggle.querySelector('.material-symbols-outlined');
+        if (icon) icon.textContent = willOpen ? 'close' : 'menu';
+      });
+      menu.querySelectorAll('a').forEach(function (link) {link.addEventListener('click', closeMenu);});
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu(); toggle.focus();
+        }
+      });
+    })();
+  </script>
+</body></html>
