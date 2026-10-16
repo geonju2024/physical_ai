@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MUSE Smart Mirror — Hardware Architecture</title>
+<!-- Google Fonts: Playfair Display + Plus Jakarta Sans + JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "inverse-primary": "#c6c6c6",
+            "on-secondary-container": "#3c2a89",
+            "on-surface-variant": "#444748",
+            "surface-dim": "#dadad7",
+            "secondary-fixed-dim": "#c9beff",
+            "on-secondary": "#ffffff",
+            "secondary": "#6050af",
+            "surface-container-highest": "#e3e2e0",
+            "surface-variant": "#e2e3df",
+            "primary-fixed-dim": "#c6c6c6",
+            "tertiary-container": "#1b1b1b",
+            "on-secondary-fixed-variant": "#483795",
+            "surface-bright": "#faf9f6",
+            "secondary-container": "#ab9bff",
+            "on-tertiary-fixed-variant": "#474747",
+            "inverse-on-surface": "#f1f1ed",
+            "background": "#faf9f6",
+            "on-surface": "#1a1c1a",
+            "secondary-fixed": "#e6deff",
+            "primary": "#000000",
+            "on-error": "#ffffff",
+            "tertiary": "#000000",
+            "surface-container": "#efeeeb",
+            "on-tertiary": "#ffffff",
+            "inverse-surface": "#1c1d1c",
+            "on-tertiary-container": "#848484",
+            "surface": "#faf9f6",
+            "primary-fixed": "#e2e2e2",
+            "outline": "#747878",
+            "outline-variant": "#c4c7c7",
+            "surface-container-high": "#e9e8e5",
+            "surface-container-low": "#f4f3f1",
+            "on-error-container": "#93000a",
+            "on-primary": "#ffffff",
+            "tertiary-fixed": "#e2e2e2",
+            "primary-container": "#1b1b1b",
+            "on-primary-container": "#848484",
+            "on-secondary-fixed": "#1b0062",
+            "surface-tint": "#5e5e5e",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed": "#1b1b1b",
+            "tertiary-fixed-dim": "#c6c6c6",
+            "surface-container-lowest": "#ffffff",
+            "error-container": "#ffdad6",
+            "on-primary-fixed-variant": "#474747",
+            "on-primary-fixed": "#1b1b1b",
+            "on-background": "#1a1c1a"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "sm": "0.375rem",
+            "md": "0.5rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            "headline-md": ["Playfair Display", "serif"],
+            "title-editorial": ["Plus Jakarta Sans", "sans-serif"],
+            "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "display-hero": ["Playfair Display", "serif"],
+            "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "label-uppercase": ["Plus Jakarta Sans", "sans-serif"],
+            "label-tag": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-lg": ["Playfair Display", "serif"],
+            "headline-sm": ["Playfair Display", "serif"],
+            "body-md": ["Plus Jakarta Sans", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 350, 'GRAD' 0, 'opsz' 20;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .editorial-card {
+      background-color: #ffffff;
+      border: 1px solid #c4c7c7;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .editorial-card:hover {
+      border-color: #1a1c1a;
+      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.06);
+    }
+    .kiosk-screen-glass {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(244, 243, 241, 0.8) 100%);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 4px 16px -2px rgba(0, 0, 0, 0.05);
+    }
+    @keyframes subtle-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.15); }
+    }
+    .live-pulse {
+      animation: subtle-pulse 2.2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col font-body-md selection:bg-primary selection:text-white">
+<!-- ========================================================= -->
+<!-- 1. TopNavBar (Editorial Muse)                             -->
+<!-- ========================================================= -->
+<header class="bg-surface/90 backdrop-blur-md border-b border-outline-variant sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-6 md:px-12 max-w-[1440px] mx-auto h-20">
+<!-- Brand Logo -->
+<a class="flex items-center gap-3 text-primary tracking-tight group" href="#">
+<span class="font-display-hero text-2xl md:text-3xl tracking-tight italic font-medium">MUSE</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="text-[10px] tracking-[0.2em] font-semibold text-outline uppercase hidden sm:inline">Smart Mirror Architecture</span>
+</a>
+<!-- Desktop Navigation Links -->
+<nav class="hidden md:flex items-center gap-8 text-[12px] uppercase tracking-[0.14em] font-medium text-on-surface-variant">
+<a class="hover:text-primary transition-colors py-1" href="#overview">Overview</a>
+<a class="text-primary font-bold border-b-2 border-primary py-1 flex items-center gap-1.5" href="#hardware">
+          Hardware
+          <span class="w-1 h-1 rounded-full bg-secondary inline-block"></span>
+</a>
+<a class="hover:text-primary transition-colors py-1" href="#ai-research">AI Research</a>
+<a class="hover:text-primary transition-colors py-1" href="#data-pipeline">Data Pipeline</a>
+<a class="hover:text-primary transition-colors py-1" href="#inference-engine">Inference Engine</a>
+</nav>
+<!-- Trailing Action -->
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center gap-1 text-on-surface-variant">
+<button class="p-2 rounded-lg hover:bg-surface-container transition-colors" title="AI Magic">
+<span class="material-symbols-outlined text-[19px]">auto_awesome</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-surface-container transition-colors" title="Shell/Logs">
+<span class="material-symbols-outlined text-[19px]">terminal</span>
+</button>
+</div>
+<a class="inline-flex items-center gap-2 bg-primary text-white text-[11px] uppercase tracking-[0.14em] font-semibold px-4 py-2.5 rounded-lg hover:bg-surface-tint active:scale-[0.98] transition-all" href="#docs">
+<span>Tech Docs</span>
+<span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</header>
+<!-- Main Canvas Container -->
+<main class="flex-grow w-full max-w-[1440px] mx-auto px-6 md:px-12 py-10 space-y-20">
+<!-- ========================================================= -->
+<!-- 2. SECTION 01: Hero — MUSE의 두뇌                          -->
+<!-- ========================================================= -->
+<section class="pt-2" id="hardware">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+<!-- Hero Left Column -->
+<div class="lg:col-span-7 space-y-7">
+<div class="inline-flex items-center gap-2.5 px-3 py-1 rounded-lg bg-surface-container border border-outline-variant text-[11px] font-semibold tracking-[0.14em] uppercase text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-secondary">memory</span>
+<span>EDGE COMPUTING ARCHITECTURE</span>
+</div>
+<div class="space-y-4">
+<h1 class="font-display-hero text-4xl sm:text-5xl lg:text-[54px] text-on-surface leading-[1.12] tracking-tight font-normal">
+              MUSE를 움직이는 <br/>
+<span class="italic font-normal text-secondary underline decoration-1 decoration-secondary/40 underline-offset-8">AI 컴퓨터</span>
+</h1>
+<p class="font-body-md text-base sm:text-lg text-on-surface-variant max-w-xl leading-relaxed font-normal">
+              MUSE는 카메라로 사용자를 인식하고 AI로 스타일을 분석합니다. 이를 위해 <span class="font-semibold text-primary">NVIDIA Jetson Orin NX</span> 기반 엣지 AI 시스템을 메인 컴퓨팅 플랫폼으로 선정했습니다.
+            </p>
+</div>
+<!-- Editorial Tag Badges -->
+<div class="flex flex-wrap gap-2 pt-1">
+<span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-low border border-outline-variant text-primary text-[11px] uppercase tracking-[0.12em] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Edge AI
+            </span>
+<span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-low border border-outline-variant text-primary text-[11px] uppercase tracking-[0.12em] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> GPU Acceleration
+            </span>
+<span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-low border border-outline-variant text-primary text-[11px] uppercase tracking-[0.12em] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Docker Architecture
+            </span>
+</div>
+<!-- Micro Stats Row -->
+<div class="grid grid-cols-3 gap-3 pt-2 max-w-xl">
+<div class="editorial-card p-4 rounded-xl">
+<p class="text-[11px] uppercase tracking-[0.14em] font-semibold text-outline">소비 전력</p>
+<p class="font-headline-sm text-xl text-primary font-bold mt-1">20W 모듈</p>
+<span class="text-[11px] text-secondary font-medium tracking-wide">저전력 설계</span>
+</div>
+<div class="editorial-card p-4 rounded-xl border-secondary/40">
+<p class="text-[11px] uppercase tracking-[0.14em] font-semibold text-outline">연산 성능</p>
+<p class="font-headline-sm text-xl text-secondary font-bold mt-1">100 TOPS</p>
+<span class="text-[11px] text-primary font-medium tracking-wide">AI 가속 파워</span>
+</div>
+<div class="editorial-card p-4 rounded-xl">
+<p class="text-[11px] uppercase tracking-[0.14em] font-semibold text-outline">컨테이너 분리</p>
+<p class="font-headline-sm text-xl text-primary font-bold mt-1">7개 격리</p>
+<span class="text-[11px] text-outline font-medium tracking-wide">독립 샌드박스</span>
+</div>
+</div>
+</div>
+<!-- Hero Right Column: Graphic Visualizer Card -->
+<div class="lg:col-span-5">
+<div class="relative bg-surface-container-lowest p-6 sm:p-7 rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<!-- Top Card Header Tags -->
+<div class="flex items-center justify-between pb-3.5 mb-5 border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary live-pulse"></span>
+<span class="text-[11px] font-mono uppercase font-semibold text-primary tracking-wider">JETSON_SOM • CARRIER_BOARD_V1</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[10px] tracking-wide">HDMI 2.1 • MIPI-CSI</span>
+</div>
+<!-- Graphic Visualization Layout -->
+<div class="relative flex items-center justify-between gap-4 py-3">
+<!-- Jetson SoM Graphic Card -->
+<div class="w-5/12 bg-inverse-surface text-inverse-on-surface p-4 rounded-lg border border-outline/30 relative">
+<div class="flex items-center justify-between mb-2.5">
+<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-secondary text-white font-bold tracking-wider">NVIDIA</span>
+<span class="text-[11px] font-mono text-secondary-fixed-dim">Orin NX</span>
+</div>
+<div class="w-full h-20 rounded bg-white/5 border border-white/10 flex flex-col items-center justify-center p-2 text-center">
+<span class="material-symbols-outlined text-secondary-fixed-dim text-2xl">developer_board</span>
+<p class="text-[11px] font-medium mt-1 text-white">Ampere GPU</p>
+<p class="text-[9px] font-mono text-inverse-primary">1024 CUDA Cores</p>
+</div>
+<div class="mt-2.5 pt-2 border-t border-white/10 text-[9px] font-mono text-surface-dim flex justify-between">
+<span>Carrier Board</span>
+<span class="text-secondary-fixed-dim">M.2 NVMe</span>
+</div>
+</div>
+<!-- Data Bridge Link -->
+<div class="w-2/12 flex flex-col items-center justify-center relative">
+<div class="w-full border-t border-dashed border-secondary relative"></div>
+<div class="my-1 px-1.5 py-0.5 bg-surface-container rounded font-mono text-[9px] text-secondary font-semibold border border-outline-variant">
+                  MIPI / IPC
+                </div>
+<span class="text-[9px] font-mono text-outline">60 FPS</span>
+</div>
+<!-- Smart Mirror Display Simulation Graphic -->
+<div class="w-5/12 bg-surface-container-low p-3 rounded-lg border border-outline-variant relative">
+<!-- Top Camera Sensor Indicator -->
+<div class="flex items-center justify-center mb-2">
+<div class="w-2 h-2 rounded-full bg-error flex items-center justify-center">
+<div class="w-0.5 h-0.5 rounded-full bg-white"></div>
+</div>
+<span class="text-[9px] font-mono ml-1 text-on-surface-variant">Wide RGB Cam</span>
+</div>
+<!-- Mirror Screen Glass Pane -->
+<div class="h-28 rounded kiosk-screen-glass border border-outline-variant/60 p-2 flex flex-col justify-between relative overflow-hidden">
+<div class="flex justify-between items-start text-[8px] font-mono text-on-surface-variant">
+<span>10:24 AM</span>
+<span class="text-primary font-bold">22°C ☀️</span>
+</div>
+<div class="text-center py-1">
+<span class="font-headline-sm text-[11px] italic font-medium text-secondary">AI Styling Ready</span>
+<div class="w-6 h-0.5 bg-primary rounded-full mx-auto mt-1"></div>
+</div>
+<div class="flex justify-between text-[8px] font-mono bg-surface-container px-1 py-0.5 rounded border border-outline-variant/40">
+<span>Pose: OK</span>
+<span class="text-secondary font-semibold">28ms</span>
+</div>
+</div>
+<div class="mt-2 text-center text-[10px] uppercase tracking-[0.14em] text-on-surface-variant font-medium">
+                  MUSE Glass Display
+                </div>
+</div>
+</div>
+<!-- Footer Caption Inside Card -->
+<div class="mt-4 pt-3 border-t border-outline-variant flex items-center justify-between text-[11px] font-mono text-on-surface-variant">
+<span>Host OS: JetPack 6.0 (L4T)</span>
+<span class="text-secondary font-medium">Dual MIPI CSI-2 Connected</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================================= -->
+<!-- 3. SECTION 02: Hardware Selection — MCU vs SBC            -->
+<!-- ========================================================= -->
+<section class="space-y-8 pt-4" id="selection">
+<!-- Section Title Area -->
+<div class="max-w-2xl space-y-2">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-container border border-outline-variant text-[11px] font-semibold tracking-[0.14em] uppercase text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-secondary">compare_arrows</span>
+<span>COMPUTATION BENCHMARK &amp; TRADE-OFF</span>
+</div>
+<h2 class="font-headline-lg text-3xl sm:text-4xl text-on-surface tracking-tight font-normal">
+          왜 SBC를 선택했을까?
+        </h2>
+<p class="font-body-md text-base text-on-surface-variant leading-relaxed">
+          MUSE는 단순한 장치 제어뿐 아니라 고해상도 영상 분석, 여러 AI 모델 추론, 화면 렌더링을 수행해야 합니다. 따라서 메인 연산 장치로 GPU 가속이 가능한 SBC 기반 시스템을 선정했습니다.
+        </p>
+</div>
+<!-- Comparison Matrix Grid: 2-Tier Hierarchy -->
+<div class="space-y-6">
+<!-- Tier 1: MCU vs SBC High Level Category -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<!-- MCU Card -->
+<div class="editorial-card p-6 rounded-xl">
+<div class="flex items-center justify-between mb-3 pb-2 border-b border-outline-variant">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-outline text-xl">developer_board</span>
+<h3 class="font-headline-sm text-lg font-bold text-on-surface">MCU (Micro Controller Unit)</h3>
+</div>
+<span class="px-2.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[10px] tracking-wide font-semibold">
+                ESP32 / STM32
+              </span>
+</div>
+<p class="text-body-sm text-sm text-on-surface-variant mb-5 leading-relaxed">
+              주로 모터 펄스 제어, I2C/SPI 센서 풀링 등 단일 루프형 하드웨어 임베디드 제어에 특화된 칩셋입니다.
+            </p>
+<div class="space-y-2.5 text-xs font-mono">
+<div class="flex items-center justify-between py-1.5 border-b border-surface-container-high">
+<span class="text-outline uppercase tracking-wider text-[11px]">주요 용도</span>
+<span class="text-on-surface font-sans font-medium text-sm">센서 및 액추에이터 제어</span>
+</div>
+<div class="flex items-center justify-between py-1.5 border-b border-surface-container-high">
+<span class="text-outline uppercase tracking-wider text-[11px]">전력 &amp; 단가</span>
+<span class="text-on-surface font-sans font-medium text-sm">초저전력 • 저비용</span>
+</div>
+<div class="flex items-center justify-between py-1.5">
+<span class="text-outline uppercase tracking-wider text-[11px]">AI 연산성</span>
+<span class="text-error font-sans font-semibold text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">close</span> 대규모 AI 추론에는 부적합
+                </span>
+</div>
+</div>
+</div>
+<!-- SBC Card -->
+<div class="editorial-card p-6 rounded-xl border-secondary/50 bg-surface-container-lowest">
+<div class="flex items-center justify-between mb-3 pb-2 border-b border-outline-variant">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-xl">computer</span>
+<h3 class="font-headline-sm text-lg font-bold text-secondary">SBC (Single Board Computer)</h3>
+</div>
+<span class="px-2.5 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-mono text-[10px] tracking-wide font-semibold">
+                Jetson / Raspberry Pi 5
+              </span>
+</div>
+<p class="text-body-sm text-sm text-on-surface-variant mb-5 leading-relaxed">
+              Linux OS 환경 위에서 고대역폭 멀티미디어 스트림, 그래픽 렌더링, 컨테이너화된 AI 백엔드를 병렬 구동합니다.
+            </p>
+<div class="space-y-2.5 text-xs font-mono">
+<div class="flex items-center justify-between py-1.5 border-b border-surface-container-high">
+<span class="text-outline uppercase tracking-wider text-[11px]">주요 용도</span>
+<span class="text-on-surface font-sans font-medium text-sm">영상 처리 및 다중 AI 모델 추론</span>
+</div>
+<div class="flex items-center justify-between py-1.5 border-b border-surface-container-high">
+<span class="text-outline uppercase tracking-wider text-[11px]">소프트웨어 환경</span>
+<span class="text-on-surface font-sans font-medium text-sm">Linux OS 및 Docker Compose 지원</span>
+</div>
+<div class="flex items-center justify-between py-1.5">
+<span class="text-outline uppercase tracking-wider text-[11px]">적합도 판정</span>
+<span class="text-secondary font-sans font-semibold text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">check_circle</span> MUSE 메인 시스템에 적합
+                </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Tier 2: Jetson Orin NX vs Raspberry Pi 5 Deep Dive -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+<!-- Jetson Orin NX (PROMINENTLY HIGHLIGHTED) -->
+<div class="lg:col-span-7 bg-surface-container-lowest rounded-xl p-6 md:p-7 border-2 border-primary relative flex flex-col justify-between">
+<div class="absolute -top-3 right-6 bg-primary text-white text-[10px] font-semibold uppercase tracking-[0.14em] px-3 py-1 rounded shadow-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[13px]">verified</span>
+<span>Selected — NVIDIA Jetson Orin NX</span>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-2 pt-1">
+<span class="font-display-hero text-2xl font-normal text-on-surface">NVIDIA Jetson Orin NX (16GB)</span>
+</div>
+<p class="text-body-sm text-sm text-on-surface-variant mb-6 leading-relaxed">
+                모듈형 컴퓨팅 유닛(SoM) 형태로 전용 캐리어 보드와 결합되어, 거울 프레임 내부 밀폐 환경에서도 고밀도 딥러닝 추론을 지연 없이 소화합니다.
+              </p>
+<!-- Features Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-6">
+<div class="bg-surface-container-low p-3.5 rounded-lg border border-outline-variant">
+<div class="flex items-center gap-2 text-primary font-bold text-sm mb-1 font-sans">
+<span class="material-symbols-outlined text-[17px] text-secondary">hub</span>
+<span>Carrier Board 결합형</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">컴퓨팅 모듈 형태로 MIPI, 디스플레이, USB 전원 분기 통합</p>
+</div>
+<div class="bg-surface-container-low p-3.5 rounded-lg border border-outline-variant">
+<div class="flex items-center gap-2 text-primary font-bold text-sm mb-1 font-sans">
+<span class="material-symbols-outlined text-[17px] text-secondary">speed</span>
+<span>Ampere GPU • TensorRT</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">FP16 / INT8 정밀도 가속으로 비전 모델 추론 레이턴시 30ms 이내 보장</p>
+</div>
+<div class="bg-surface-container-low p-3.5 rounded-lg border border-outline-variant">
+<div class="flex items-center gap-2 text-primary font-bold text-sm mb-1 font-sans">
+<span class="material-symbols-outlined text-[17px] text-secondary">view_stream</span>
+<span>실시간 다중 AI 파이프라인</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">포즈 추출 + 의류 세그멘테이션 + 특징 임베딩 동시 병렬 연산</p>
+</div>
+<div class="bg-surface-container-low p-3.5 rounded-lg border border-outline-variant">
+<div class="flex items-center gap-2 text-primary font-bold text-sm mb-1 font-sans">
+<span class="material-symbols-outlined text-[17px] text-secondary">check_box</span>
+<span>MUSE 메인 선정 플랫폼</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">단일 보드에서 UI 렌더링 + 비전 인식 완결 구조 달성</p>
+</div>
+</div>
+</div>
+<div class="pt-3.5 border-t border-outline-variant flex items-center justify-between text-xs font-mono">
+<span class="text-on-surface font-semibold uppercase tracking-wider">100 TOPS AI Engine</span>
+<span class="text-secondary font-bold uppercase tracking-wider">Recommended for Production</span>
+</div>
+</div>
+<!-- Raspberry Pi 5 Card -->
+<div class="lg:col-span-5 editorial-card rounded-xl p-6 md:p-7 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-2">
+<h3 class="font-headline-sm text-2xl font-bold text-on-surface">Raspberry Pi 5</h3>
+<span class="px-2.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[10px] tracking-wide">대안 검토</span>
+</div>
+<p class="text-body-sm text-sm text-on-surface-variant mb-6 leading-relaxed">
+                범용 교육 및 메이커용 SBC의 대표 주자로 진입 장벽이 낮고 생태계가 넓으나, 하드웨어 비전 AI 가속 파이프라인에는 한계가 존재합니다.
+              </p>
+<div class="space-y-3">
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant/60">
+<div class="flex items-center gap-1.5 text-on-surface font-semibold text-xs font-sans">
+<span class="text-secondary">✦</span> 상대적으로 낮은 도입 비용
+                  </div>
+<p class="text-xs text-on-surface-variant mt-1 leading-relaxed">단위 보드 구매 비용이 경제적이나 AI 연산 탑재 시 추가 보드 필요</p>
+</div>
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant/60">
+<div class="flex items-center gap-1.5 text-outline font-semibold text-xs font-sans">
+<span class="text-error">✦</span> 기본 GPU 기반 AI 연산 환경 제약
+                  </div>
+<p class="text-xs text-on-surface-variant mt-1 leading-relaxed">CUDA 코어가 없어 대형 비전 모델(SigLIP, YOLOE) 구동 시 CPU 부하 심화</p>
+</div>
+<div class="p-3.5 rounded-lg bg-surface-container-low border border-outline-variant/60">
+<div class="flex items-center gap-1.5 text-on-surface font-semibold text-xs font-sans">
+<span class="text-secondary">✦</span> 별도 AI 가속기(Hailo 등) 확장 가능
+                  </div>
+<p class="text-xs text-on-surface-variant mt-1 leading-relaxed">M.2 HAT을 통해 NPU 모듈 확장은 가능하나 드라이버 스택 이원화 발생</p>
+</div>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant mt-5 text-xs font-mono text-on-surface-variant flex justify-between">
+<span>경량 센서 허브에 적합</span>
+<span class="text-outline uppercase tracking-wider font-semibold">MUSE 메인 AI엔 부적합</span>
+</div>
+</div>
+</div>
+<!-- Footnote Info Badge -->
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5">info</span>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+<span class="font-semibold text-on-surface">설계 참고사항:</span> Jetson Orin NX는 캐리어 보드와 결합되어 전원(DC 12V-19V), 고대역 카메라(MIPI-CSI 4채널 및 USB3), 디스플레이(HDMI 2.1), 센서 I/O(I2C/UART/GPIO)를 통합 제어하도록 구성되었습니다.
+          </p>
+</div>
+</div>
+</section>
+<!-- ========================================================= -->
+<!-- 4. SECTION 03: Docker Container Architecture (Interactive)-->
+<!-- ========================================================= -->
+<section class="space-y-8 pt-4" id="architecture">
+<div class="max-w-2xl space-y-2">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-container border border-outline-variant text-[11px] font-semibold tracking-[0.14em] uppercase text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-secondary">deployed_code</span>
+<span>DOCKER COMPOSE TOPOLOGY</span>
+</div>
+<h2 class="font-headline-lg text-3xl sm:text-4xl text-on-surface tracking-tight font-normal">
+          하나의 스마트미러, 7개의 컨테이너
+        </h2>
+<p class="font-body-md text-base text-on-surface-variant leading-relaxed">
+          Jetson Orin NX 위에서 센서 수집, AI 추론, 화면 출력, 서비스 제어 기능을 Docker 컨테이너로 분리하여 유연한 시스템 구조를 설계했습니다.
+        </p>
+</div>
+<!-- Outer Container Canvas -->
+<div class="bg-surface-container-lowest rounded-xl p-6 sm:p-8 border border-outline-variant shadow-sm space-y-6">
+<!-- Canvas Header Banner -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container border border-outline-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[19px]">apps</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-lg text-on-surface font-bold">Jetson Orin NX • Docker Compose</h3>
+<p class="text-xs font-mono text-outline">MUSE Edge Runtime — Target Architecture Spec</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container border border-outline-variant text-primary font-mono text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary live-pulse"></span>
+              7 Containers Healthy
+            </span>
+<span class="text-xs font-mono text-outline hidden md:inline">Click any node to inspect</span>
+</div>
+</div>
+<!-- Architecture Flow Topology Layout -->
+<div class="space-y-4">
+<!-- TOP ROW: 3 Top Containers -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- 1) sensor-collector -->
+<div class="cursor-pointer editorial-card p-4 rounded-lg container-card relative group" id="card-sensor-collector" onclick="selectContainer('sensor-collector')">
+<div class="flex items-center justify-between mb-2">
+<span class="font-mono text-xs font-bold text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  sensor-collector
+                </span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[10px] tracking-wide border border-outline-variant">
+                  Hardware Access
+                </span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3 leading-relaxed">
+                카메라·뎁스·환경 센서 데이터 수집
+              </p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">MIPI/USB</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">Depth Sensor</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">V4L2</span>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant flex items-center justify-between text-[10px] font-mono text-outline">
+<span>/dev/video0 • MIPI-CSI</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform text-primary">chevron_right</span>
+</div>
+</div>
+<!-- 2) ai-inference -->
+<div class="cursor-pointer editorial-card p-4 rounded-lg container-card relative group" id="card-ai-inference" onclick="selectContainer('ai-inference')">
+<div class="flex items-center justify-between mb-2">
+<span class="font-mono text-xs font-bold text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  ai-inference
+                </span>
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-mono text-[10px] tracking-wide font-semibold">
+                  Software Service
+                </span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3 leading-relaxed">
+                MediaPipe·YOLOE·SigLIP 기반 분석
+              </p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">TensorRT</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">CUDA 12.x</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">PyTorch</span>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant flex items-center justify-between text-[10px] font-mono text-secondary font-medium">
+<span>NVIDIA Runtime Active</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+</div>
+</div>
+<!-- 3) mirror-ui -->
+<div class="cursor-pointer editorial-card p-4 rounded-lg container-card relative group" id="card-mirror-ui" onclick="selectContainer('mirror-ui')">
+<div class="flex items-center justify-between mb-2">
+<span class="font-mono text-xs font-bold text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  mirror-ui
+                </span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[10px] tracking-wide border border-outline-variant">
+                  Software Service
+                </span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3 leading-relaxed">
+                스마트미러 화면 및 가상 피팅 결과 렌더링
+              </p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">Chromium Kiosk</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">WebGL</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">Next.js</span>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant flex items-center justify-between text-[10px] font-mono text-outline">
+<span>Display Port: HDMI 2.1</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform text-primary">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- CONNECTOR ARROWS DOWN -->
+<div class="flex justify-around items-center px-8 text-outline text-xs font-mono">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-sm">arrow_downward</span>
+<span class="text-[9px]">pub: raw_events</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-sm">swap_vert</span>
+<span class="text-[9px]">sub: frames / pub: inference</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-sm">arrow_upward</span>
+<span class="text-[9px]">sub: ui_state</span>
+</div>
+</div>
+<!-- MIDDLE ROW: Long Horizontal Card (broker) -->
+<div class="cursor-pointer editorial-card rounded-lg p-4 transition-all container-card bg-surface-container-low" id="card-broker" onclick="selectContainer('broker')">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary text-white flex items-center justify-center font-bold text-sm">
+                  ⚡
+                </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-mono text-sm font-bold text-on-surface">broker</span>
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-mono text-[10px] font-semibold">MQTT / Mosquitto Broker</span>
+<span class="text-[10px] text-outline font-mono">Port 1883</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                    Topic 기반 Publish/Subscribe (이벤트 및 경량 제어 메시지 초저지연 버스 전송)
+                  </p>
+</div>
+</div>
+<div class="flex items-center gap-2 text-xs font-mono text-secondary">
+<span class="px-2 py-1 rounded bg-surface-container border border-outline-variant text-[11px]">
+                  qos: 0/1 • In-Memory Pipe
+                </span>
+</div>
+</div>
+</div>
+<!-- CONNECTOR ARROWS UP/DOWN -->
+<div class="flex justify-around items-center px-8 text-outline text-xs font-mono">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-sm">arrow_downward</span>
+<span class="text-[9px]">sub: safety_cmd</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-sm">swap_vert</span>
+<span class="text-[9px]">sync: recommendation</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-sm">swap_vert</span>
+<span class="text-[9px]">pub: ext_context</span>
+</div>
+</div>
+<!-- BOTTOM ROW: 3 Bottom Containers -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- 4) motor-safety-control -->
+<div class="cursor-pointer editorial-card p-4 rounded-lg container-card relative group" id="card-motor-safety-control" onclick="selectContainer('motor-safety-control')">
+<div class="flex items-center justify-between mb-2">
+<span class="font-mono text-xs font-bold text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  motor-safety-control
+                </span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[10px] tracking-wide border border-outline-variant">
+                  Hardware Access
+                </span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3 leading-relaxed">
+                모터 및 안전 제어 연동 (확장형 하드웨어용 선택 기능, 별도 물리 비상정지 회로 필수)
+              </p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">GPIO Pins</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">UART Serial</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">Hard-Interlock</span>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant flex items-center justify-between text-[10px] font-mono text-outline">
+<span>Emergency Cutoff Bus</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform text-primary">chevron_right</span>
+</div>
+</div>
+<!-- 5) app-core -->
+<div class="cursor-pointer editorial-card p-4 rounded-lg container-card relative group" id="card-app-core" onclick="selectContainer('app-core')">
+<div class="flex items-center justify-between mb-2">
+<span class="font-mono text-xs font-bold text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  app-core
+                </span>
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-mono text-[10px] tracking-wide font-semibold">
+                  Software Service
+                </span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3 leading-relaxed">
+                코디 추천 및 사용자 DB • 의류 매칭 비즈니스 로직
+              </p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">SQLite / PG</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">FastAPI</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">Rule Engine</span>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant flex items-center justify-between text-[10px] font-mono text-secondary font-medium">
+<span>Personalized DB</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+</div>
+</div>
+<!-- 6) cloud-gateway -->
+<div class="cursor-pointer editorial-card p-4 rounded-lg container-card relative group" id="card-cloud-gateway" onclick="selectContainer('cloud-gateway')">
+<div class="flex items-center justify-between mb-2">
+<span class="font-mono text-xs font-bold text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  cloud-gateway
+                </span>
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-mono text-[10px] tracking-wide font-semibold">
+                  Software Service
+                </span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3 leading-relaxed">
+                쇼핑몰·날씨·일정 API 연동 및 오프로딩 관리
+              </p>
+<div class="flex flex-wrap gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">REST / GraphQL</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">HTTPS Sync</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-low border border-outline-variant/60 font-mono text-[10px]">OAuth2</span>
+</div>
+<div class="mt-3 pt-2 border-t border-outline-variant flex items-center justify-between text-[10px] font-mono text-secondary font-medium">
+<span>External APIs Link</span>
+<span class="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- LOWEST LAYER: Host Environment Box -->
+<div class="bg-inverse-surface text-inverse-on-surface p-4 rounded-lg border border-outline/30">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary-fixed-dim text-[18px]">layers</span>
+<span class="font-mono text-xs font-bold text-white tracking-wide">Host Environment</span>
+<span class="font-mono text-[11px] text-surface-dim">(NVIDIA JetPack L4T / Linux Kernel 5.15)</span>
+</div>
+<div class="flex flex-wrap gap-1.5 font-mono text-[10px]">
+<span class="px-2 py-0.5 rounded bg-white/10 text-secondary-fixed border border-white/10">NVIDIA Container Runtime</span>
+<span class="px-2 py-0.5 rounded bg-white/10 text-white border border-white/10">CUDA Driver 12.x</span>
+<span class="px-2 py-0.5 rounded bg-white/10 text-white border border-white/10">TensorRT 8.6</span>
+<span class="px-2 py-0.5 rounded bg-white/10 text-surface-dim border border-white/10">Unified Memory (UMA)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Container Detail Drawer / Inspector Popover -->
+<div class="bg-surface-container-low rounded-lg p-5 border border-outline-variant transition-all" id="inspector-panel">
+<div class="flex items-center justify-between mb-4 pb-2 border-b border-outline-variant">
+<div class="flex items-center gap-2.5">
+<span class="px-2 py-0.5 rounded bg-primary text-white font-mono text-[10px] uppercase font-bold tracking-wider" id="inspect-tag">INSPECTOR</span>
+<h4 class="font-mono text-sm font-bold text-on-surface" id="inspect-name">sensor-collector</h4>
+</div>
+<span class="font-mono text-xs text-secondary font-semibold" id="inspect-layer">Hardware Access Layer</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs leading-relaxed">
+<div class="bg-surface-container-lowest p-3.5 rounded border border-outline-variant">
+<p class="font-mono text-[10px] uppercase tracking-wider text-outline mb-1.5 font-semibold">담당 역할 및 기능</p>
+<p class="text-on-surface font-sans" id="inspect-role">카메라 및 뎁스 센서의 V4L2 스트림을 캡처하여 저지연 링버퍼 메모리에 적재 및 FPS 유지 관리</p>
+</div>
+<div class="bg-surface-container-lowest p-3.5 rounded border border-outline-variant">
+<p class="font-mono text-[10px] uppercase tracking-wider text-outline mb-1.5 font-semibold">MQTT 토픽 / IPC 채널</p>
+<p class="text-on-surface font-mono text-[11px]" id="inspect-topics">Pub: muse/sensor/events, IPC: /dev/shm/mipi_frame0</p>
+</div>
+<div class="bg-surface-container-lowest p-3.5 rounded border border-outline-variant">
+<p class="font-mono text-[10px] uppercase tracking-wider text-outline mb-1.5 font-semibold">하드웨어 권한 / 엣지 노트</p>
+<p class="text-on-surface font-mono text-[11px]" id="inspect-hardware">devices: [/dev/video0, /dev/i2c-1], privileged: true, Jetson ISP direct bind</p>
+</div>
+</div>
+</div>
+<!-- Architecture Notice Badge -->
+<div class="bg-surface-container-low border border-outline-variant p-4 rounded-lg text-xs leading-relaxed flex items-start gap-2.5 text-on-surface">
+<span class="material-symbols-outlined text-secondary text-[18px] mt-0.5">architecture</span>
+<p>
+<span class="font-semibold text-primary">아키텍처 설계 지침:</span> MQTT는 제어·상태 이벤트 전송에 집중되며, 대용량 실시간 고해상도 영상 스트림은 공유 메모리(IPC) 또는 NVIDIA 전용 GStreamer/Jetson 파이프라인을 목표로 설계되었습니다.
+          </p>
+</div>
+</div>
+</section>
+<!-- ========================================================= -->
+<!-- 5. SECTION 04: System Flow — MUSE는 어떻게 작동할까?         -->
+<!-- ========================================================= -->
+<section class="space-y-8 pt-4" id="flow">
+<div class="max-w-2xl space-y-2">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-container border border-outline-variant text-[11px] font-semibold tracking-[0.14em] uppercase text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-secondary">route</span>
+<span>END-TO-END PIPELINE</span>
+</div>
+<h2 class="font-headline-lg text-3xl sm:text-4xl text-on-surface tracking-tight font-normal">
+          카메라에서 스타일 추천까지
+        </h2>
+<p class="font-body-md text-base text-on-surface-variant leading-relaxed">
+          하드웨어에서 수집된 정보는 AI 분석과 추천 과정을 거쳐 스마트미러 화면으로 전달됩니다.
+        </p>
+</div>
+<!-- 4-Step Process Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative">
+<!-- Step 1 -->
+<div class="editorial-card p-5 rounded-xl flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4 pb-2 border-b border-outline-variant">
+<span class="font-display-hero text-lg font-bold text-primary italic">01</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-outline font-mono text-[10px] tracking-wide font-medium">
+                sensor-collector
+              </span>
+</div>
+<h3 class="font-headline-sm text-lg font-bold text-on-surface mb-1">Capture</h3>
+<p class="text-xs font-semibold text-secondary mb-2.5">RGB 카메라 및 센서</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+              사용자가 거울 앞에 서면 MIPI 광각 렌즈와 센서가 전신 프레임을 캡처하고 조도 등 주변 환경을 감지합니다.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant text-[11px] font-mono text-outline">
+            Target: 1080p @ 30-60 FPS
+          </div>
+</div>
+<!-- Step 2 -->
+<div class="editorial-card p-5 rounded-xl flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4 pb-2 border-b border-outline-variant">
+<span class="font-display-hero text-lg font-bold text-secondary italic">02</span>
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-mono text-[10px] tracking-wide font-semibold">
+                ai-inference
+              </span>
+</div>
+<h3 class="font-headline-sm text-lg font-bold text-on-surface mb-1">Analyze</h3>
+<p class="text-xs font-semibold text-secondary mb-2.5">체형·의류 분석</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+              33개 인체 키포인트를 실시간 추출하고, 세그멘테이션 및 비전 임베딩 모델로 현재 착용 의류의 핏과 색상을 분류합니다.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant text-[11px] font-mono text-outline">
+            TensorRT Latency: &lt; 35ms
+          </div>
+</div>
+<!-- Step 3 -->
+<div class="editorial-card p-5 rounded-xl flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4 pb-2 border-b border-outline-variant">
+<span class="font-display-hero text-lg font-bold text-primary italic">03</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-outline font-mono text-[10px] tracking-wide font-medium">
+                app-core / cloud
+              </span>
+</div>
+<h3 class="font-headline-sm text-lg font-bold text-on-surface mb-1">Recommend</h3>
+<p class="text-xs font-semibold text-secondary mb-2.5">취향·옷장·상황 추천</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+              당일 기상 정보, 캘린더 TPO, 로컬 데이터베이스의 옷장 목록을 결합하여 개인에게 어울리는 최적의 스타일 셋을 조합합니다.
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant text-[11px] font-mono text-outline">
+            DB: SQLite + REST Gateway
+          </div>
+</div>
+<!-- Step 4 -->
+<div class="editorial-card p-5 rounded-xl flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4 pb-2 border-b border-outline-variant">
+<span class="font-display-hero text-lg font-bold text-secondary italic">04</span>
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-mono text-[10px] tracking-wide font-semibold">
+                mirror-ui
+              </span>
+</div>
+<h3 class="font-headline-sm text-lg font-bold text-on-surface mb-1">Display</h3>
+<p class="text-xs font-semibold text-secondary mb-2.5">가상 피팅 결과 표시</p>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+              스마트미러 반사 패널 상에 추천 코디 카드와 AR 가상 피팅 오버레이를 자연스럽게 렌더링합니다. (고부하 시 오프로딩 가능)
+            </p>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant text-[11px] font-mono text-outline">
+            Full-HD 60FPS UI Mirroring
+          </div>
+</div>
+</div>
+<!-- Closing Editorial Banner Card -->
+<div class="bg-surface-container-low p-6 md:p-8 rounded-xl border border-outline-variant flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="space-y-1.5 text-center md:text-left">
+<p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-secondary">FROM HARDWARE TO AI EXPERIENCE</p>
+<h3 class="font-display-hero text-2xl sm:text-3xl text-on-surface font-normal leading-tight">
+            MUSE는 하드웨어, AI, 소프트웨어를 연결하여<br class="hidden sm:inline"/> 거울을 개인화된 AI 스타일리스트로 발전시킵니다.
+          </h3>
+</div>
+<!-- Next Page Navigation Pills -->
+<div class="flex flex-wrap items-center justify-center gap-2.5">
+<a class="px-4 py-2 rounded-lg bg-surface-container-lowest hover:bg-primary hover:text-white text-on-surface text-xs font-semibold border border-outline-variant transition-all flex items-center gap-1.5" href="#ai-research">
+<span>AI Research</span>
+<span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+</a>
+<a class="px-4 py-2 rounded-lg bg-surface-container-lowest hover:bg-primary hover:text-white text-on-surface text-xs font-semibold border border-outline-variant transition-all flex items-center gap-1.5" href="#data-pipeline">
+<span>Data Pipeline</span>
+<span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+</a>
+<a class="px-4 py-2 rounded-lg bg-surface-container-lowest hover:bg-primary hover:text-white text-on-surface text-xs font-semibold border border-outline-variant transition-all flex items-center gap-1.5" href="#inference-engine">
+<span>Inference Engine</span>
+<span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+</main>
+<!-- ========================================================= -->
+<!-- 6. Footer (Editorial Muse)                                -->
+<!-- ========================================================= -->
+<footer class="bg-surface-container-low border-t border-outline-variant mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-6 md:px-12 py-8 max-w-[1440px] mx-auto gap-4">
+<!-- Brand & Copyright -->
+<div class="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
+<span class="font-display-hero text-lg font-bold italic text-primary">MUSE</span>
+<span class="text-outline text-xs">
+          © 2025 MUSE Smart Mirror Project. All rights reserved.
+        </span>
+</div>
+<!-- Tech Stack Badges & Links -->
+<div class="flex flex-wrap items-center justify-center gap-2 text-[11px] font-mono text-on-surface-variant">
+<a class="px-2.5 py-1 rounded bg-surface-container-lowest border border-outline-variant hover:text-primary transition-colors" href="#">JetPack 6.0</a>
+<a class="px-2.5 py-1 rounded bg-surface-container-lowest border border-outline-variant hover:text-primary transition-colors" href="#">NVIDIA TensorRT</a>
+<a class="px-2.5 py-1 rounded bg-surface-container-lowest border border-outline-variant hover:text-primary transition-colors" href="#">Docker Compose</a>
+<a class="px-2.5 py-1 rounded bg-surface-container-lowest border border-outline-variant hover:text-primary transition-colors" href="#">MQTT Mosquitto</a>
+<a class="px-2.5 py-1 rounded bg-surface-container-lowest border border-outline-variant hover:text-primary transition-colors" href="#">GitHub</a>
+<a class="px-3 py-1 rounded bg-primary text-white font-sans font-semibold hover:bg-surface-tint transition-colors" href="#">Architecture Whitepaper</a>
+</div>
+</div>
+</footer>
+<!-- Interactive JavaScript for Docker Node Details -->
+<script>
+    const containerData = {
+      'sensor-collector': {
+        name: 'sensor-collector',
+        layer: 'Hardware Access Layer',
+        tagBg: 'bg-primary text-white',
+        role: 'MIPI-CSI 광각 카메라 및 뎁스 센서 V4L2 스트림을 캡처하여 저지연 링버퍼 메모리에 적재하고 프레임 동기화를 관리합니다.',
+        topics: 'Pub: muse/sensor/events, muse/sensor/presence, IPC: /dev/shm/mipi_frame0',
+        hardware: 'devices: [/dev/video0, /dev/i2c-1], privileged: true, Jetson ISP direct bind'
+      },
+      'ai-inference': {
+        name: 'ai-inference',
+        layer: 'Software Service Layer',
+        tagBg: 'bg-secondary text-white',
+        role: 'TensorRT 엔진으로 변환된 MediaPipe 키포인트 추출기, YOLOE 의류 객체 검출기, SigLIP 패션 임베딩을 순차/병렬 추론합니다.',
+        topics: 'Sub: muse/sensor/events, Pub: muse/ai/pose, muse/ai/garments, muse/ai/embedding',
+        hardware: 'runtime: nvidia, GPU access: all, TensorRT 8.6, FP16 execution enabled'
+      },
+      'mirror-ui': {
+        name: 'mirror-ui',
+        layer: 'Software Service Layer',
+        tagBg: 'bg-primary text-white',
+        role: '풀스크린 Chromium Kiosk 모드로 스마트미러 글래스에 최적화된 고대비 UI, 추천 카드, AR 피팅 그래픽을 60fps로 렌더링합니다.',
+        topics: 'Sub: muse/app/recommendations, muse/ai/pose, Pub: muse/ui/interactions',
+        hardware: 'Display Port: HDMI 2.1, GPU WebGL 2.0 하드웨어 가속 플래그 활성화'
+      },
+      'broker': {
+        name: 'broker (Mosquitto MQTT)',
+        layer: 'Message Bus Backbone',
+        tagBg: 'bg-secondary text-white',
+        role: '컨테이너 간 비동기 제어 이벤트, 감지 상태 변경, UI 트리거를 전달하는 초저지연 경량 메시지 브로커입니다.',
+        topics: 'Topic Bus: muse/# (QoS 0/1 지원, In-Memory SQLite persistence)',
+        hardware: 'Port 1883 Expose, Jetson 내부 가상 브리지 네트워크 (bridge network muse-net)'
+      },
+      'motor-safety-control': {
+        name: 'motor-safety-control',
+        layer: 'Hardware Access Layer',
+        tagBg: 'bg-primary text-white',
+        role: '확장형 거울 각도 조절 모터 연동 및 물리 비상정지 회로를 감시합니다. 안전 인터록 해제 시 즉각적인 전원 차단을 수행합니다.',
+        topics: 'Sub: muse/control/tilt, Pub: muse/safety/emergency_status, GPIO interlock alerts',
+        hardware: 'devices: [/dev/ttyTHS1, /dev/gpiochip0], 물리 비상 차단 스위치 직결 필수'
+      },
+      'app-core': {
+        name: 'app-core',
+        layer: 'Software Service Layer',
+        tagBg: 'bg-secondary text-white',
+        role: '사용자의 등록 옷장 인벤토리, 최근 착용 로그, TPO 룰베이스 알고리즘을 구동하여 가장 적합한 코디 조합을 생성합니다.',
+        topics: 'Sub: muse/ai/garments, Pub: muse/app/recommendations, muse/app/profile_sync',
+        hardware: 'Storage: Local M.2 NVMe SSD (SQLite / Postgres DB 마운트)'
+      },
+      'cloud-gateway': {
+        name: 'cloud-gateway',
+        layer: 'Software Service Layer',
+        tagBg: 'bg-secondary text-white',
+        role: '지역 기상청 날씨 데이터, 캘린더 일정, 쇼핑몰 가상 피팅 백엔드 연동을 비동기로 수신하여 로컬 버스에 중계합니다.',
+        topics: 'Pub: muse/cloud/weather, muse/cloud/calendar, Proxy: HTTPS External REST/GraphQL',
+        hardware: 'Wi-Fi 6 / 이더넷 네트워크 인터페이스, TLS 1.3 암호화 보안 세션 유지'
+      }
+    };
+
+    function selectContainer(containerKey) {
+      const data = containerData[containerKey];
+      if (!data) return;
+
+      // Update Inspector UI
+      document.getElementById('inspect-name').textContent = data.name;
+      document.getElementById('inspect-layer').textContent = data.layer;
+      document.getElementById('inspect-role').textContent = data.role;
+      document.getElementById('inspect-topics').textContent = data.topics;
+      document.getElementById('inspect-hardware').textContent = data.hardware;
+
+      const inspectTag = document.getElementById('inspect-tag');
+      inspectTag.className = `px-2 py-0.5 rounded font-mono text-[10px] uppercase font-bold tracking-wider ${data.tagBg}`;
+
+      // Reset & Highlight active card border
+      document.querySelectorAll('.container-card').forEach(el => {
+        el.classList.remove('ring-2', 'ring-primary', 'border-primary');
+      });
+
+      const activeCard = document.getElementById(`card-${containerKey}`);
+      if (activeCard) {
+        activeCard.classList.add('ring-2', 'ring-primary', 'border-primary');
+      }
+    }
+
+    // Initialize with sensor-collector selected
+    document.addEventListener('DOMContentLoaded', () => {
+      selectContainer('sensor-collector');
+    });
+  </script>
+</body></html>
