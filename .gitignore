@@ -5,3 +5,11 @@ __pycache__/
 install_muse_mvp.py
 install_muse_ai_research.py
 patch_data_pipeline.py
+
+# Secrets (Supabase / Gemini keys)
+.env
+supabase/.temp/
+supabase/functions/.env
+
+# npm (Supabase CLI devDependency)
+node_modules/
